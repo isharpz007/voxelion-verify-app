@@ -29,7 +29,7 @@ class StartController extends Controller
             'task' => [
                 'reference' => $request->query('task', 'OP-2026-7842'),
                 'partner' => 'OpinionPadi',
-                'duration' => '~2–3 mins',
+                'duration' => '2–3 mins',
             ],
         ]);
     }
@@ -53,7 +53,7 @@ class StartController extends Controller
                 'task' => [
                     'reference' => $claims['task_id'],
                     'partner' => 'OpinionPadi',
-                    'duration' => '~2–3 mins',
+                    'duration' => '2–3 mins',
                 ],
             ]);
     }
