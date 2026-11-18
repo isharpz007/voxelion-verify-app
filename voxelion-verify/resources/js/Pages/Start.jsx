@@ -11,7 +11,7 @@ function Header() {
             <span className="font-headline-sm text-headline-sm text-primary tracking-tight">Voxelion</span>
             <div className="flex items-center space-x-1.5 px-3 py-1 rounded-full bg-surface-container-high text-on-surface-variant">
                 <Icon name="verified_user" className="text-[16px] text-on-tertiary-container" fill />
-                <span className="font-label-code text-label-code text-on-surface">256-bit Encrypted Session</span>
+                <span className="font-label-code text-label-code text-on-surface">Encrypted Session</span>
             </div>
         </header>
     );

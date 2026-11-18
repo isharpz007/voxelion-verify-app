@@ -10,7 +10,7 @@ function Header() {
             <span className="font-title-md text-title-md tracking-tight text-primary-container font-semibold">Voxelion</span>
             <div className="inline-flex items-center gap-space-xs px-2.5 py-1 rounded-full bg-surface-container-high/60">
                 <Icon name="lock" className="text-on-surface-variant text-[14px]" />
-                <span className="font-label-code text-label-code text-on-surface-variant tracking-wider uppercase">256-bit Encrypted</span>
+                <span className="font-label-code text-label-code text-on-surface-variant tracking-wider uppercase">Encrypted</span>
             </div>
         </header>
     );
