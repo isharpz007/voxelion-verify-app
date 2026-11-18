@@ -71,4 +71,10 @@ class Participant extends Model
     {
         return $this->hasOne(CompletionCode::class);
     }
+
+    /** @return HasMany<RewardSubmission, $this> */
+    public function rewardSubmissions(): HasMany
+    {
+        return $this->hasMany(RewardSubmission::class);
+    }
 }

@@ -4,9 +4,13 @@ namespace App\Http\Controllers\Api;
 
 use App\Events\AuditRecorded;
 use App\Http\Controllers\Controller;
+use App\Models\MediaAsset;
+use App\Models\Participant;
 use App\Models\RewardSubmission;
 use App\Services\CompletionCodeService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class RewardSubmissionController extends Controller
 {
@@ -39,34 +43,66 @@ class RewardSubmissionController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'code' => ['required', 'string'],
+            // Code entry is optional on OpinionPadi's proof screen — a
+            // screenshot-only submission lands in the queue but can never
+            // be approved (the exit criterion). Without a code, the caller
+            // must identify the participant.
+            'code' => ['required_without:participant_ref', 'nullable', 'string'],
+            'participant_ref' => ['required_without:code', 'nullable', 'string'],
+            'task_id' => ['nullable', 'string'],
+            'screenshot' => ['nullable', 'file', 'image', 'mimes:jpeg,jpg,png,webp', 'max:10240'],
             'screenshot_s3_key' => ['nullable', 'string'],
         ]);
 
-        $check = $this->codes->validate($data['code']);
-        if (! $check['valid']) {
-            return response()->json([
-                'message' => 'Completion code rejected: '.$check['reason'],
-                'valid' => false,
-                'reason' => $check['reason'],
-            ], 422);
+        $code = null;
+        if (! empty($data['code'])) {
+            $check = $this->codes->validate($data['code']);
+            if (! $check['valid']) {
+                return response()->json([
+                    'message' => 'Completion code rejected: '.$check['reason'],
+                    'valid' => false,
+                    'reason' => $check['reason'],
+                ], 422);
+            }
+            $code = $check['code'];
+
+            $existing = RewardSubmission::where('code_id', $code->id)->first();
+            if ($existing) {
+                return response()->json([
+                    'message' => 'A reward submission already exists for this code.',
+                    'submission' => $existing,
+                ], 409);
+            }
+
+            $participant = $code->session()->with('participant')->first()->participant;
+        } else {
+            $participant = Participant::where('op_volunteer_ref', $data['participant_ref'])
+                ->when($data['task_id'] ?? null, fn ($q, $t) => $q->where('task_id', $t))
+                ->first();
+
+            if (! $participant) {
+                return response()->json(['message' => 'Unknown participant reference.'], 404);
+            }
         }
 
-        $existing = RewardSubmission::where('code_id', $check['code']->id)->first();
-        if ($existing) {
-            return response()->json([
-                'message' => 'A reward submission already exists for this code.',
-                'submission' => $existing,
-            ], 409);
+        $screenshotKey = $data['screenshot_s3_key'] ?? null;
+        if ($request->hasFile('screenshot')) {
+            // Store the proof on our media disk so reviewers get a signed
+            // view URL and deletion workflows scrub it like all captures.
+            $screenshotKey = 'media/'.$participant->id.'/proof-'.Str::uuid().'.'.$request->file('screenshot')->extension();
+            Storage::disk('media')->put($screenshotKey, file_get_contents($request->file('screenshot')->getRealPath()));
+            MediaAsset::create([
+                'participant_id' => $participant->id,
+                'kind' => 'proof',
+                'storage_key' => $screenshotKey,
+            ]);
         }
-
-        $session = $check['code']->session()->with('participant')->first();
 
         $submission = RewardSubmission::create([
-            'task_id' => $session->participant->task_id,
-            'participant_id' => $session->participant_id,
-            'code_id' => $check['code']->id,
-            'screenshot_s3_key' => $data['screenshot_s3_key'] ?? null,
+            'task_id' => $participant->task_id,
+            'participant_id' => $participant->id,
+            'code_id' => $code?->id,
+            'screenshot_s3_key' => $screenshotKey,
             'review_state' => 'pending',
         ]);
 
@@ -91,6 +127,12 @@ class RewardSubmissionController extends Controller
 
         if ($data['decision'] === 'approved') {
             // Backend code check — a screenshot alone is never sufficient.
+            // Code-less (screenshot-only) submissions can never be approved.
+            if (! $submission->code) {
+                return response()->json([
+                    'message' => 'Cannot approve: no completion code attached to this submission.',
+                ], 422);
+            }
             $check = $this->codes->validateRecord($submission->code);
             if (! $check['valid']) {
                 return response()->json([

@@ -72,6 +72,9 @@ class ReviewController extends Controller
         }
 
         if ($data['decision'] === 'approved') {
+            if (! $submission->code) {
+                return back()->withErrors(['decision' => 'Cannot approve: no completion code attached to this submission.']);
+            }
             $check = $this->codes->validateRecord($submission->code);
             if (! $check['valid']) {
                 return back()->withErrors(['decision' => 'Cannot approve: code is '.$check['reason'].'.']);

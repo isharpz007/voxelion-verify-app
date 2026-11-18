@@ -4,8 +4,10 @@ namespace Tests\Feature;
 
 use App\Enums\SessionState;
 use App\Models\CompletionCode;
+use App\Models\RewardSubmission;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
+use Inertia\Testing\AssertableInertia;
 use Tests\TestCase;
 
 class CompletionCodeApiTest extends TestCase
@@ -157,5 +159,86 @@ class CompletionCodeApiTest extends TestCase
         // Still valid — not consumed by a rejection.
         $this->getJson("/api/v1/completion-codes/$plain", $this->signedApiHeaders())
             ->assertJson(['valid' => true]);
+    }
+
+    public function test_screenshot_upload_is_stored_as_viewable_proof(): void
+    {
+        $plain = $this->verifiedCode();
+
+        // call() with parameters+files synthesises a multipart request but
+        // leaves the raw body empty — which is exactly what the signature
+        // middleware hashes, so sign "".
+        $res = $this->call(
+            'POST',
+            '/api/v1/reward-submissions',
+            ['code' => $plain],
+            [],
+            ['screenshot' => $this->noiseImage()],
+            $this->transformHeadersToServerVars($this->signedApiHeaders('')),
+        );
+
+        $res->assertCreated();
+
+        $participant = CompletionCode::firstOrFail()->participant_id;
+        $this->assertDatabaseHas('media_assets', [
+            'participant_id' => $participant,
+            'kind' => 'proof',
+        ]);
+        $key = $res->json('submission.screenshot_s3_key');
+        $this->assertStringStartsWith('media/', $key);
+        Storage::disk('media')->assertExists($key);
+    }
+
+    public function test_screenshot_only_submission_lands_in_queue_but_cannot_be_approved(): void
+    {
+        // Exit criterion made concrete: screenshot proof without a code is
+        // accepted into the queue but every approval path re-validates a
+        // code — screenshot alone is never sufficient.
+        Storage::fake('media');
+        $session = $this->beginSession();
+        $this->driveToPhoto($session);
+        $ref = $session->participant->op_volunteer_ref;
+
+        $payload = ['participant_ref' => $ref, 'screenshot_s3_key' => 'external/proof-1.png'];
+        $id = $this->postJson('/api/v1/reward-submissions', $payload, $this->signedApiHeaders($payload))
+            ->assertCreated()
+            ->json('submission.id');
+
+        $this->assertDatabaseHas('reward_submissions', [
+            'id' => $id,
+            'code_id' => null,
+            'review_state' => 'pending',
+        ]);
+
+        $approve = ['decision' => 'approved', 'reviewer_id' => 'rev-1'];
+        $this->postJson("/api/v1/reward-submissions/$id/decision", $approve, $this->signedApiHeaders($approve))
+            ->assertStatus(422);
+
+        $this->assertSame('pending', RewardSubmission::find($id)->review_state);
+    }
+
+    public function test_unknown_participant_ref_rejected(): void
+    {
+        $payload = ['participant_ref' => 'vol-ghost'];
+        $this->postJson('/api/v1/reward-submissions', $payload, $this->signedApiHeaders($payload))
+            ->assertStatus(404);
+    }
+
+    public function test_result_page_shows_reward_status_to_volunteer(): void
+    {
+        $plain = $this->verifiedCode();
+
+        $payload = ['code' => $plain];
+        $id = $this->postJson('/api/v1/reward-submissions', $payload, $this->signedApiHeaders($payload))
+            ->assertCreated()->json('submission.id');
+
+        $this->get('/result')->assertInertia(
+            fn (AssertableInertia $page) => $page->where('reward.state', 'pending'));
+
+        $approve = ['decision' => 'approved', 'reviewer_id' => 'rev-1'];
+        $this->postJson("/api/v1/reward-submissions/$id/decision", $approve, $this->signedApiHeaders($approve))->assertOk();
+
+        $this->get('/result')->assertInertia(
+            fn (AssertableInertia $page) => $page->where('reward.state', 'approved'));
     }
 }

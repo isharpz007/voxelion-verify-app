@@ -65,7 +65,7 @@ function Hero({ icon, chip, chipClass, title, body }) {
     );
 }
 
-export default function Result({ outcome, task, participant, code, codeExpiresAt, similarityScore, verifiedAt, auditHash, opinionpadiUrl }) {
+export default function Result({ outcome, task, participant, code, codeExpiresAt, similarityScore, verifiedAt, auditHash, reward, opinionpadiUrl }) {
     const [copied, setCopied] = useState(false);
 
     const copy = async () => {
@@ -189,6 +189,24 @@ export default function Result({ outcome, task, participant, code, codeExpiresAt
                                     <Icon name="lock" className="text-[12px]" />
                                     <span>{auditHash}</span>
                                 </div>
+                            </div>
+                        )}
+                        {reward && (
+                            <div className="flex justify-between items-center text-on-surface-variant">
+                                <span>Reward Status</span>
+                                <span className={`font-medium ${
+                                    reward.state === 'approved'
+                                        ? 'text-emerald-700'
+                                        : reward.state === 'rejected'
+                                          ? 'text-error'
+                                          : 'text-on-surface'
+                                }`}>
+                                    {reward.state === 'approved'
+                                        ? 'Approved'
+                                        : reward.state === 'rejected'
+                                          ? `Rejected${reward.reason ? ` — ${reward.reason}` : ''}`
+                                          : 'Under review'}
+                                </span>
                             </div>
                         )}
                     </div>

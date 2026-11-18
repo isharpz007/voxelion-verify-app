@@ -14,6 +14,7 @@ class ResultController extends Controller
         $participant = $session->participant;
         $result = $session->result;
         $code = $session->completionCode;
+        $reward = $participant->rewardSubmissions()->latest()->first();
 
         return Inertia::render('Result', [
             'outcome' => $session->state->value, // verified | failed | manual_review
@@ -27,6 +28,13 @@ class ResultController extends Controller
             'similarityScore' => $result?->similarity_score,
             'verifiedAt' => $result?->completed_at?->toIso8601String(),
             'auditHash' => $result ? 'sha256:'.substr(hash('sha256', $result->id), 0, 5).'...'.substr(hash('sha256', $result->id), -4) : null,
+            // Reward status visible to the volunteer once OpinionPadi has
+            // submitted a claim for this participant.
+            'reward' => $reward ? [
+                'state' => $reward->review_state,
+                'reason' => $reward->rejection_reason,
+                'decided_at' => $reward->decision_at?->toIso8601String(),
+            ] : null,
             'opinionpadiUrl' => config('opinionpadi.dashboard_url'),
         ]);
     }
