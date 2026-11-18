@@ -36,14 +36,24 @@ class RunQualityChecks implements ShouldQueue
             file_put_contents($path, $disk->get($asset->storage_key));
         }
 
-        $assessment = $quality->assessStoredFile(
-            $path,
-            (string) $disk->mimeType($asset->storage_key),
-            (int) $disk->size($asset->storage_key),
-        );
-
-        if (str_starts_with($path, sys_get_temp_dir())) {
-            @unlink($path);
+        try {
+            $assessment = $quality->assessStoredFile(
+                $path,
+                (string) $disk->mimeType($asset->storage_key),
+                (int) $disk->size($asset->storage_key),
+            );
+        } catch (\Throwable $e) {
+            // Provider outage degrades to a failed check rather than a job
+            // crash — the volunteer can retry the upload.
+            report($e);
+            $assessment = [
+                'passed' => false,
+                'checks' => ['provider' => ['passed' => false, 'message' => 'Verification service is temporarily unavailable — please try again.']],
+            ];
+        } finally {
+            if (str_starts_with($path, sys_get_temp_dir())) {
+                @unlink($path);
+            }
         }
 
         $asset->update([

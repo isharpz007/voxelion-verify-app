@@ -96,11 +96,24 @@ class PhotoController extends Controller
         RunQualityChecks::dispatchSync($asset->id);
         $asset->refresh();
 
+        if (! $asset->accepted) {
+            $failedChecks = collect($asset->quality_check_json)->reject(fn ($c) => $c['passed']);
+
+            // A provider outage is not the volunteer's failure — free the
+            // attempt and let them retry when the service is back.
+            if ($failedChecks->keys()->all() === ['provider']) {
+                $disk->delete($key);
+                $asset->delete();
+                AuditRecorded::dispatch('system', 'provider.error', 'verification_session', $session->id, ['stage' => 'photo_quality']);
+
+                return back()->withErrors(['photo' => $failedChecks->first()['message']]);
+            }
+        }
+
         $attempts = $session->photo_attempts + 1;
         $session->update(['photo_attempts' => $attempts]);
 
         if (! $asset->accepted) {
-            $failedChecks = collect($asset->quality_check_json)->reject(fn ($c) => $c['passed']);
 
             AuditRecorded::dispatch('participant', 'photo.failed', 'verification_session', $session->id, ['attempt' => $attempts, 'failed_checks' => $failedChecks->keys()->all()]);
 

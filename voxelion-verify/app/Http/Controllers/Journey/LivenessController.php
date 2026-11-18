@@ -97,8 +97,6 @@ class LivenessController extends Controller
         }
 
         $challenge = $session->current_challenge ?? 'blink';
-        $attempts = $session->liveness_attempts + 1;
-        $session->update(['liveness_attempts' => $attempts]);
 
         MediaAsset::create([
             'participant_id' => $session->participant_id,
@@ -114,11 +112,25 @@ class LivenessController extends Controller
             file_put_contents($capturePath, $disk->get($key));
         }
 
-        $response = $this->provider->verifyLiveness($challenge, $capturePath);
+        try {
+            $response = $this->provider->verifyLiveness($challenge, $capturePath);
+        } catch (\Throwable $e) {
+            // Provider latency spikes/timeouts must degrade gracefully:
+            // the volunteer burned no attempt and can simply retry.
+            report($e);
+            AuditRecorded::dispatch('system', 'provider.error', 'verification_session', $session->id, ['stage' => 'liveness']);
 
-        if (str_starts_with($capturePath, sys_get_temp_dir())) {
-            @unlink($capturePath);
+            return back()->withErrors(['capture' => 'Verification service is temporarily unavailable — please try again in a moment.']);
+        } finally {
+            if (str_starts_with($capturePath, sys_get_temp_dir())) {
+                @unlink($capturePath);
+            }
         }
+
+        // Only a provider response consumes an attempt — an outage is not
+        // the volunteer's failure.
+        $attempts = $session->liveness_attempts + 1;
+        $session->update(['liveness_attempts' => $attempts]);
 
         $threshold = (float) config('verification.liveness.similarity_threshold');
         $passed = $response['liveness_passed'] && $response['similarity_score'] >= $threshold;
