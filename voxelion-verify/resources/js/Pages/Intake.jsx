@@ -109,12 +109,13 @@ export default function Intake({ task, participant, awaitingVerification, contac
     };
 
     const sendCode = (channel) => {
+        // Optimistic transition — waiting on onSuccess left the screen stuck
+        // on method selection even though the code was sent. onError flips
+        // back so a delivery failure still shows the error on the picker.
+        setChoosingMethod(false);
         sendForm.transform(() => ({ channel })).post('/api/otp/send', {
-            onSuccess: () => {
-                setChoosingMethod(false);
-                setSecondsLeft(300);
-                setCooldown(60);
-            },
+            onSuccess: () => { setSecondsLeft(300); setCooldown(60); },
+            onError: () => setChoosingMethod(true),
         });
     };
 
@@ -165,7 +166,9 @@ export default function Intake({ task, participant, awaitingVerification, contac
                                 <Icon name={m.channel === 'email' ? 'mail' : 'sms'} className="text-[22px] text-[#0ea5e9]" />
                                 <span>
                                     <span className="block font-title-md text-title-md text-on-surface">{m.channel === 'email' ? 'Email' : 'SMS'}</span>
-                                    <span className="block font-body-sm text-body-sm text-on-surface-variant">{m.destination}</span>
+                                    <span className="block font-body-sm text-body-sm text-on-surface-variant">
+                                        {sendForm.processing ? 'Sending code…' : m.destination}
+                                    </span>
                                 </span>
                             </button>
                         ))}
