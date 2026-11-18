@@ -39,8 +39,10 @@ abstract class TestCase extends BaseTestCase
      * Headers OpinionPadi would send on a signed /api/v1 call:
      * X-OpinionPadi-Signature = HMAC-SHA256("<ts>.<raw body>", api_secret).
      * Pass the request body exactly as it will be sent (array → JSON).
+     * getJson() transmits "[]" for an empty payload — the default here
+     * matches so GET calls verify the same body the middleware sees.
      */
-    protected function signedApiHeaders(array|string $body = '', ?int $timestamp = null): array
+    protected function signedApiHeaders(array|string $body = '[]', ?int $timestamp = null): array
     {
         $ts = (string) ($timestamp ?? time());
         $body = is_array($body) ? json_encode($body) : $body;

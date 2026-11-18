@@ -46,13 +46,15 @@ class PhotoController extends Controller
         ]);
 
         // Synchronous dispatch — the page needs the verdict in this request.
-        $assessment = RunQualityChecks::dispatchSync($asset->id);
+        // The job writes its checks back onto the asset.
+        RunQualityChecks::dispatchSync($asset->id);
+        $asset->refresh();
 
         $attempts = $session->photo_attempts + 1;
         $session->update(['photo_attempts' => $attempts]);
 
-        if (! $assessment['passed']) {
-            $failedChecks = collect($assessment['checks'])->reject(fn ($c) => $c['passed']);
+        if (! $asset->accepted) {
+            $failedChecks = collect($asset->quality_check_json)->reject(fn ($c) => $c['passed']);
 
             AuditEvent::create([
                 'actor' => 'participant',

@@ -23,8 +23,7 @@ class RunQualityChecks implements ShouldQueue
 
     public function __construct(public string $mediaAssetId) {}
 
-    /** @return array{passed:bool, checks:array<string,array{passed:bool,message:string}>} */
-    public function handle(PhotoQualityService $quality): array
+    public function handle(PhotoQualityService $quality): void
     {
         $asset = MediaAsset::findOrFail($this->mediaAssetId);
         $disk = Storage::disk('media');
@@ -39,7 +38,5 @@ class RunQualityChecks implements ShouldQueue
             'quality_check_json' => $assessment['checks'],
             'accepted' => $assessment['passed'],
         ]);
-
-        return $assessment;
     }
 }
