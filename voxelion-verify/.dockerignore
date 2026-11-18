@@ -1,0 +1,14 @@
+.git
+node_modules
+vendor
+public/build
+.env
+.env.*
+!.env.example
+database/database.sqlite
+storage/app/keys
+tests
+docs
+*.log
+Dockerfile
+.dockerignore
