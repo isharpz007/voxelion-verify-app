@@ -4,12 +4,51 @@ namespace Tests\Feature;
 
 use App\Enums\SessionState;
 use App\Models\Participant;
+use App\Services\Sms\SmsSender;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+
+/** Records outbound SMS so tests can assert the OTP was dispatched. */
+class RecordingSmsSender implements SmsSender
+{
+    /** @var array<int,array{to:string,message:string}> */
+    public array $sent = [];
+
+    public function send(string $to, string $message): void
+    {
+        $this->sent[] = ['to' => $to, 'message' => $message];
+    }
+}
 
 class JourneyStateTest extends TestCase
 {
     use RefreshDatabase;
+
+    public function test_intake_sends_sms_otp_to_the_volunteer_phone(): void
+    {
+        $session = $this->beginSession();
+        $this->post('/consent', ['agree_processing' => 'yes', 'agree_biometrics' => 'yes']);
+
+        $sms = new RecordingSmsSender;
+        $this->app->instance(SmsSender::class, $sms);
+
+        $this->put('/intake', [
+            'full_name' => 'Test Volunteer',
+            'email' => 'v@example.com',
+            'phone_country_code' => '+234',
+            'phone' => '8012345678',
+        ])->assertRedirect('/intake');
+
+        // The SMS gateway was called once, at the full international number,
+        // carrying the same 6-digit code flashed for dev display.
+        $this->assertCount(1, $sms->sent);
+        $this->assertSame('+2348012345678', $sms->sent[0]['to']);
+        $this->assertStringContainsString(session('dev_sms_code'), $sms->sent[0]['message']);
+
+        $participant = $session->participant->fresh();
+        $this->assertNotNull($participant->phone_code_hash);
+        $this->assertNull($participant->phone_verified_at);
+    }
 
     public function test_new_session_starts_at_created_state(): void
     {
@@ -179,6 +218,7 @@ class JourneyStateTest extends TestCase
         ])->assertRedirect('/intake');
 
         $code = session('dev_email_code');
+        $sms = session('dev_sms_code');
 
         // Normalised before storage — lowercase + trimmed.
         $participant = $session->participant->fresh();
@@ -186,19 +226,28 @@ class JourneyStateTest extends TestCase
         $this->assertNull($participant->email_verified_at);
         $this->assertSame(SessionState::Consented, $session->fresh()->state); // not advanced yet
 
-        // Wrong code rejected; journey stays consented.
-        $this->post('/intake/verify', ['code' => '000000'])->assertSessionHasErrors('code');
+        // Wrong email code rejected; journey stays consented.
+        $this->post('/intake/verify', ['email_code' => '000000', 'sms_code' => $sms])
+            ->assertSessionHasErrors('email_code');
         $this->assertSame(SessionState::Consented, $session->fresh()->state);
 
-        // Expired code rejected.
+        // Wrong SMS code rejected too — both must be correct.
+        $this->post('/intake/verify', ['email_code' => $code, 'sms_code' => '000000'])
+            ->assertSessionHasErrors('sms_code');
+        $this->assertSame(SessionState::Consented, $session->fresh()->state);
+
+        // Expired email code rejected.
         $participant->update(['email_code_expires_at' => now()->subMinute()]);
-        $this->post('/intake/verify', ['code' => $code])->assertSessionHasErrors('code');
+        $this->post('/intake/verify', ['email_code' => $code, 'sms_code' => $sms])
+            ->assertSessionHasErrors('email_code');
         $participant->update(['email_code_expires_at' => now()->addMinutes(10)]);
 
-        // Correct code verifies the email and advances the journey.
-        $this->post('/intake/verify', ['code' => $code])->assertRedirect('/photo');
+        // Correct codes verify both channels and advance the journey.
+        $this->post('/intake/verify', ['email_code' => $code, 'sms_code' => $sms])->assertRedirect('/photo');
         $this->assertSame(SessionState::IntakeDone, $session->fresh()->state);
-        $this->assertNotNull($session->participant->fresh()->email_verified_at);
+        $participant = $session->participant->fresh();
+        $this->assertNotNull($participant->email_verified_at);
+        $this->assertNotNull($participant->phone_verified_at);
     }
 
     public function test_email_is_unique_per_volunteer(): void

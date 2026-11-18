@@ -88,7 +88,10 @@ abstract class TestCase extends BaseTestCase
     /** Complete the emailed-code step — intake only advances once verified. */
     protected function verifyEmail(): void
     {
-        $this->post('/intake/verify', ['code' => session('dev_email_code')])
+        $this->post('/intake/verify', [
+            'email_code' => session('dev_email_code'),
+            'sms_code' => session('dev_sms_code'),
+        ])
             ->assertRedirect('/photo');
     }
 

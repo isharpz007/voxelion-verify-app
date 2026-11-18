@@ -29,7 +29,7 @@ function Field({ label, helper, error, children }) {
 const inputClass =
     'w-full h-12 px-space-md rounded-lg bg-surface font-body-md text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-[#0ea5e9] transition-all border border-outline-variant/40';
 
-export default function Intake({ task, participant, awaitingVerification, devCode }) {
+export default function Intake({ task, participant, awaitingVerification, devCode, devSmsCode }) {
     const form = useForm({
         full_name: participant?.full_name ?? '',
         email: participant?.email ?? '',
@@ -37,7 +37,7 @@ export default function Intake({ task, participant, awaitingVerification, devCod
         phone: participant?.phone ?? '',
         preferred_contact: participant?.preferred_contact ?? 'email',
     });
-    const codeForm = useForm({ code: '' });
+    const codeForm = useForm({ email_code: '', sms_code: '' });
 
     // Details submitted and a code was emailed — show the verify screen
     // unless the user chooses to edit their details.
@@ -57,38 +57,57 @@ export default function Intake({ task, participant, awaitingVerification, devCod
         return (
             <JourneyLayout step={2} taskRef={task.reference} showBack>
                 <div className="space-y-space-xs">
-                    <p className="font-label-code text-label-code text-[#0ea5e9] uppercase font-bold tracking-wider">Email Verification</p>
-                    <h1 className="font-headline-lg-mobile text-headline-lg-mobile font-semibold text-on-surface tracking-tight">Check your email</h1>
+                    <p className="font-label-code text-label-code text-[#0ea5e9] uppercase font-bold tracking-wider">Contact Verification</p>
+                    <h1 className="font-headline-lg-mobile text-headline-lg-mobile font-semibold text-on-surface tracking-tight">Check your email &amp; phone</h1>
                     <p className="font-body-md text-body-md text-on-surface-variant leading-relaxed">
-                        We sent a 6-digit verification code to <strong className="text-on-surface">{participant?.email}</strong>. Enter it below to continue — it expires in 10 minutes.
+                        We sent a 6-digit code to <strong className="text-on-surface">{participant?.email}</strong> and a text message to <strong className="text-on-surface">{participant?.phone_country_code} {participant?.phone}</strong>. Enter both below to continue — they expire in 10 minutes.
                     </p>
                 </div>
 
-                {devCode && (
-                    <div className="w-full bg-surface-container-high rounded-xl p-space-md flex items-center gap-2">
-                        <Icon name="bug_report" className="text-on-surface-variant" />
-                        <span className="font-body-sm text-body-sm text-on-surface-variant">Dev mode code: <strong className="font-label-code">{devCode}</strong></span>
+                {(devCode || devSmsCode) && (
+                    <div className="w-full bg-surface-container-high rounded-xl p-space-md space-y-1">
+                        {devCode && (
+                            <span className="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-2">
+                                <Icon name="bug_report" className="text-on-surface-variant" />Dev email code: <strong className="font-label-code">{devCode}</strong>
+                            </span>
+                        )}
+                        {devSmsCode && (
+                            <span className="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-2">
+                                <Icon name="bug_report" className="text-on-surface-variant" />Dev SMS code: <strong className="font-label-code">{devSmsCode}</strong>
+                            </span>
+                        )}
                     </div>
                 )}
 
                 <form onSubmit={verify} className="space-y-space-lg">
                     <div className="w-full bg-surface-container-lowest rounded-xl p-space-md shadow-sm space-y-space-md">
-                        <Field label="Verification code" error={codeForm.errors.code}>
+                        <Field label="Email code" error={codeForm.errors.email_code}>
                             <input
                                 className={`${inputClass} text-center tracking-[0.5em] font-label-code text-label-lg`}
                                 type="text"
                                 inputMode="numeric"
                                 autoComplete="one-time-code"
                                 maxLength={6}
-                                value={codeForm.data.code}
-                                onChange={(e) => codeForm.setData('code', e.target.value.replace(/\D/g, ''))}
+                                value={codeForm.data.email_code}
+                                onChange={(e) => codeForm.setData('email_code', e.target.value.replace(/\D/g, ''))}
+                            />
+                        </Field>
+                        <Field label="SMS code" error={codeForm.errors.sms_code}>
+                            <input
+                                className={`${inputClass} text-center tracking-[0.5em] font-label-code text-label-lg`}
+                                type="text"
+                                inputMode="numeric"
+                                autoComplete="one-time-code"
+                                maxLength={6}
+                                value={codeForm.data.sms_code}
+                                onChange={(e) => codeForm.setData('sms_code', e.target.value.replace(/\D/g, ''))}
                             />
                         </Field>
                     </div>
 
                     <button
                         type="submit"
-                        disabled={codeForm.processing || codeForm.data.code.length !== 6}
+                        disabled={codeForm.processing || codeForm.data.email_code.length !== 6 || codeForm.data.sms_code.length !== 6}
                         className="w-full h-[52px] bg-primary-container hover:bg-primary text-on-primary rounded-xl font-title-md text-title-md flex items-center justify-center space-x-2 shadow-md active:scale-[0.99] transition-transform disabled:opacity-60"
                     >
                         <span>{codeForm.processing ? 'Verifying…' : 'Verify & Continue'}</span>
@@ -100,7 +119,7 @@ export default function Intake({ task, participant, awaitingVerification, devCod
                             Resend code
                         </button>
                         <button type="button" onClick={() => setEditing(true)} className="font-label-lg text-label-lg text-on-surface-variant hover:underline">
-                            Use a different email
+                            Edit my details
                         </button>
                     </div>
                 </form>

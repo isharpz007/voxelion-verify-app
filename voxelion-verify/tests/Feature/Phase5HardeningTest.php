@@ -114,7 +114,10 @@ class Phase5HardeningTest extends TestCase
             'full_name' => 'Volunteer A', 'email' => 'a@example.com',
             'phone_country_code' => '+234', 'phone' => '8012345678',
         ]);
-        $this->post('/intake/verify', ['code' => session('dev_email_code')]);
+        $this->post('/intake/verify', [
+            'email_code' => session('dev_email_code'),
+            'sms_code' => session('dev_sms_code'),
+        ]);
 
         // Act as B: still at created — B's POST /photo is bounced by the
         // state gate back to /consent, never touching A's progress.

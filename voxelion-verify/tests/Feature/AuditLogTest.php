@@ -28,7 +28,7 @@ class AuditLogTest extends TestCase
         $this->post('/live/complete', ['capture' => $this->noiseImage()]);
 
         foreach ([
-            'session.created', 'consent.recorded', 'intake.submitted', 'email.verified',
+            'session.created', 'consent.recorded', 'intake.submitted', 'contact.verified',
             'photo.accepted', 'liveness.challenge_issued', 'liveness.completed',
         ] as $action) {
             $this->assertDatabaseHas('audit_events', [
