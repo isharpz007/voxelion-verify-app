@@ -4,9 +4,11 @@ namespace Tests;
 
 use App\Models\VerificationSession;
 use App\Services\HandoffTokenService;
+use App\Services\Sms\SmsSender;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
+use Tests\Support\FakeSmsSender;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -82,17 +84,21 @@ abstract class TestCase extends BaseTestCase
             'preferred_contact' => 'email',
         ])->assertRedirect('/intake');
 
-        $this->verifyEmail();
+        $this->verifyOtp();
     }
 
-    /** Complete the emailed-code step — intake only advances once verified. */
-    protected function verifyEmail(): void
+    /**
+     * Complete the OTP step via the SMS channel — a FakeSmsSender captures
+     * the real 6-digit code the service generated so tests submit a genuine
+     * round-trip. Intake only advances once verified.
+     */
+    protected function verifyOtp(string $channel = 'sms'): void
     {
-        $this->post('/intake/verify', [
-            'email_code' => session('dev_email_code'),
-            'sms_code' => session('dev_sms_code'),
-        ])
-            ->assertRedirect('/photo');
+        $sms = new FakeSmsSender;
+        $this->app->instance(SmsSender::class, $sms);
+
+        $this->post('/api/otp/send', ['channel' => $channel])->assertSessionHasNoErrors();
+        $this->post('/api/otp/verify', ['code' => $sms->lastCode()])->assertRedirect('/photo');
     }
 
     /**

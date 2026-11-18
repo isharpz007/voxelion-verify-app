@@ -35,9 +35,8 @@ class Participant extends Model
 
     protected $fillable = [
         'op_volunteer_ref', 'task_id', 'submission_id',
-        'full_name', 'email', 'email_verified_at', 'email_code_hash',
-        'email_code_expires_at', 'phone_country_code', 'phone',
-        'phone_code_hash', 'phone_code_expires_at', 'phone_verified_at',
+        'full_name', 'email', 'email_verified_at', 'phone_country_code',
+        'phone', 'phone_verified_at',
         'volunteer_role_ref', 'preferred_contact', 'status',
     ];
 
@@ -45,9 +44,7 @@ class Participant extends Model
     {
         return [
             'email_verified_at' => 'datetime',
-            'email_code_expires_at' => 'datetime',
             'phone_verified_at' => 'datetime',
-            'phone_code_expires_at' => 'datetime',
         ];
     }
 

@@ -22,13 +22,13 @@ class AuditLogTest extends TestCase
             'phone_country_code' => '+234',
             'phone' => '8012345678',
         ]);
-        $this->verifyEmail();
+        $this->verifyOtp();
         $this->post('/photo', ['photo' => $this->noiseImage()]);
         $this->postJson('/live/challenge');
         $this->post('/live/complete', ['capture' => $this->noiseImage()]);
 
         foreach ([
-            'session.created', 'consent.recorded', 'intake.submitted', 'contact.verified',
+            'session.created', 'consent.recorded', 'intake.submitted', 'otp.sent', 'otp.verified',
             'photo.accepted', 'liveness.challenge_issued', 'liveness.completed',
         ] as $action) {
             $this->assertDatabaseHas('audit_events', [

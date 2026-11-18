@@ -7,6 +7,7 @@ use App\Http\Controllers\Journey\ConsentController;
 use App\Http\Controllers\Journey\ExitController;
 use App\Http\Controllers\Journey\IntakeController;
 use App\Http\Controllers\Journey\LivenessController;
+use App\Http\Controllers\Journey\OtpController;
 use App\Http\Controllers\Journey\PhotoController;
 use App\Http\Controllers\Journey\ResultController;
 use App\Http\Controllers\Journey\StartController;
@@ -42,9 +43,12 @@ Route::middleware('journey.state:consented')->group(function () {
     Route::get('/intake', [IntakeController::class, 'show'])->name('journey.intake');
     Route::put('/intake', [IntakeController::class, 'update']);
 
-    // Email verification — rate-limited against 6-digit-code guessing.
-    Route::post('/intake/verify', [IntakeController::class, 'verify'])->middleware('throttle:10,1');
-    Route::post('/intake/verify/resend', [IntakeController::class, 'resend'])->middleware('throttle:5,1');
+    // Contact verification OTP — session-scoped endpoints (not the HMAC
+    // OpinionPadi API). Rate-limited against code guessing and send abuse.
+    Route::post('/api/otp/send', [OtpController::class, 'send'])->middleware('throttle:10,1');
+    Route::post('/api/otp/verify', [OtpController::class, 'verify'])->middleware('throttle:10,1');
+    Route::post('/api/otp/resend', [OtpController::class, 'resend'])->middleware('throttle:10,1');
+    Route::get('/api/otp/status', [OtpController::class, 'status']);
 });
 
 Route::middleware('journey.state:intake_done')->group(function () {

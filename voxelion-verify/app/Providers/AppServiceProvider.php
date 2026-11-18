@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Services\HandoffTokenService;
 use App\Services\Sms\LogSmsSender;
 use App\Services\Sms\SmsSender;
+use App\Services\Sms\TwilioSmsSender;
 use App\Services\VerificationProvider\VerificationProvider;
 use App\Services\VerificationProvider\VoxelionProvider;
 use Illuminate\Support\Facades\URL;
@@ -17,8 +18,14 @@ class AppServiceProvider extends ServiceProvider
         // The Phase 0 provider decision swaps this single binding.
         $this->app->bind(VerificationProvider::class, VoxelionProvider::class);
 
-        // SMS gateway boundary — 'log' until a real vendor is contracted.
+        // SMS gateway boundary — 'log' for local dev, 'twilio' in deployed
+        // environments once credentials are provisioned.
         $this->app->bind(SmsSender::class, fn () => match (config('services.sms.driver')) {
+            'twilio' => new TwilioSmsSender(
+                (string) config('services.twilio.sid'),
+                (string) config('services.twilio.token'),
+                (string) config('services.twilio.from'),
+            ),
             default => new LogSmsSender,
         });
 

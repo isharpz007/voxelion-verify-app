@@ -21,6 +21,6 @@ class EmailVerificationCode extends Mailable
 
     public function content(): Content
     {
-        return new Content(text: 'emails.verification-code');
+        return new Content(html: 'emails.verification-code');
     }
 }

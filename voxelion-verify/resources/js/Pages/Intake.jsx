@@ -1,5 +1,5 @@
 import { router, useForm } from '@inertiajs/react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Icon from '../Components/Icon';
 import JourneyLayout from '../Components/JourneyLayout';
 
@@ -29,7 +29,54 @@ function Field({ label, helper, error, children }) {
 const inputClass =
     'w-full h-12 px-space-md rounded-lg bg-surface font-body-md text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-[#0ea5e9] transition-all border border-outline-variant/40';
 
-export default function Intake({ task, participant, awaitingVerification, devCode, devSmsCode }) {
+function OtpInput({ value, onChange }) {
+    // Six auto-advancing boxes: digit entry moves focus forward, backspace
+    // moves it back, and pasting a full code fills every box at once.
+    const refs = useRef([]);
+
+    const handleKey = (i, e) => {
+        const digit = e.target.value.replace(/\D/g, '');
+        if (digit) {
+            onChange((value.slice(0, i) + digit.slice(-1) + value.slice(i + 1)).slice(0, 6));
+            if (i < 5) refs.current[i + 1]?.focus();
+        }
+    };
+
+    const handleKeyDown = (i, e) => {
+        if (e.key === 'Backspace' && !value[i] && i > 0) {
+            refs.current[i - 1]?.focus();
+        }
+    };
+
+    const handlePaste = (e) => {
+        const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
+        if (!pasted) return;
+        e.preventDefault();
+        onChange(pasted);
+        refs.current[Math.min(pasted.length, 5)]?.focus();
+    };
+
+    return (
+        <div className="flex justify-between gap-2" onPaste={handlePaste}>
+            {[0, 1, 2, 3, 4, 5].map((i) => (
+                <input
+                    key={i}
+                    ref={(el) => (refs.current[i] = el)}
+                    className="w-12 h-14 text-center rounded-lg bg-surface font-label-code text-label-lg text-on-surface focus:outline-none focus:ring-2 focus:ring-[#0ea5e9] transition-all border border-outline-variant/40"
+                    type="text"
+                    inputMode="numeric"
+                    autoComplete={i === 0 ? 'one-time-code' : 'off'}
+                    maxLength={1}
+                    value={value[i] ?? ''}
+                    onChange={(e) => handleKey(i, e)}
+                    onKeyDown={(e) => handleKeyDown(i, e)}
+                />
+            ))}
+        </div>
+    );
+}
+
+export default function Intake({ task, participant, awaitingVerification, contactMethods = [], otpStatus }) {
     const form = useForm({
         full_name: participant?.full_name ?? '',
         email: participant?.email ?? '',
@@ -37,77 +84,128 @@ export default function Intake({ task, participant, awaitingVerification, devCod
         phone: participant?.phone ?? '',
         preferred_contact: participant?.preferred_contact ?? 'email',
     });
-    const codeForm = useForm({ email_code: '', sms_code: '' });
+    const sendForm = useForm({ channel: '' });
+    const codeForm = useForm({ code: '' });
 
-    // Details submitted and a code was emailed — show the verify screen
-    // unless the user chooses to edit their details.
+    // Details submitted but no channel verified — show method selection
+    // (or the in-flight OTP screen) unless the user edits their details.
     const [editing, setEditing] = useState(!awaitingVerification);
+    const [choosingMethod, setChoosingMethod] = useState(!otpStatus?.active);
+    const [secondsLeft, setSecondsLeft] = useState(otpStatus?.expires_in ?? 0);
+    const [cooldown, setCooldown] = useState(otpStatus?.cooldown_remaining ?? 0);
+
+    // Tick down OTP validity and resend cooldown once per second.
+    useEffect(() => {
+        const t = setInterval(() => {
+            setSecondsLeft((s) => Math.max(0, s - 1));
+            setCooldown((c) => Math.max(0, c - 1));
+        }, 1000);
+        return () => clearInterval(t);
+    }, []);
 
     const submit = (e) => {
         e.preventDefault();
         form.put('/intake', { onSuccess: () => setEditing(false) });
     };
 
-    const verify = (e) => {
-        e.preventDefault();
-        codeForm.post('/intake/verify');
+    const sendCode = (channel) => {
+        sendForm.transform(() => ({ channel })).post('/api/otp/send', {
+            onSuccess: () => {
+                setChoosingMethod(false);
+                setSecondsLeft(300);
+                setCooldown(60);
+            },
+        });
     };
 
+    const resend = () => {
+        sendForm.transform(() => ({ channel: otpStatus?.channel ?? 'email' })).post('/api/otp/resend', {
+            onSuccess: () => { setSecondsLeft(300); setCooldown(60); },
+        });
+    };
+
+    const verify = (e) => {
+        e.preventDefault();
+        codeForm.post('/api/otp/verify');
+    };
+
+    const activeChannel = otpStatus?.channel;
+    const activeDestination = contactMethods.find((m) => m.channel === activeChannel)?.destination;
+    const expired = secondsLeft === 0;
+
     if (awaitingVerification && !editing) {
+        // Step A — pick a delivery channel (only shown when no OTP is in
+        // flight, or when the user asks to switch method).
+        if (choosingMethod || !activeChannel) {
+            return (
+                <JourneyLayout step={2} taskRef={task.reference} showBack>
+                    <div className="space-y-space-xs">
+                        <p className="font-label-code text-label-code text-[#0ea5e9] uppercase font-bold tracking-wider">Contact Verification</p>
+                        <h1 className="font-headline-lg-mobile text-headline-lg-mobile font-semibold text-on-surface tracking-tight">Verify your details</h1>
+                        <p className="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                            How would you like to receive your verification code?
+                        </p>
+                    </div>
+
+                    {sendForm.errors.channel && (
+                        <p className="font-body-sm text-body-sm text-error flex items-center gap-1">
+                            <Icon name="error" className="text-[14px]" /> {sendForm.errors.channel}
+                        </p>
+                    )}
+
+                    <div className="space-y-space-sm">
+                        {contactMethods.map((m) => (
+                            <button
+                                key={m.channel}
+                                type="button"
+                                disabled={sendForm.processing}
+                                onClick={() => sendCode(m.channel)}
+                                className="w-full bg-surface-container-lowest rounded-xl p-space-md shadow-sm border border-outline-variant/40 hover:border-[#0ea5e9] text-left flex items-center gap-3 transition-all active:scale-[0.99] disabled:opacity-60"
+                            >
+                                <Icon name={m.channel === 'email' ? 'mail' : 'sms'} className="text-[22px] text-[#0ea5e9]" />
+                                <span>
+                                    <span className="block font-title-md text-title-md text-on-surface">{m.channel === 'email' ? 'Email' : 'SMS'}</span>
+                                    <span className="block font-body-sm text-body-sm text-on-surface-variant">{m.destination}</span>
+                                </span>
+                            </button>
+                        ))}
+                    </div>
+
+                    <button type="button" onClick={() => setEditing(true)} className="font-label-lg text-label-lg text-on-surface-variant hover:underline">
+                        Edit my details
+                    </button>
+                </JourneyLayout>
+            );
+        }
+
+        // Step B — an OTP is in flight: enter it, watch the countdown,
+        // resend after cooldown, or switch delivery method.
+        const mm = String(Math.floor(secondsLeft / 60));
+        const ss = String(secondsLeft % 60).padStart(2, '0');
+
         return (
             <JourneyLayout step={2} taskRef={task.reference} showBack>
                 <div className="space-y-space-xs">
                     <p className="font-label-code text-label-code text-[#0ea5e9] uppercase font-bold tracking-wider">Contact Verification</p>
-                    <h1 className="font-headline-lg-mobile text-headline-lg-mobile font-semibold text-on-surface tracking-tight">Check your email &amp; phone</h1>
+                    <h1 className="font-headline-lg-mobile text-headline-lg-mobile font-semibold text-on-surface tracking-tight">Enter your code</h1>
                     <p className="font-body-md text-body-md text-on-surface-variant leading-relaxed">
-                        We sent a 6-digit code to <strong className="text-on-surface">{participant?.email}</strong> and a text message to <strong className="text-on-surface">{participant?.phone_country_code} {participant?.phone}</strong>. Enter both below to continue — they expire in 10 minutes.
+                        We sent a verification code to <strong className="text-on-surface">{activeDestination}</strong>.
                     </p>
                 </div>
 
-                {(devCode || devSmsCode) && (
-                    <div className="w-full bg-surface-container-high rounded-xl p-space-md space-y-1">
-                        {devCode && (
-                            <span className="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-2">
-                                <Icon name="bug_report" className="text-on-surface-variant" />Dev email code: <strong className="font-label-code">{devCode}</strong>
-                            </span>
-                        )}
-                        {devSmsCode && (
-                            <span className="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-2">
-                                <Icon name="bug_report" className="text-on-surface-variant" />Dev SMS code: <strong className="font-label-code">{devSmsCode}</strong>
-                            </span>
-                        )}
-                    </div>
-                )}
-
                 <form onSubmit={verify} className="space-y-space-lg">
                     <div className="w-full bg-surface-container-lowest rounded-xl p-space-md shadow-sm space-y-space-md">
-                        <Field label="Email code" error={codeForm.errors.email_code}>
-                            <input
-                                className={`${inputClass} text-center tracking-[0.5em] font-label-code text-label-lg`}
-                                type="text"
-                                inputMode="numeric"
-                                autoComplete="one-time-code"
-                                maxLength={6}
-                                value={codeForm.data.email_code}
-                                onChange={(e) => codeForm.setData('email_code', e.target.value.replace(/\D/g, ''))}
-                            />
+                        <Field label="Verification code" error={codeForm.errors.code}>
+                            <OtpInput value={codeForm.data.code} onChange={(v) => codeForm.setData('code', v)} />
                         </Field>
-                        <Field label="SMS code" error={codeForm.errors.sms_code}>
-                            <input
-                                className={`${inputClass} text-center tracking-[0.5em] font-label-code text-label-lg`}
-                                type="text"
-                                inputMode="numeric"
-                                autoComplete="one-time-code"
-                                maxLength={6}
-                                value={codeForm.data.sms_code}
-                                onChange={(e) => codeForm.setData('sms_code', e.target.value.replace(/\D/g, ''))}
-                            />
-                        </Field>
+                        <p className={`font-body-sm text-body-sm ${expired ? 'text-error' : 'text-on-surface-variant'}`}>
+                            {expired ? 'This code has expired — request a new one.' : `Code expires in ${mm}:${ss}`}
+                        </p>
                     </div>
 
                     <button
                         type="submit"
-                        disabled={codeForm.processing || codeForm.data.email_code.length !== 6 || codeForm.data.sms_code.length !== 6}
+                        disabled={codeForm.processing || codeForm.data.code.length !== 6 || expired}
                         className="w-full h-[52px] bg-primary-container hover:bg-primary text-on-primary rounded-xl font-title-md text-title-md flex items-center justify-center space-x-2 shadow-md active:scale-[0.99] transition-transform disabled:opacity-60"
                     >
                         <span>{codeForm.processing ? 'Verifying…' : 'Verify & Continue'}</span>
@@ -115,11 +213,16 @@ export default function Intake({ task, participant, awaitingVerification, devCod
                     </button>
 
                     <div className="flex items-center justify-between">
-                        <button type="button" onClick={() => router.post('/intake/verify/resend')} className="font-label-lg text-label-lg text-primary hover:underline">
-                            Resend code
+                        <button
+                            type="button"
+                            onClick={resend}
+                            disabled={sendForm.processing || cooldown > 0}
+                            className="font-label-lg text-label-lg text-primary hover:underline disabled:opacity-50 disabled:no-underline"
+                        >
+                            {cooldown > 0 ? `Resend code (${cooldown}s)` : 'Resend code'}
                         </button>
-                        <button type="button" onClick={() => setEditing(true)} className="font-label-lg text-label-lg text-on-surface-variant hover:underline">
-                            Edit my details
+                        <button type="button" onClick={() => setChoosingMethod(true)} className="font-label-lg text-label-lg text-on-surface-variant hover:underline">
+                            Change delivery method
                         </button>
                     </div>
                 </form>

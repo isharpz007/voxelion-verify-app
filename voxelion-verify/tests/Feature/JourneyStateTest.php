@@ -6,19 +6,8 @@ use App\Enums\SessionState;
 use App\Models\Participant;
 use App\Services\Sms\SmsSender;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Support\FakeSmsSender;
 use Tests\TestCase;
-
-/** Records outbound SMS so tests can assert the OTP was dispatched. */
-class RecordingSmsSender implements SmsSender
-{
-    /** @var array<int,array{to:string,message:string}> */
-    public array $sent = [];
-
-    public function send(string $to, string $message): void
-    {
-        $this->sent[] = ['to' => $to, 'message' => $message];
-    }
-}
 
 class JourneyStateTest extends TestCase
 {
@@ -29,9 +18,6 @@ class JourneyStateTest extends TestCase
         $session = $this->beginSession();
         $this->post('/consent', ['agree_processing' => 'yes', 'agree_biometrics' => 'yes']);
 
-        $sms = new RecordingSmsSender;
-        $this->app->instance(SmsSender::class, $sms);
-
         $this->put('/intake', [
             'full_name' => 'Test Volunteer',
             'email' => 'v@example.com',
@@ -39,15 +25,21 @@ class JourneyStateTest extends TestCase
             'phone' => '8012345678',
         ])->assertRedirect('/intake');
 
+        $sms = new FakeSmsSender;
+        $this->app->instance(SmsSender::class, $sms);
+
+        $this->post('/api/otp/send', ['channel' => 'sms'])->assertSessionHasNoErrors();
+
         // The SMS gateway was called once, at the full international number,
-        // carrying the same 6-digit code flashed for dev display.
+        // carrying a 6-digit code persisted only as a hash.
         $this->assertCount(1, $sms->sent);
         $this->assertSame('+2348012345678', $sms->sent[0]['to']);
-        $this->assertStringContainsString(session('dev_sms_code'), $sms->sent[0]['message']);
-
-        $participant = $session->participant->fresh();
-        $this->assertNotNull($participant->phone_code_hash);
-        $this->assertNull($participant->phone_verified_at);
+        $this->assertMatchesRegularExpression('/\d{6}/', $sms->sent[0]['message']);
+        $this->assertDatabaseHas('otps', [
+            'participant_id' => $session->participant_id,
+            'channel' => 'sms',
+            'purpose' => 'contact_verification',
+        ]);
     }
 
     public function test_new_session_starts_at_created_state(): void
@@ -100,7 +92,7 @@ class JourneyStateTest extends TestCase
             'phone_country_code' => '+234',
             'phone' => '8012345678',
         ]);
-        $this->verifyEmail();
+        $this->verifyOtp();
         $this->assertSame(SessionState::IntakeDone, $session->fresh()->state);
 
         $this->post('/photo', ['photo' => $this->noiseImage()]);
@@ -217,37 +209,24 @@ class JourneyStateTest extends TestCase
             'phone' => '8012345678',
         ])->assertRedirect('/intake');
 
-        $code = session('dev_email_code');
-        $sms = session('dev_sms_code');
-
         // Normalised before storage — lowercase + trimmed.
         $participant = $session->participant->fresh();
         $this->assertSame('v@example.com', $participant->email);
         $this->assertNull($participant->email_verified_at);
         $this->assertSame(SessionState::Consented, $session->fresh()->state); // not advanced yet
 
-        // Wrong email code rejected; journey stays consented.
-        $this->post('/intake/verify', ['email_code' => '000000', 'sms_code' => $sms])
-            ->assertSessionHasErrors('email_code');
+        $sms = new FakeSmsSender;
+        $this->app->instance(SmsSender::class, $sms);
+        $this->post('/api/otp/send', ['channel' => 'sms'])->assertSessionHasNoErrors();
+
+        // Wrong code rejected; journey stays consented.
+        $this->post('/api/otp/verify', ['code' => '000000'])->assertSessionHasErrors('code');
         $this->assertSame(SessionState::Consented, $session->fresh()->state);
 
-        // Wrong SMS code rejected too — both must be correct.
-        $this->post('/intake/verify', ['email_code' => $code, 'sms_code' => '000000'])
-            ->assertSessionHasErrors('sms_code');
-        $this->assertSame(SessionState::Consented, $session->fresh()->state);
-
-        // Expired email code rejected.
-        $participant->update(['email_code_expires_at' => now()->subMinute()]);
-        $this->post('/intake/verify', ['email_code' => $code, 'sms_code' => $sms])
-            ->assertSessionHasErrors('email_code');
-        $participant->update(['email_code_expires_at' => now()->addMinutes(10)]);
-
-        // Correct codes verify both channels and advance the journey.
-        $this->post('/intake/verify', ['email_code' => $code, 'sms_code' => $sms])->assertRedirect('/photo');
+        // Correct code verifies the channel and advances the journey.
+        $this->post('/api/otp/verify', ['code' => $sms->lastCode()])->assertRedirect('/photo');
         $this->assertSame(SessionState::IntakeDone, $session->fresh()->state);
-        $participant = $session->participant->fresh();
-        $this->assertNotNull($participant->email_verified_at);
-        $this->assertNotNull($participant->phone_verified_at);
+        $this->assertNotNull($session->participant->fresh()->phone_verified_at);
     }
 
     public function test_email_is_unique_per_volunteer(): void
