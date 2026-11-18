@@ -50,6 +50,9 @@ Route::middleware('journey.state:consented')->group(function () {
 Route::middleware('journey.state:intake_done')->group(function () {
     Route::get('/photo', [PhotoController::class, 'show'])->name('journey.photo');
     Route::post('/photo', [PhotoController::class, 'store']);
+    // S3 presigned-upload flow — issues a short-lived PUT URL when the
+    // media disk supports it; the client falls back to POST /photo multipart.
+    Route::post('/photo/upload-url', [PhotoController::class, 'uploadUrl'])->middleware('throttle:20,1');
 });
 
 Route::middleware('journey.state:photo_ok,live_check')->group(function () {

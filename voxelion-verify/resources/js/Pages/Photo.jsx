@@ -68,13 +68,47 @@ export default function Photo({ task, attemptsUsed, maxAttempts }) {
         camera.start();
     };
 
-    const upload = () => {
-        if (!file) return;
-        setUploading(true);
+    const postMultipart = () =>
         router.post('/photo', { photo: file }, {
             forceFormData: true,
             onFinish: () => setUploading(false),
         });
+
+    // S3 presigned flow when the media disk supports it: PUT straight to
+    // storage, then hand the key to POST /photo for quality checks. Falls
+    // back to multipart on local/dev disks or any presign failure.
+    const upload = async () => {
+        if (!file) return;
+        setUploading(true);
+        try {
+            const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+            const res = await fetch('/photo/upload-url', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-XSRF-TOKEN': decodeURIComponent(
+                        (document.cookie.match(/XSRF-TOKEN=([^;]+)/) || [])[1] || ''
+                    ),
+                },
+                body: JSON.stringify({ extension: ext }),
+            });
+            if (!res.ok) return postMultipart();
+            const data = await res.json();
+            if (!data.presigned) return postMultipart();
+
+            const put = await fetch(data.url, {
+                method: 'PUT',
+                headers: data.headers,
+                body: file,
+            });
+            if (!put.ok) return postMultipart();
+
+            router.post('/photo', { storage_key: data.key }, {
+                onFinish: () => setUploading(false),
+            });
+        } catch {
+            postMultipart();
+        }
     };
 
     return (

@@ -28,11 +28,23 @@ class RunQualityChecks implements ShouldQueue
         $asset = MediaAsset::findOrFail($this->mediaAssetId);
         $disk = Storage::disk('media');
 
+        // path() only exists on local disks — on S3 stream the object to a
+        // temp file so the quality gate works on either driver.
+        $path = $disk->path($asset->storage_key);
+        if (! is_file($path)) {
+            $path = tempnam(sys_get_temp_dir(), 'vox-qc-');
+            file_put_contents($path, $disk->get($asset->storage_key));
+        }
+
         $assessment = $quality->assessStoredFile(
-            $disk->path($asset->storage_key),
+            $path,
             (string) $disk->mimeType($asset->storage_key),
             (int) $disk->size($asset->storage_key),
         );
+
+        if (str_starts_with($path, sys_get_temp_dir())) {
+            @unlink($path);
+        }
 
         $asset->update([
             'quality_check_json' => $assessment['checks'],

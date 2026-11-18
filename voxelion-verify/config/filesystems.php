@@ -47,9 +47,18 @@ return [
             'report' => false,
         ],
 
+        // Private volunteer media. Local disk in dev; set
+        // MEDIA_DISK_DRIVER=s3 in prod to enable presigned uploads and
+        // short-lived signed read URLs against the bucket.
         'media' => [
-            'driver' => 'local',
+            'driver' => env('MEDIA_DISK_DRIVER', 'local'),
             'root' => storage_path('app/media'),
+            'key' => env('AWS_ACCESS_KEY_ID'),
+            'secret' => env('AWS_SECRET_ACCESS_KEY'),
+            'region' => env('AWS_DEFAULT_REGION'),
+            'bucket' => env('AWS_MEDIA_BUCKET', env('AWS_BUCKET')),
+            'endpoint' => env('AWS_ENDPOINT'),
+            'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
             'throw' => false,
             'report' => false,
         ],

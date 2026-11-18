@@ -26,17 +26,63 @@ class PhotoController extends Controller
         ]);
     }
 
+    /**
+     * POST /photo/upload-url — S3 temporary-URL upload flow. When the media
+     * disk supports presigned PUTs (S3 in prod) the browser uploads straight
+     * to storage, then submits the returned key to POST /photo. On disks
+     * without presign support (local dev) the client falls back to multipart.
+     */
+    public function uploadUrl(Request $request)
+    {
+        $session = $request->attributes->get('verificationSession');
+        $disk = Storage::disk('media');
+
+        if (! $disk->providesTemporaryUploadUrls()) {
+            return response()->json(['presigned' => false]);
+        }
+
+        $ext = strtolower((string) $request->input('extension', 'jpg'));
+        abort_unless(in_array($ext, ['jpg', 'jpeg', 'png', 'webp'], true), 422);
+
+        $key = 'media/'.$session->participant_id.'/photo-'.Str::uuid().'.'.$ext;
+
+        $upload = $disk->temporaryUploadUrl(
+            $key,
+            now()->addMinutes(10),
+            ['ContentType' => 'image/'.($ext === 'jpg' ? 'jpeg' : $ext)]
+        );
+
+        return response()->json([
+            'presigned' => true,
+            'url' => $upload['url'],
+            'headers' => $upload['headers'] ?? [],
+            'key' => $key,
+        ]);
+    }
+
     public function store(PhotoUploadRequest $request)
     {
         $session = $request->attributes->get('verificationSession');
         $max = (int) config('verification.photo.max_retries');
+        $disk = Storage::disk('media');
 
         if ($session->photo_attempts >= $max) {
             return back()->withErrors(['photo' => 'Maximum attempts reached. Your verification has been sent for manual review.']);
         }
 
-        $key = 'media/'.$session->participant_id.'/photo-'.Str::uuid().'.'.$request->file('photo')->extension();
-        Storage::disk('media')->put($key, file_get_contents($request->file('photo')->getRealPath()));
+        if ($request->filled('storage_key')) {
+            // Presigned flow — the file is already on the disk. Only accept
+            // keys under this participant's own prefix.
+            $key = (string) $request->input('storage_key');
+            $prefix = 'media/'.$session->participant_id.'/photo-';
+
+            if (! str_starts_with($key, $prefix) || ! $disk->exists($key)) {
+                return back()->withErrors(['photo' => 'Upload not found — please try again.']);
+            }
+        } else {
+            $key = 'media/'.$session->participant_id.'/photo-'.Str::uuid().'.'.$request->file('photo')->extension();
+            $disk->put($key, file_get_contents($request->file('photo')->getRealPath()));
+        }
 
         $asset = MediaAsset::create([
             'participant_id' => $session->participant_id,
@@ -64,7 +110,7 @@ class PhotoController extends Controller
                 $session->update(['state' => SessionState::ManualReview]);
             } else {
                 // Non-final rejections are not retained.
-                Storage::disk('media')->delete($key);
+                $disk->delete($key);
                 $asset->delete();
             }
 
