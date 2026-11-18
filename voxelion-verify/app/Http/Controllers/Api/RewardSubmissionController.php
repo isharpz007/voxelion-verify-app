@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Events\AuditRecorded;
 use App\Http\Controllers\Controller;
-use App\Models\AuditEvent;
 use App\Models\RewardSubmission;
 use App\Services\CompletionCodeService;
 use Illuminate\Http\Request;
@@ -70,12 +70,7 @@ class RewardSubmissionController extends Controller
             'review_state' => 'pending',
         ]);
 
-        AuditEvent::create([
-            'actor' => 'opinionpadi',
-            'action' => 'reward.submitted',
-            'entity_type' => 'reward_submission',
-            'entity_id' => $submission->id,
-        ]);
+        AuditRecorded::dispatch('opinionpadi', 'reward.submitted', 'reward_submission', $submission->id);
 
         return response()->json(['submission' => $submission], 201);
     }
@@ -112,13 +107,7 @@ class RewardSubmissionController extends Controller
             'decision_at' => now(),
         ]);
 
-        AuditEvent::create([
-            'actor' => 'reviewer:'.$data['reviewer_id'],
-            'action' => 'reward.'.$data['decision'],
-            'entity_type' => 'reward_submission',
-            'entity_id' => $submission->id,
-            'metadata_json' => ['reason' => $data['reason'] ?? null],
-        ]);
+        AuditRecorded::dispatch('reviewer:'.$data['reviewer_id'], 'reward.'.$data['decision'], 'reward_submission', $submission->id, ['reason' => $data['reason'] ?? null]);
 
         return response()->json(['submission' => $submission]);
     }

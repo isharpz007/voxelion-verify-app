@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Journey;
 
 use App\Enums\SessionState;
+use App\Events\AuditRecorded;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\IntakeRequest;
 use App\Mail\EmailVerificationCode;
-use App\Models\AuditEvent;
 use App\Models\Participant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -37,12 +37,7 @@ class IntakeController extends Controller
         $participant->update($request->validated());
         $this->issueVerificationCode($request, $participant);
 
-        AuditEvent::create([
-            'actor' => 'participant',
-            'action' => 'intake.submitted',
-            'entity_type' => 'verification_session',
-            'entity_id' => $session->id,
-        ]);
+        AuditRecorded::dispatch('participant', 'intake.submitted', 'verification_session', $session->id);
 
         // Stay in `consented` until the emailed code is verified — only then
         // does the session advance to intake_done and /photo unlock.
@@ -70,12 +65,7 @@ class IntakeController extends Controller
         ]);
         $session->update(['state' => SessionState::IntakeDone]);
 
-        AuditEvent::create([
-            'actor' => 'participant',
-            'action' => 'email.verified',
-            'entity_type' => 'verification_session',
-            'entity_id' => $session->id,
-        ]);
+        AuditRecorded::dispatch('participant', 'email.verified', 'verification_session', $session->id);
 
         return redirect('/photo');
     }

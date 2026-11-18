@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Journey;
 
 use App\Enums\SessionState;
+use App\Events\AuditRecorded;
 use App\Http\Controllers\Controller;
-use App\Models\AuditEvent;
 use App\Models\Participant;
 use App\Models\VerificationSession;
 use Illuminate\Http\Request;
@@ -82,13 +82,7 @@ class StartController extends Controller
         $request->session()->regenerate();
         $request->session()->put('verification_session_id', $session->id);
 
-        AuditEvent::create([
-            'actor' => 'participant:'.$participant->id,
-            'action' => 'session.created',
-            'entity_type' => 'verification_session',
-            'entity_id' => $session->id,
-            'metadata_json' => ['task_id' => $claims['task_id']],
-        ]);
+        AuditRecorded::dispatch('participant:'.$participant->id, 'session.created', 'verification_session', $session->id, ['task_id' => $claims['task_id']]);
 
         return redirect('/consent');
     }

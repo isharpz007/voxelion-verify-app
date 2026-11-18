@@ -3,7 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Enums\SessionState;
-use App\Models\AuditEvent;
+use App\Events\AuditRecorded;
 use App\Models\VerificationSession;
 use App\Services\OpinionPadiWebhook;
 use Closure;
@@ -37,12 +37,7 @@ class EnforceSessionState
                 'reason' => 'expired',
             ]);
 
-            AuditEvent::create([
-                'actor' => 'system',
-                'action' => 'session.expired',
-                'entity_type' => 'verification_session',
-                'entity_id' => $session->id,
-            ]);
+            AuditRecorded::dispatch('system', 'session.expired', 'verification_session', $session->id);
 
             return redirect('/exit?reason=expired');
         }

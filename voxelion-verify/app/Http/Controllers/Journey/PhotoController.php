@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Journey;
 
 use App\Enums\SessionState;
+use App\Events\AuditRecorded;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PhotoUploadRequest;
 use App\Jobs\RunQualityChecks;
-use App\Models\AuditEvent;
 use App\Models\MediaAsset;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -56,13 +56,7 @@ class PhotoController extends Controller
         if (! $asset->accepted) {
             $failedChecks = collect($asset->quality_check_json)->reject(fn ($c) => $c['passed']);
 
-            AuditEvent::create([
-                'actor' => 'participant',
-                'action' => 'photo.failed',
-                'entity_type' => 'verification_session',
-                'entity_id' => $session->id,
-                'metadata_json' => ['attempt' => $attempts, 'failed_checks' => $failedChecks->keys()->all()],
-            ]);
+            AuditRecorded::dispatch('participant', 'photo.failed', 'verification_session', $session->id, ['attempt' => $attempts, 'failed_checks' => $failedChecks->keys()->all()]);
 
             if ($attempts >= $max) {
                 // Keep the final rejected capture as reviewer evidence —
@@ -79,12 +73,7 @@ class PhotoController extends Controller
 
         $session->update(['state' => SessionState::PhotoOk]);
 
-        AuditEvent::create([
-            'actor' => 'participant',
-            'action' => 'photo.accepted',
-            'entity_type' => 'verification_session',
-            'entity_id' => $session->id,
-        ]);
+        AuditRecorded::dispatch('participant', 'photo.accepted', 'verification_session', $session->id);
 
         return redirect('/live');
     }

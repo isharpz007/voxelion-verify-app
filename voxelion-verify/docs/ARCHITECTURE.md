@@ -79,6 +79,7 @@ through 15-minute signed URLs (`MediaController` + `signed` middleware).
 | `Jobs/DispatchWebhook`, `Jobs/ProcessDeletionRequest`, `Jobs/RunQualityChecks` | Queued webhook delivery; PII/media erasure on withdrawal; photo quality gate (dispatched sync for inline verdicts) |
 | `Console/Commands` | `voxelion:keys` (dev RSA keypair), `voxelion:prune` (retention windows — inert until `RETENTION_*` set) |
 | `Models` | `Participant`, `VerificationSession`, `Consent`, `MediaAsset`, `VerificationResult`, `CompletionCode`, `RewardSubmission`, `AuditEvent`, `DeletionRequest` |
+| `Events/AuditRecorded` + `Listeners/WriteAuditEvent` | All audit trail entries flow through this event → listener pair; the listener is the single `audit_events` writer and strips PII keys from metadata |
 
 ## Data model
 

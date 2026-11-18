@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Models\AuditEvent;
+use App\Events\AuditRecorded;
 use App\Models\DeletionRequest;
 use App\Models\MediaAsset;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -58,12 +58,6 @@ class ProcessDeletionRequest implements ShouldQueue
             'processor_confirmations_json' => $confirmations,
         ]);
 
-        AuditEvent::create([
-            'actor' => 'system',
-            'action' => 'deletion.completed',
-            'entity_type' => 'participant',
-            'entity_id' => $participant->id,
-            'metadata_json' => ['trigger' => $request->trigger, 'processors' => array_keys($confirmations)],
-        ]);
+        AuditRecorded::dispatch('system', 'deletion.completed', 'participant', $participant->id, ['trigger' => $request->trigger, 'processors' => array_keys($confirmations)]);
     }
 }

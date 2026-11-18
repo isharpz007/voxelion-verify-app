@@ -23,7 +23,7 @@ RUN composer install \
     --optimize-autoloader
 
 # ---- Stage 3: runtime ----
-FROM php:8.2-cli
+FROM php:8.3-cli
 
 # pdo_pgsql: Render Postgres. intl: IDN → punycode email normalisation.
 # (pdo_sqlite/mbstring/curl are already compiled into the official image.)

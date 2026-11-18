@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Journey;
 
 use App\Enums\SessionState;
+use App\Events\AuditRecorded;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LiveCompleteRequest;
-use App\Models\AuditEvent;
 use App\Models\MediaAsset;
 use App\Models\VerificationResult;
 use App\Services\CompletionCodeService;
@@ -47,13 +47,7 @@ class LivenessController extends Controller
             'state' => SessionState::LiveCheck,
         ]);
 
-        AuditEvent::create([
-            'actor' => 'participant',
-            'action' => 'liveness.challenge_issued',
-            'entity_type' => 'verification_session',
-            'entity_id' => $session->id,
-            'metadata_json' => ['challenge' => $challenge],
-        ]);
+        AuditRecorded::dispatch('participant', 'liveness.challenge_issued', 'verification_session', $session->id, ['challenge' => $challenge]);
 
         return response()->json(['challenge' => $challenge]);
     }
@@ -114,13 +108,7 @@ class LivenessController extends Controller
 
         $session->update(['state' => $newState, 'current_challenge' => null]);
 
-        AuditEvent::create([
-            'actor' => 'system',
-            'action' => 'liveness.completed',
-            'entity_type' => 'verification_session',
-            'entity_id' => $session->id,
-            'metadata_json' => ['outcome' => $outcome, 'score' => $response['similarity_score']],
-        ]);
+        AuditRecorded::dispatch('system', 'liveness.completed', 'verification_session', $session->id, ['outcome' => $outcome, 'score' => $response['similarity_score']]);
 
         // OpinionPadi is only notified of terminal outcomes — a retriable
         // attempt failure must not read as a final result on their side.

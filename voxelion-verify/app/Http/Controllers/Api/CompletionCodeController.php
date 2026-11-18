@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Events\AuditRecorded;
 use App\Http\Controllers\Controller;
-use App\Models\AuditEvent;
 use App\Services\CompletionCodeService;
 
 class CompletionCodeController extends Controller
@@ -14,13 +14,7 @@ class CompletionCodeController extends Controller
     {
         $result = $this->codes->validate($code);
 
-        AuditEvent::create([
-            'actor' => 'opinionpadi',
-            'action' => 'code.validated',
-            'entity_type' => 'completion_code',
-            'entity_id' => $result['code']->id ?? $code,
-            'metadata_json' => ['valid' => $result['valid'], 'reason' => $result['reason']],
-        ]);
+        AuditRecorded::dispatch('opinionpadi', 'code.validated', 'completion_code', $result['code']->id ?? $code, ['valid' => $result['valid'], 'reason' => $result['reason']]);
 
         if (! $result['valid']) {
             return response()->json(['valid' => false, 'reason' => $result['reason']], 200);

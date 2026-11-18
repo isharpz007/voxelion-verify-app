@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Journey;
 
 use App\Enums\SessionState;
+use App\Events\AuditRecorded;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ConsentRequest;
 use App\Jobs\ProcessDeletionRequest;
-use App\Models\AuditEvent;
 use App\Models\Consent;
 use App\Models\DeletionRequest;
 use App\Services\OpinionPadiWebhook;
@@ -108,11 +108,6 @@ class ConsentController extends Controller
 
     private function audit(string $sessionId, string $action): void
     {
-        AuditEvent::create([
-            'actor' => 'participant',
-            'action' => $action,
-            'entity_type' => 'verification_session',
-            'entity_id' => $sessionId,
-        ]);
+        AuditRecorded::dispatch('participant', $action, 'verification_session', $sessionId);
     }
 }

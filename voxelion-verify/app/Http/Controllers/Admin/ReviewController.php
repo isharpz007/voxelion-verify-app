@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Events\AuditRecorded;
 use App\Http\Controllers\Controller;
 use App\Models\AuditEvent;
 use App\Models\CompletionCode;
@@ -87,13 +88,7 @@ class ReviewController extends Controller
             'decision_at' => now(),
         ]);
 
-        AuditEvent::create([
-            'actor' => 'reviewer:'.$reviewer,
-            'action' => 'reward.'.$data['decision'],
-            'entity_type' => 'reward_submission',
-            'entity_id' => $submission->id,
-            'metadata_json' => ['reason' => $data['reason'] ?? null],
-        ]);
+        AuditRecorded::dispatch('reviewer:'.$reviewer, 'reward.'.$data['decision'], 'reward_submission', $submission->id, ['reason' => $data['reason'] ?? null]);
 
         return back();
     }
