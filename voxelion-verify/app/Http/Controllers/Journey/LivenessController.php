@@ -58,7 +58,7 @@ class LivenessController extends Controller
         $max = (int) config('verification.liveness.max_retries');
 
         if ($session->liveness_attempts >= $max) {
-            return back()->withErrors(['capture' => 'Maximum attempts reached. Your verification is under manual review.']);
+            return redirect('/live')->withErrors(['capture' => 'Maximum attempts reached. Your verification is under manual review.']);
         }
 
         $key = 'media/'.$session->participant_id.'/live-'.Str::uuid().'.'.$request->file('capture')->extension();
@@ -120,7 +120,7 @@ class LivenessController extends Controller
             report($e);
             AuditRecorded::dispatch('system', 'provider.error', 'verification_session', $session->id, ['stage' => 'liveness']);
 
-            return back()->withErrors(['capture' => 'Verification service is temporarily unavailable — please try again in a moment.']);
+            return redirect('/live')->withErrors(['capture' => 'Verification service is temporarily unavailable — please try again in a moment.']);
         } finally {
             if (str_starts_with($capturePath, sys_get_temp_dir())) {
                 @unlink($capturePath);
@@ -174,7 +174,7 @@ class LivenessController extends Controller
         }
 
         if (! $passed && ! $hardFail && $attempts < $max) {
-            return back()->withErrors(['capture' => 'Verification failed — please try the challenge again.']);
+            return redirect('/live')->withErrors(['capture' => 'Verification failed — please try the challenge again.']);
         }
 
         return redirect('/result');

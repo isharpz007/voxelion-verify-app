@@ -68,16 +68,16 @@ class ReviewController extends Controller
         $submission = RewardSubmission::with('code')->findOrFail($id);
 
         if ($submission->review_state !== 'pending') {
-            return back()->withErrors(['decision' => 'This submission has already been decided.']);
+            return redirect('/admin/review')->withErrors(['decision' => 'This submission has already been decided.']);
         }
 
         if ($data['decision'] === 'approved') {
             if (! $submission->code) {
-                return back()->withErrors(['decision' => 'Cannot approve: no completion code attached to this submission.']);
+                return redirect('/admin/review')->withErrors(['decision' => 'Cannot approve: no completion code attached to this submission.']);
             }
             $check = $this->codes->validateRecord($submission->code);
             if (! $check['valid']) {
-                return back()->withErrors(['decision' => 'Cannot approve: code is '.$check['reason'].'.']);
+                return redirect('/admin/review')->withErrors(['decision' => 'Cannot approve: code is '.$check['reason'].'.']);
             }
             $this->codes->consume($submission->code, $submission->task_id);
         }
@@ -93,7 +93,7 @@ class ReviewController extends Controller
 
         AuditRecorded::dispatch('reviewer:'.$reviewer, 'reward.'.$data['decision'], 'reward_submission', $submission->id, ['reason' => $data['reason'] ?? null]);
 
-        return back();
+        return redirect('/admin/review');
     }
 
     /**

@@ -67,7 +67,7 @@ class PhotoController extends Controller
         $disk = Storage::disk('media');
 
         if ($session->photo_attempts >= $max) {
-            return back()->withErrors(['photo' => 'Maximum attempts reached. Your verification has been sent for manual review.']);
+            return redirect('/photo')->withErrors(['photo' => 'Maximum attempts reached. Your verification has been sent for manual review.']);
         }
 
         if ($request->filled('storage_key')) {
@@ -77,7 +77,7 @@ class PhotoController extends Controller
             $prefix = 'media/'.$session->participant_id.'/photo-';
 
             if (! str_starts_with($key, $prefix) || ! $disk->exists($key)) {
-                return back()->withErrors(['photo' => 'Upload not found — please try again.']);
+                return redirect('/photo')->withErrors(['photo' => 'Upload not found — please try again.']);
             }
         } else {
             $key = 'media/'.$session->participant_id.'/photo-'.Str::uuid().'.'.$request->file('photo')->extension();
@@ -106,7 +106,7 @@ class PhotoController extends Controller
                 $asset->delete();
                 AuditRecorded::dispatch('system', 'provider.error', 'verification_session', $session->id, ['stage' => 'photo_quality']);
 
-                return back()->withErrors(['photo' => $failedChecks->first()['message']]);
+                return redirect('/photo')->withErrors(['photo' => $failedChecks->first()['message']]);
             }
         }
 
@@ -127,7 +127,7 @@ class PhotoController extends Controller
                 $asset->delete();
             }
 
-            return back()->withErrors(['photo' => $failedChecks->pluck('message')->first()]);
+            return redirect('/photo')->withErrors(['photo' => $failedChecks->pluck('message')->first()]);
         }
 
         $session->update(['state' => SessionState::PhotoOk]);

@@ -29,12 +29,12 @@ class OtpController extends Controller
         try {
             $result = $this->otps->issue($participant, $data['channel']);
         } catch (OtpRateLimitException|OtpDeliveryException $e) {
-            return back()->withErrors(['channel' => $e->getMessage()]);
+            return redirect('/intake')->withErrors(['channel' => $e->getMessage()]);
         }
 
         AuditRecorded::dispatch('participant', 'otp.sent', 'verification_session', $session->id, ['channel' => $result['channel']]);
 
-        return back();
+        return redirect('/intake');
     }
 
     public function verify(Request $request)
@@ -46,7 +46,7 @@ class OtpController extends Controller
         try {
             $channel = $this->otps->verify($participant, $data['code']);
         } catch (OtpVerificationException $e) {
-            return back()->withErrors(['code' => $e->getMessage()]);
+            return redirect('/intake')->withErrors(['code' => $e->getMessage()]);
         }
 
         $participant->update([

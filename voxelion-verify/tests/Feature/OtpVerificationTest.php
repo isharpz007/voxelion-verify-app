@@ -53,7 +53,9 @@ class OtpVerificationTest extends TestCase
         $this->driveToIntake();
         $sms = $this->fakeSms();
 
-        $this->post('/api/otp/send', ['channel' => 'sms']);
+        // Redirects back to the intake page — never back() to a stale
+        // previousUrl (which would bounce the volunteer to /start).
+        $this->post('/api/otp/send', ['channel' => 'sms'])->assertRedirect('/intake');
 
         $this->assertCount(1, $sms->sent);
         $this->assertSame('+2348012345678', $sms->sent[0]['to']);
