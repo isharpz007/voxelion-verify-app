@@ -80,10 +80,15 @@ The app is now at `http://127.0.0.1:8000`.
    (This route only exists when `APP_ENV=local`.)
 2. Complete the journey: **consent → intake → photo → live check → result**.
 3. The completion code is shown once on `/result`.
-4. Validate it the way OpinionPadi's server would:
+4. Validate it the way OpinionPadi's server would. Calls are HMAC-signed —
+   `X-OpinionPadi-Signature` is `HMAC_SHA256("<ts>.<body>",
+   OPINIONPADI_API_SECRET)`:
 
    ```powershell
-   curl -H "Authorization: Bearer op-dev-token" `
+   $ts = [DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
+   $hmac = [System.Security.Cryptography.HMACSHA256]::new([Text.Encoding]::UTF8.GetBytes("op-dev-secret"))
+   $sig = -join ($hmac.ComputeHash([Text.Encoding]::UTF8.GetBytes("$ts.")) | ForEach-Object { $_.ToString("x2") })
+   curl -H "X-OpinionPadi-Timestamp: $ts" -H "X-OpinionPadi-Signature: $sig" `
      http://127.0.0.1:8000/api/v1/completion-codes/VX-XXXX-XXXX-XXXX
    ```
 

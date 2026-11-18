@@ -17,21 +17,32 @@ class PhotoQualityService
     /** @return array{passed:bool, checks:array<string,array{passed:bool,message:string}>} */
     public function assess(UploadedFile $file): array
     {
+        return $this->assessStoredFile($file->getRealPath(), (string) $file->getMimeType(), (int) $file->getSize());
+    }
+
+    /**
+     * Same gate for a file already on disk — used by the RunQualityChecks
+     * job, which reads captures back from the media store.
+     *
+     * @return array{passed:bool, checks:array<string,array{passed:bool,message:string}>}
+     */
+    public function assessStoredFile(string $path, string $mimeType, int $sizeBytes): array
+    {
         $config = config('verification.photo');
 
         $checks = [
             'format' => [
-                'passed' => in_array($file->getMimeType(), $config['allowed_mimes'], true),
+                'passed' => in_array($mimeType, $config['allowed_mimes'], true),
                 'message' => 'Unsupported format — use JPEG, PNG or WebP.',
             ],
             'size' => [
-                'passed' => $file->getSize() >= $config['min_size_kb'] * 1024
-                    && $file->getSize() <= $config['max_size_kb'] * 1024,
+                'passed' => $sizeBytes >= $config['min_size_kb'] * 1024
+                    && $sizeBytes <= $config['max_size_kb'] * 1024,
                 'message' => 'File size outside the accepted range.',
             ],
         ];
 
-        $dimensions = @getimagesize($file->getRealPath());
+        $dimensions = @getimagesize($path);
         $checks['dimensions'] = [
             'passed' => $dimensions !== false
                 && $dimensions[0] >= $config['min_width']
@@ -43,7 +54,7 @@ class PhotoQualityService
             ? ['face' => ['passed' => false, 'message' => 'No face detected — centre your face in the oval.'],
                 'blur' => ['passed' => false, 'message' => 'Photo is too blurry — hold still and retake.'],
                 'lighting' => ['passed' => false, 'message' => 'Lighting is too dim — move to a brighter area.']]
-            : $this->provider->photoChecks($file->getRealPath());
+            : $this->provider->photoChecks($path);
 
         $checks = array_merge($checks, $providerChecks);
 

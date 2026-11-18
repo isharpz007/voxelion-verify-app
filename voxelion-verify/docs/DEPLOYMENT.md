@@ -21,7 +21,7 @@ Everything is already wired to env vars — provide real values to go live.
 |---|---|---|---|
 | 1 | Face-verification provider account + API key | `VERIFICATION_PROVIDER` + vendor-specific vars (TBD) | **BLOCKED — vendor not selected** |
 | 2 | OpinionPadi production RS256 public key | `OPINIONPADI_PUBLIC_KEY_PATH` | Dev keypair at `storage/app/keys/` |
-| 3 | OpinionPadi API bearer token | `OPINIONPADI_API_TOKEN` | Dev value `op-dev-token` |
+| 3 | OpinionPadi API HMAC shared secret | `OPINIONPADI_API_SECRET` | Dev value `op-dev-secret` |
 | 4 | Webhook URL + signing secret | `OPINIONPADI_WEBHOOK_URL`, `OPINIONPADI_WEBHOOK_SECRET` | URL unset (no-op locally) |
 | 5 | Reviewer credentials | `ADMIN_USERNAME`, `ADMIN_PASSWORD` | Dev values; prod should use staff SSO |
 | 6 | PostgreSQL | `DB_*` | SQLite locally |
@@ -56,7 +56,7 @@ The `database` tables are migrated; Redis needs `REDIS_*`.
 Requires `league/flysystem-aws-s3-v3` (not yet installed).
 
 **OpinionPadi** — `OPINIONPADI_ISSUER`, `OPINIONPADI_PUBLIC_KEY_PATH` (or PEM),
-`OPINIONPADI_HANDOFF_TTL=900`, `OPINIONPADI_API_TOKEN`,
+`OPINIONPADI_HANDOFF_TTL=900`, `OPINIONPADI_API_SECRET`,
 `OPINIONPADI_WEBHOOK_URL`, `OPINIONPADI_WEBHOOK_SECRET`,
 `OPINIONPADI_DASHBOARD_URL`.
 

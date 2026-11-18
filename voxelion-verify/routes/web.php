@@ -20,10 +20,12 @@ use Illuminate\Support\Facades\Route;
 | created → consented → intake_done → photo_ok → live_check → terminal.
 */
 
-Route::get('/start', StartController::class)->name('journey.start');
+// The `handoff` middleware verifies the one-time RS256 JWT (signature,
+// issuer, expiry, jti replay) before the controller ever sees the request.
+Route::get('/start', StartController::class)->middleware('handoff')->name('journey.start');
 // The POST consumes the one-time token — rate-limit it per IP so the
 // handoff cannot be brute-forced (jti replay already caps reuse).
-Route::post('/start', StartController::class)->middleware('throttle:10,1');
+Route::post('/start', StartController::class)->middleware(['handoff', 'throttle:10,1']);
 
 Route::get('/', [StartController::class, 'welcome'])->name('welcome');
 
@@ -60,7 +62,7 @@ Route::get('/result', ResultController::class)
     ->middleware('journey.state:verified,failed,manual_review')
     ->name('journey.result');
 
-Route::post('/withdraw', [ExitController::class, 'withdraw'])
+Route::post('/withdraw', [ConsentController::class, 'withdraw'])
     ->middleware('journey.state:created,consented,intake_done,photo_ok,live_check')
     ->name('journey.withdraw');
 

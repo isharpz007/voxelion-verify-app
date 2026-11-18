@@ -12,8 +12,6 @@ class CompletionCodeApiTest extends TestCase
 {
     use RefreshDatabase;
 
-    private const AUTH = ['Authorization' => 'Bearer op-dev-token', 'Accept' => 'application/json'];
-
     /** Drive a session all the way to verified and return its plaintext code. */
     private function verifiedCode(): string
     {
@@ -32,7 +30,7 @@ class CompletionCodeApiTest extends TestCase
     {
         $plain = $this->verifiedCode();
 
-        $this->getJson("/api/v1/completion-codes/$plain", self::AUTH)
+        $this->getJson("/api/v1/completion-codes/$plain", $this->signedApiHeaders())
             ->assertOk()
             ->assertJson(['valid' => true, 'task_id' => 'OP-2026-7842'])
             ->assertJsonStructure(['participant_ref', 'verified_at', 'expires_at']);
@@ -40,7 +38,7 @@ class CompletionCodeApiTest extends TestCase
 
     public function test_unknown_code_returns_not_found(): void
     {
-        $this->getJson('/api/v1/completion-codes/VX-XXXX-XXXX-XXXX', self::AUTH)
+        $this->getJson('/api/v1/completion-codes/VX-XXXX-XXXX-XXXX', $this->signedApiHeaders())
             ->assertOk()
             ->assertJson(['valid' => false, 'reason' => 'not_found']);
     }
@@ -59,10 +57,21 @@ class CompletionCodeApiTest extends TestCase
             ->assertUnauthorized();
     }
 
-    public function test_wrong_bearer_token_rejected(): void
+    public function test_wrong_signature_rejected(): void
     {
         $this->getJson('/api/v1/completion-codes/VX-AAAA-BBBB-CCCC', [
-            'Authorization' => 'Bearer wrong-token',
+            'X-OpinionPadi-Timestamp' => (string) time(),
+            'X-OpinionPadi-Signature' => hash_hmac('sha256', 'bad', 'bad'),
+        ])->assertUnauthorized();
+    }
+
+    public function test_stale_timestamp_rejected(): void
+    {
+        $ts = (string) (time() - 600); // outside the 5-minute window
+
+        $this->getJson('/api/v1/completion-codes/VX-AAAA-BBBB-CCCC', [
+            'X-OpinionPadi-Timestamp' => $ts,
+            'X-OpinionPadi-Signature' => hash_hmac('sha256', $ts.'.', (string) config('opinionpadi.api_secret')),
         ])->assertUnauthorized();
     }
 
@@ -71,7 +80,7 @@ class CompletionCodeApiTest extends TestCase
         $plain = $this->verifiedCode();
         CompletionCode::firstOrFail()->update(['expires_at' => now()->subHour()]);
 
-        $this->getJson("/api/v1/completion-codes/$plain", self::AUTH)
+        $this->getJson("/api/v1/completion-codes/$plain", $this->signedApiHeaders())
             ->assertJson(['valid' => false, 'reason' => 'expired']);
     }
 
@@ -80,21 +89,21 @@ class CompletionCodeApiTest extends TestCase
         $plain = $this->verifiedCode();
 
         // Submit reward → approve → code consumed.
-        $res = $this->postJson('/api/v1/reward-submissions', ['code' => $plain], self::AUTH)
+        $res = $this->postJson('/api/v1/reward-submissions', ['code' => $plain], $this->signedApiHeaders(['code' => $plain]))
             ->assertCreated();
         $submissionId = $res->json('submission.id');
 
         $this->postJson("/api/v1/reward-submissions/$submissionId/decision", [
             'decision' => 'approved',
             'reviewer_id' => 'rev-1',
-        ], self::AUTH)->assertOk();
+        ], $this->signedApiHeaders(['decision' => 'approved', 'reviewer_id' => 'rev-1']))->assertOk();
 
         // Code now validates as consumed — cannot be redeemed again.
-        $this->getJson("/api/v1/completion-codes/$plain", self::AUTH)
+        $this->getJson("/api/v1/completion-codes/$plain", $this->signedApiHeaders())
             ->assertJson(['valid' => false, 'reason' => 'consumed']);
 
         // A second reward submission for the same code is rejected.
-        $this->postJson('/api/v1/reward-submissions', ['code' => $plain], self::AUTH)
+        $this->postJson('/api/v1/reward-submissions', ['code' => $plain], $this->signedApiHeaders(['code' => $plain]))
             ->assertStatus(422);
     }
 
@@ -102,15 +111,15 @@ class CompletionCodeApiTest extends TestCase
     {
         $plain = $this->verifiedCode();
 
-        $this->postJson('/api/v1/reward-submissions', ['code' => $plain], self::AUTH)->assertCreated();
-        $this->postJson('/api/v1/reward-submissions', ['code' => $plain], self::AUTH)
+        $this->postJson('/api/v1/reward-submissions', ['code' => $plain], $this->signedApiHeaders(['code' => $plain]))->assertCreated();
+        $this->postJson('/api/v1/reward-submissions', ['code' => $plain], $this->signedApiHeaders(['code' => $plain]))
             ->assertStatus(409)
             ->assertJsonPath('message', 'A reward submission already exists for this code.');
     }
 
     public function test_reward_submission_rejects_invalid_code(): void
     {
-        $this->postJson('/api/v1/reward-submissions', ['code' => 'VX-FAKE-FAKE-FAKE'], self::AUTH)
+        $this->postJson('/api/v1/reward-submissions', ['code' => 'VX-FAKE-FAKE-FAKE'], $this->signedApiHeaders(['code' => 'VX-FAKE-FAKE-FAKE']))
             ->assertStatus(422)
             ->assertJson(['valid' => false, 'reason' => 'not_found']);
     }
@@ -118,9 +127,9 @@ class CompletionCodeApiTest extends TestCase
     public function test_submission_list_omits_contact_pii(): void
     {
         $plain = $this->verifiedCode();
-        $this->postJson('/api/v1/reward-submissions', ['code' => $plain], self::AUTH)->assertCreated();
+        $this->postJson('/api/v1/reward-submissions', ['code' => $plain], $this->signedApiHeaders(['code' => $plain]))->assertCreated();
 
-        $response = $this->getJson('/api/v1/reward-submissions', self::AUTH)->assertOk();
+        $response = $this->getJson('/api/v1/reward-submissions', $this->signedApiHeaders())->assertOk();
 
         $row = $response->json('data.0');
         $this->assertArrayHasKey('participant_ref', $row);
@@ -136,17 +145,17 @@ class CompletionCodeApiTest extends TestCase
     public function test_rejected_decision_does_not_consume_code(): void
     {
         $plain = $this->verifiedCode();
-        $id = $this->postJson('/api/v1/reward-submissions', ['code' => $plain], self::AUTH)
+        $id = $this->postJson('/api/v1/reward-submissions', ['code' => $plain], $this->signedApiHeaders(['code' => $plain]))
             ->json('submission.id');
 
         $this->postJson("/api/v1/reward-submissions/$id/decision", [
             'decision' => 'rejected',
             'reviewer_id' => 'rev-1',
             'reason' => 'Name mismatch',
-        ], self::AUTH)->assertOk();
+        ], $this->signedApiHeaders(['decision' => 'rejected', 'reviewer_id' => 'rev-1', 'reason' => 'Name mismatch']))->assertOk();
 
         // Still valid — not consumed by a rejection.
-        $this->getJson("/api/v1/completion-codes/$plain", self::AUTH)
+        $this->getJson("/api/v1/completion-codes/$plain", $this->signedApiHeaders())
             ->assertJson(['valid' => true]);
     }
 }

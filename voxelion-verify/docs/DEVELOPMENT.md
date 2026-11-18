@@ -35,10 +35,13 @@ npm run dev
    only when `APP_ENV=local`; dead everywhere else.
 2. Walk the journey: consent → intake → photo → live check → result.
 3. The completion code is displayed once on `/result`.
-4. Validate it like OpinionPadi would:
+4. Validate it like OpinionPadi would (HMAC-signed — see
+   `VerifyWebhookSignature`):
 
    ```bash
-   curl -H "Authorization: Bearer op-dev-token" \
+   TS=$(date +%s)
+   SIG=$(printf '%s' "$TS." | openssl dgst -sha256 -hmac "op-dev-secret" | awk '{print $NF}')
+   curl -H "X-OpinionPadi-Timestamp: $TS" -H "X-OpinionPadi-Signature: $SIG" \
      http://127.0.0.1:8000/api/v1/completion-codes/VX-XXXX-XXXX-XXXX
    ```
 

@@ -50,10 +50,14 @@ php artisan serve
    Optional params: `?volunteer=vol-42&task=OP-2026-1234`.
 2. Complete the journey (consent → intake → photo → live check → result).
 3. The completion code is shown once on `/result` (hashed at rest).
-4. Validate it server-to-server:
+4. Validate it server-to-server. Calls are HMAC-signed —
+   `X-OpinionPadi-Signature` is `HMAC_SHA256("<ts>.<body>",
+   OPINIONPADI_API_SECRET)`:
 
    ```bash
-   curl -H "Authorization: Bearer op-dev-token" \
+   TS=$(date +%s)
+   SIG=$(printf '%s' "$TS." | openssl dgst -sha256 -hmac "op-dev-secret" | awk '{print $NF}')
+   curl -H "X-OpinionPadi-Timestamp: $TS" -H "X-OpinionPadi-Signature: $SIG" \
      http://127.0.0.1:8000/api/v1/completion-codes/VX-XXXX-XXXX-XXXX
    ```
 

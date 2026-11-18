@@ -35,6 +35,23 @@ abstract class TestCase extends BaseTestCase
         ], $overrides));
     }
 
+    /**
+     * Headers OpinionPadi would send on a signed /api/v1 call:
+     * X-OpinionPadi-Signature = HMAC-SHA256("<ts>.<raw body>", api_secret).
+     * Pass the request body exactly as it will be sent (array → JSON).
+     */
+    protected function signedApiHeaders(array|string $body = '', ?int $timestamp = null): array
+    {
+        $ts = (string) ($timestamp ?? time());
+        $body = is_array($body) ? json_encode($body) : $body;
+
+        return [
+            'X-OpinionPadi-Timestamp' => $ts,
+            'X-OpinionPadi-Signature' => hash_hmac('sha256', $ts.'.'.$body, (string) config('opinionpadi.api_secret')),
+            'Accept' => 'application/json',
+        ];
+    }
+
     /** Run GET+POST /start and return the created verification session. */
     protected function beginSession(array $claims = []): VerificationSession
     {

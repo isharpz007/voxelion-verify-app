@@ -5,9 +5,9 @@ namespace App\Http\Controllers\Journey;
 use App\Enums\SessionState;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PhotoUploadRequest;
+use App\Jobs\RunQualityChecks;
 use App\Models\AuditEvent;
 use App\Models\MediaAsset;
-use App\Services\PhotoQualityService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -26,7 +26,7 @@ class PhotoController extends Controller
         ]);
     }
 
-    public function store(PhotoUploadRequest $request, PhotoQualityService $quality)
+    public function store(PhotoUploadRequest $request)
     {
         $session = $request->attributes->get('verificationSession');
         $max = (int) config('verification.photo.max_retries');
@@ -35,7 +35,19 @@ class PhotoController extends Controller
             return back()->withErrors(['photo' => 'Maximum attempts reached. Your verification has been sent for manual review.']);
         }
 
-        $assessment = $quality->assess($request->file('photo'));
+        $key = 'media/'.$session->participant_id.'/photo-'.Str::uuid().'.'.$request->file('photo')->extension();
+        Storage::disk('media')->put($key, file_get_contents($request->file('photo')->getRealPath()));
+
+        $asset = MediaAsset::create([
+            'participant_id' => $session->participant_id,
+            'kind' => 'photo',
+            'accepted' => false,
+            'storage_key' => $key,
+        ]);
+
+        // Synchronous dispatch — the page needs the verdict in this request.
+        $assessment = RunQualityChecks::dispatchSync($asset->id);
+
         $attempts = $session->photo_attempts + 1;
         $session->update(['photo_attempts' => $attempts]);
 
@@ -53,32 +65,15 @@ class PhotoController extends Controller
             if ($attempts >= $max) {
                 // Keep the final rejected capture as reviewer evidence —
                 // a manual_review session would otherwise have no media.
-                $key = 'media/'.$session->participant_id.'/photo-'.Str::uuid().'.'.$request->file('photo')->extension();
-                Storage::disk('media')->put($key, file_get_contents($request->file('photo')->getRealPath()));
-
-                MediaAsset::create([
-                    'participant_id' => $session->participant_id,
-                    'kind' => 'photo',
-                    'accepted' => false,
-                    'storage_key' => $key,
-                    'quality_check_json' => $assessment['checks'],
-                ]);
-
                 $session->update(['state' => SessionState::ManualReview]);
+            } else {
+                // Non-final rejections are not retained.
+                Storage::disk('media')->delete($key);
+                $asset->delete();
             }
 
             return back()->withErrors(['photo' => $failedChecks->pluck('message')->first()]);
         }
-
-        $key = 'media/'.$session->participant_id.'/photo-'.Str::uuid().'.'.$request->file('photo')->extension();
-        Storage::disk('media')->put($key, file_get_contents($request->file('photo')->getRealPath()));
-
-        MediaAsset::create([
-            'participant_id' => $session->participant_id,
-            'kind' => 'photo',
-            'storage_key' => $key,
-            'quality_check_json' => $assessment['checks'],
-        ]);
 
         $session->update(['state' => SessionState::PhotoOk]);
 

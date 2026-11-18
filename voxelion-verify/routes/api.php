@@ -8,11 +8,12 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 | OpinionPadi server-to-server API
 |--------------------------------------------------------------------------
-| Bearer-token guarded. The completion-code endpoint replaces
+| Every call is HMAC-signed (X-OpinionPadi-Timestamp + X-OpinionPadi-
+| Signature over "<ts>.<body>"); the completion-code endpoint replaces
 | screenshot-only trust during reward review.
 */
 
-Route::prefix('v1')->middleware(['op.token', 'throttle:60,1'])->group(function () {
+Route::prefix('v1')->middleware(['op.signature', 'throttle:60,1'])->group(function () {
     Route::get('/completion-codes/{code}', [CompletionCodeController::class, 'show']);
 
     Route::get('/reward-submissions', [RewardSubmissionController::class, 'index']);

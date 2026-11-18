@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Journey;
 use App\Enums\SessionState;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ConsentRequest;
+use App\Jobs\ProcessDeletionRequest;
 use App\Models\AuditEvent;
 use App\Models\Consent;
+use App\Models\DeletionRequest;
 use App\Services\OpinionPadiWebhook;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -63,6 +65,38 @@ class ConsentController extends Controller
         ]);
 
         return redirect('/exit?reason=declined');
+    }
+
+    /**
+     * POST /withdraw — consent can be withdrawn at any journey step.
+     * Stops processing, queues media + PII deletion, and notifies
+     * OpinionPadi so the task does not hang awaiting a result.
+     */
+    public function withdraw(Request $request)
+    {
+        $session = $request->attributes->get('verificationSession');
+
+        if (! $session->state->isTerminal()) {
+            $session->update(['state' => SessionState::Withdrawn]);
+        }
+
+        $deletion = DeletionRequest::firstOrCreate(
+            ['participant_id' => $session->participant_id],
+            ['trigger' => 'withdrawal', 'status' => 'pending']
+        );
+
+        if ($deletion->status === 'pending') {
+            ProcessDeletionRequest::dispatch($deletion->id);
+        }
+
+        $this->audit($session->id, 'consent.withdrawn');
+
+        app(OpinionPadiWebhook::class)->send('withdrawn', [
+            'task_id' => $session->participant->task_id,
+            'participant_ref' => $session->participant->op_volunteer_ref,
+        ]);
+
+        return redirect('/exit?reason=withdrawn');
     }
 
     private function taskContext(Request $request): array

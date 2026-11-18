@@ -7,15 +7,11 @@ use App\Http\Controllers\Controller;
 use App\Models\AuditEvent;
 use App\Models\Participant;
 use App\Models\VerificationSession;
-use App\Services\HandoffException;
-use App\Services\HandoffTokenService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class StartController extends Controller
 {
-    public function __construct(private HandoffTokenService $tokens) {}
-
     /**
      * GET / — the welcome/entry screen. In local dev it shows the Stitch
      * welcome state and hands off through the dev JWT simulator. In
@@ -38,19 +34,14 @@ class StartController extends Controller
         ]);
     }
 
+    /**
+     * GET/POST /start?t=… — the ValidateHandoffToken middleware has already
+     * verified the JWT (and rendered the error state if not); the claims it
+     * verified arrive as a request attribute.
+     */
     public function __invoke(Request $request)
     {
-        $token = (string) $request->query('t', '');
-
-        try {
-            $claims = $this->tokens->verify($token);
-        } catch (HandoffException $e) {
-            return Inertia::render('Start', [
-                'linkState' => $e->getMessage(), // invalid | expired | used | malformed
-                'task' => null,
-                'opinionpadiUrl' => config('opinionpadi.dashboard_url'),
-            ]);
-        }
+        $claims = $request->attributes->get('handoffClaims');
 
         return $request->isMethod('post')
             ? $this->begin($request, $claims)

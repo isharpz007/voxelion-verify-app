@@ -69,9 +69,8 @@ class AdminAuthTest extends TestCase
         $this->post('/live/complete', ['capture' => $this->noiseImage()]);
 
         $plain = session('completion_code_plain');
-        $id = $this->postJson('/api/v1/reward-submissions', ['code' => $plain], [
-            'Authorization' => 'Bearer op-dev-token',
-        ])->json('submission.id');
+        $id = $this->postJson('/api/v1/reward-submissions', ['code' => $plain],
+            $this->signedApiHeaders(['code' => $plain]))->json('submission.id');
 
         $this->post("/admin/review/$id", ['decision' => 'approved'], self::AUTH);
 
@@ -149,9 +148,8 @@ class AdminAuthTest extends TestCase
         $this->post('/live/complete', ['capture' => $this->noiseImage()]);
 
         $plain = session('completion_code_plain');
-        $id = $this->postJson('/api/v1/reward-submissions', ['code' => $plain], [
-            'Authorization' => 'Bearer op-dev-token',
-        ])->json('submission.id');
+        $id = $this->postJson('/api/v1/reward-submissions', ['code' => $plain],
+            $this->signedApiHeaders(['code' => $plain]))->json('submission.id');
 
         $this->post("/admin/review/$id", ['decision' => 'approved'], self::AUTH);
         $this->post("/admin/review/$id", ['decision' => 'approved'], self::AUTH)

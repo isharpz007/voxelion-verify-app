@@ -37,7 +37,12 @@ States (`App\Enums\SessionState`):
 `created → consented → intake_done → photo_ok → live_check` then terminal
 `verified | failed | manual_review | withdrawn | declined`.
 
-### OpinionPadi server-to-server API (`routes/api.php`, `op.token` bearer guard)
+### OpinionPadi server-to-server API (`routes/api.php`, `op.signature` HMAC guard)
+
+Every call is signed: `X-OpinionPadi-Signature` =
+`HMAC_SHA256("<X-OpinionPadi-Timestamp>.<raw body>", OPINIONPADI_API_SECRET)`,
+with a 5-minute timestamp tolerance against replay
+(`App\Http\Middleware\VerifyWebhookSignature`).
 
 | Endpoint | Purpose |
 |---|---|
@@ -64,14 +69,14 @@ through 15-minute signed URLs (`MediaController` + `signed` middleware).
 | `Http/Controllers/Admin` | Reviewer queue/decisions/metrics + signed media |
 | `Http/Controllers/Api` | Completion-code + reward-submission API |
 | `Http/Controllers/DevHandoffController` | **Local-only** OpinionPadi simulator (`abort_unless(local)`) — mints a dev JWT and redirects to `/start` |
-| `Http/Middleware` | `EnforceSessionState`, `AdminBasicAuth`, `VerifyOpinionPadiToken`, `HandleInertiaRequests` |
+| `Http/Middleware` | `ValidateHandoffToken`, `EnforceSessionState`, `VerifyWebhookSignature`, `AdminBasicAuth`, `HandleInertiaRequests` |
 | `Http/Requests` | Form validation per step (`ConsentRequest`, `IntakeRequest`, `PhotoUploadRequest`, `LiveCompleteRequest`) |
 | `Services/HandoffTokenService` | RS256 JWT verification + claim/jti rules (+ dev `mint`) |
 | `Services/CompletionCodeService` | Code generation, HMAC hashing, single-use semantics |
 | `Services/OpinionPadiWebhook` | Signed outbound webhooks |
 | `Services/PhotoQualityService` | Server-side photo quality gates |
 | `Services/VerificationProvider` | **Vendor seam.** `VerificationProvider` interface bound in `AppServiceProvider`; `VoxelionProvider` is a deterministic local stub until a real biometric vendor is selected |
-| `Jobs/DispatchWebhook`, `Jobs/ProcessDeletionRequest` | Queued webhook delivery; PII/media erasure on withdrawal |
+| `Jobs/DispatchWebhook`, `Jobs/ProcessDeletionRequest`, `Jobs/RunQualityChecks` | Queued webhook delivery; PII/media erasure on withdrawal; photo quality gate (dispatched sync for inline verdicts) |
 | `Console/Commands` | `voxelion:keys` (dev RSA keypair), `voxelion:prune` (retention windows — inert until `RETENTION_*` set) |
 | `Models` | `Participant`, `VerificationSession`, `Consent`, `MediaAsset`, `VerificationResult`, `CompletionCode`, `RewardSubmission`, `AuditEvent`, `DeletionRequest` |
 
