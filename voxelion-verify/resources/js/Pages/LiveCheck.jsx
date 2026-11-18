@@ -86,7 +86,38 @@ export default function LiveCheck({ task, challenge: initialChallenge, attemptsU
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [phase]);
 
+    // Accessibility fallback: a clear still photo goes straight to manual
+    // review — no liveness attempt is consumed (Phase 0 decision).
+    const stillInput = useRef(null);
+    const submitStill = (file) => {
+        if (!file) return;
+        setPhase(PHASES.PROCESSING);
+        router.post('/live/complete', { capture: file, still: true }, { forceFormData: true });
+    };
+
     const ch = CHALLENGES[challenge] ?? CHALLENGES.blink;
+
+    const StillFallback = () => (
+        <div className="w-full bg-surface-container-lowest rounded-xl p-space-md shadow-sm space-y-2 text-center">
+            <p className="font-body-sm text-body-sm text-on-surface-variant">
+                Can&apos;t use a camera? Upload one clear photo of your face instead — it goes to a human reviewer.
+            </p>
+            <button
+                onClick={() => stillInput.current?.click()}
+                className="w-full h-11 rounded-lg bg-surface-container-high text-on-surface font-title-md text-title-md flex items-center justify-center gap-2"
+                type="button"
+            >
+                <Icon name="upload" className="text-[18px]" /> Upload a clear photo instead
+            </button>
+            <input
+                ref={stillInput}
+                type="file"
+                accept="image/jpeg,image/png"
+                className="hidden"
+                onChange={(e) => submitStill(e.target.files?.[0])}
+            />
+        </div>
+    );
 
     return (
         <JourneyLayout step={4} taskRef={task.reference} showBack>
@@ -150,15 +181,17 @@ export default function LiveCheck({ task, challenge: initialChallenge, attemptsU
                     </button>
                 </div>
             )}
+            {camera.state === 'denied' && <StillFallback />}
 
             {camera.state === 'unavailable' && (
                 <div className="w-full bg-surface-container-high rounded-xl p-space-md text-center space-y-2">
                     <h2 className="font-headline-sm text-headline-sm text-on-surface">Camera unavailable</h2>
                     <p className="font-body-sm text-body-sm text-on-surface-variant">
-                        No camera was detected on this device. Try another device or contact your task coordinator about the accessibility fallback.
+                        No camera was detected on this device. Try another device, or upload a clear photo for manual review.
                     </p>
                 </div>
             )}
+            {camera.state === 'unavailable' && <StillFallback />}
 
             {phase === PHASES.READY && camera.state === 'active' && (
                 <div className="w-full bg-surface-container-lowest rounded-xl p-space-md shadow-sm space-y-space-md">

@@ -61,12 +61,44 @@ class LivenessController extends Controller
             return back()->withErrors(['capture' => 'Maximum attempts reached. Your verification is under manual review.']);
         }
 
+        $key = 'media/'.$session->participant_id.'/live-'.Str::uuid().'.'.$request->file('capture')->extension();
+        $disk = Storage::disk('media');
+        $disk->put($key, file_get_contents($request->file('capture')->getRealPath()));
+
+        // Accessibility fallback (Phase 0 decision): a still image submitted
+        // when camera/liveness is not usable goes straight to manual review —
+        // no liveness attempt is consumed and no automated verdict is made.
+        if ($request->boolean('still')) {
+            MediaAsset::create([
+                'participant_id' => $session->participant_id,
+                'kind' => 'still',
+                'storage_key' => $key,
+            ]);
+
+            VerificationResult::create([
+                'session_id' => $session->id,
+                'challenge' => $session->current_challenge ?? 'accessibility',
+                'liveness_response_json' => ['accessibility_fallback' => true],
+                'similarity_score' => null,
+                'outcome' => 'manual_review',
+                'completed_at' => now(),
+            ]);
+
+            $session->update(['state' => SessionState::ManualReview, 'current_challenge' => null]);
+
+            AuditRecorded::dispatch('participant', 'liveness.accessibility_fallback', 'verification_session', $session->id);
+
+            $this->webhooks->send('manual_review', [
+                'task_id' => $session->participant->task_id,
+                'participant_ref' => $session->participant->op_volunteer_ref,
+            ]);
+
+            return redirect('/result');
+        }
+
         $challenge = $session->current_challenge ?? 'blink';
         $attempts = $session->liveness_attempts + 1;
         $session->update(['liveness_attempts' => $attempts]);
-
-        $key = 'media/'.$session->participant_id.'/live-'.Str::uuid().'.'.$request->file('capture')->extension();
-        Storage::disk('media')->put($key, file_get_contents($request->file('capture')->getRealPath()));
 
         MediaAsset::create([
             'participant_id' => $session->participant_id,
@@ -74,10 +106,19 @@ class LivenessController extends Controller
             'storage_key' => $key,
         ]);
 
-        $response = $this->provider->verifyLiveness(
-            $challenge,
-            Storage::disk('media')->path($key)
-        );
+        // path() is local-disk only — on S3 stream the capture to a temp
+        // file so the provider gets a real filesystem path.
+        $capturePath = $disk->path($key);
+        if (! is_file($capturePath)) {
+            $capturePath = tempnam(sys_get_temp_dir(), 'vox-live-');
+            file_put_contents($capturePath, $disk->get($key));
+        }
+
+        $response = $this->provider->verifyLiveness($challenge, $capturePath);
+
+        if (str_starts_with($capturePath, sys_get_temp_dir())) {
+            @unlink($capturePath);
+        }
 
         $threshold = (float) config('verification.liveness.similarity_threshold');
         $passed = $response['liveness_passed'] && $response['similarity_score'] >= $threshold;

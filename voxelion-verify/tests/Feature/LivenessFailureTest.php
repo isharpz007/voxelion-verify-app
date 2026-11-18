@@ -97,4 +97,32 @@ class LivenessFailureTest extends TestCase
         $this->assertNotSame(SessionState::Verified, $session->fresh()->state);
         $this->assertDatabaseCount('completion_codes', 0);
     }
+
+    public function test_still_frame_fallback_goes_straight_to_manual_review(): void
+    {
+        $session = $this->driveToLive();
+
+        // Accessibility path (Phase 0 decision): a still photo instead of
+        // the video challenge — no liveness attempt consumed, no provider
+        // call, straight to manual review with the image kept as evidence.
+        $this->post('/live/complete', [
+            'capture' => $this->noiseImage(),
+            'still' => true,
+        ])->assertRedirect('/result');
+
+        $session->refresh();
+        $this->assertSame(SessionState::ManualReview, $session->state);
+        $this->assertSame(0, $session->liveness_attempts);
+        $this->assertDatabaseHas('verification_results', [
+            'session_id' => $session->id,
+            'outcome' => 'manual_review',
+            'similarity_score' => null,
+        ]);
+        $this->assertDatabaseHas('media_assets', [
+            'participant_id' => $session->participant_id,
+            'kind' => 'still',
+        ]);
+        $this->assertDatabaseCount('completion_codes', 0);
+        $this->assertDatabaseHas('audit_events', ['action' => 'liveness.accessibility_fallback']);
+    }
 }
