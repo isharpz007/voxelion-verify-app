@@ -1,0 +1,246 @@
+<body class="bg-surface text-on-surface font-body-md text-body-md pt-safe pb-safe flex flex-col min-h-screen"><main class="flex-1 flex flex-col relative w-full bg-surface"><div class="flex flex-col w-full px-margin pb-space-2xl space-y-space-lg select-none">
+<!-- Interactive State Demonstration Bar -->
+<div class="w-full bg-surface-container-high rounded-xl p-space-xs shadow-sm">
+<div class="flex items-center justify-between px-space-xs pb-space-xs">
+<span class="font-label-code text-label-code text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-tertiary-container">tune</span>
+        DEMO STATE SWITCHER
+      </span>
+<span class="font-label-code text-label-code text-tertiary-container bg-surface-container-lowest px-1.5 py-0.5 rounded">Mobile Preview</span>
+</div>
+<div class="grid grid-cols-5 gap-1 text-center font-label-md text-label-md">
+<button class="py-1 px-1 rounded-lg bg-primary-container text-on-primary font-medium transition-all text-[11px] truncate" id="btn-state-initial" onclick="setDemoState('initial')" type="button">Unchecked</button>
+<button class="py-1 px-1 rounded-lg text-on-surface-variant hover:bg-surface-container font-medium transition-all text-[11px] truncate" id="btn-state-partial" onclick="setDemoState('partial')" type="button">1 Picked</button>
+<button class="py-1 px-1 rounded-lg text-on-surface-variant hover:bg-surface-container font-medium transition-all text-[11px] truncate" id="btn-state-ready" onclick="setDemoState('ready')" type="button">Agreed</button>
+<button class="py-1 px-1 rounded-lg text-on-surface-variant hover:bg-surface-container font-medium transition-all text-[11px] truncate" id="btn-state-decline" onclick="openDeclineModal()" type="button">Decline</button>
+<button class="py-1 px-1 rounded-lg text-on-surface-variant hover:bg-surface-container font-medium transition-all text-[11px] truncate" id="btn-state-withdraw" onclick="openWithdrawModal()" type="button">Withdraw</button>
+</div>
+</div>
+<!-- Header & Navigation -->
+<header class="flex items-center justify-between w-full pt-space-xs">
+<button aria-label="Go back" class="w-10 h-10 rounded-full bg-surface-container-lowest shadow-sm flex items-center justify-center text-on-surface active:scale-95 transition-transform" type="button">
+<span class="material-symbols-outlined text-[20px]">arrow_back</span>
+</button>
+<div class="flex flex-col items-center">
+<div class="flex items-center gap-1.5">
+
+<span class="font-title-md text-title-md tracking-tight text-on-surface font-semibold">VOXELION</span>
+</div>
+<span class="font-label-code text-label-code text-tertiary-container tracking-wider font-semibold">STEP 1 OF 5</span>
+</div>
+<div class="flex items-center gap-1 bg-surface-container-lowest px-2.5 py-1.5 rounded-full shadow-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-container animate-pulse"></span>
+<span class="font-label-code text-label-code text-on-surface-variant">Secured</span>
+</div>
+</header>
+<!-- Journey Progress Indicator -->
+<div class="w-full bg-surface-container-lowest rounded-xl p-space-md shadow-sm space-y-space-sm">
+<div class="relative flex items-center justify-between px-2">
+<!-- Background Connecting Track -->
+<div class="absolute left-4 right-4 top-1/2 -translate-y-1/2 h-0.5 bg-surface-container-high z-0"></div>
+<!-- Progress Bar Overlay for Step 1 -->
+<div class="absolute left-4 w-[10%] top-1/2 -translate-y-1/2 h-0.5 bg-primary-container z-0 transition-all duration-300"></div>
+<!-- Step 1 (Active) -->
+<div class="relative z-10 flex flex-col items-center gap-1">
+<div class="w-6 h-6 rounded-full bg-primary-container text-on-primary flex items-center justify-center shadow-sm ring-4 ring-surface-container-high">
+<span class="material-symbols-outlined text-[13px]" style="font-variation-settings: &quot;FILL&quot; 1;">check</span>
+</div>
+<span class="font-label-code text-label-code text-on-surface font-bold">Consent</span>
+</div>
+<!-- Step 2 -->
+<div class="relative z-10 flex flex-col items-center gap-1">
+<div class="w-5 h-5 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center">
+<span class="text-[10px] font-semibold">2</span>
+</div>
+<span class="font-label-code text-label-code text-outline">Intake</span>
+</div>
+<!-- Step 3 -->
+<div class="relative z-10 flex flex-col items-center gap-1">
+<div class="w-5 h-5 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center">
+<span class="text-[10px] font-semibold">3</span>
+</div>
+<span class="font-label-code text-label-code text-outline">Photo</span>
+</div>
+<!-- Step 4 -->
+<div class="relative z-10 flex flex-col items-center gap-1">
+<div class="w-5 h-5 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center">
+<span class="text-[10px] font-semibold">4</span>
+</div>
+<span class="font-label-code text-label-code text-outline">Live</span>
+</div>
+<!-- Step 5 -->
+<div class="relative z-10 flex flex-col items-center gap-1">
+<div class="w-5 h-5 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center">
+<span class="text-[10px] font-semibold">5</span>
+</div>
+<span class="font-label-code text-label-code text-outline">Result</span>
+</div>
+</div>
+</div>
+<!-- Main Title & Context -->
+<div class="space-y-space-xs">
+<div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-high text-on-surface-variant font-label-code text-label-code shadow-sm">
+<span class="material-symbols-outlined text-[14px] text-tertiary-container">verified</span>
+<span>Task Ref: OP-2026-7842 • OpinionPadi</span>
+</div>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile font-semibold text-on-surface tracking-tight">Your Consent Matters</h1>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+      Before we begin verifying your identity, please review the information below and confirm your consent.
+    </p>
+</div>
+<!-- Privacy & Verification Disclosure Card -->
+<div class="w-full bg-surface-container-lowest rounded-xl p-space-md shadow-sm space-y-space-md">
+<!-- Section 1 -->
+<div class="flex items-start gap-3">
+<div class="w-9 h-9 rounded-lg bg-surface-container-low flex-shrink-0 flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[20px]">badge</span>
+</div>
+<div class="space-y-1 min-w-0">
+<h2 class="font-title-md text-title-md text-on-surface">Why we verify your identity</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+          Identity verification helps confirm that you are the person participating in the volunteer task you accepted on OpinionPadi.
+        </p>
+</div>
+</div>
+<!-- Section 2 -->
+<div class="flex items-start gap-3">
+<div class="w-9 h-9 rounded-lg bg-surface-container-low flex-shrink-0 flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[20px]">photo_camera_front</span>
+</div>
+<div class="space-y-1 min-w-0">
+<h2 class="font-title-md text-title-md text-on-surface">What the process involves</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+          During this process, you will provide the required information, upload a photograph, and complete a short live verification check.
+        </p>
+</div>
+</div>
+<!-- Section 3 -->
+<div class="flex items-start gap-3">
+<div class="w-9 h-9 rounded-lg bg-surface-container-low flex-shrink-0 flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[20px]">encrypted</span>
+</div>
+<div class="space-y-1 min-w-0">
+<h2 class="font-title-md text-title-md text-on-surface">How your information is handled</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+          Your information is processed for the purpose of completing your identity verification. Please review the privacy disclosure carefully before continuing.
+        </p>
+</div>
+</div>
+<!-- Disclaimer Note -->
+<div class="p-space-sm rounded-lg bg-surface-container-low flex items-start gap-2">
+<span class="material-symbols-outlined text-outline text-[16px] flex-shrink-0 mt-0.5">info</span>
+<p class="font-body-sm text-body-sm text-outline leading-snug">
+        Draft copy for interface review. Official NDPA &amp; legal wording will be applied upon final review.
+      </p>
+</div>
+</div>
+<!-- Mandatory Consent Checkboxes -->
+<div class="space-y-space-sm">
+<!-- Consent Checkbox 1 -->
+<label class="flex items-start gap-3 p-space-md bg-surface-container-lowest rounded-xl shadow-sm cursor-pointer select-none active:bg-surface-container-low transition-colors" for="consent-check-1">
+<div class="relative flex items-center justify-center w-6 h-6 mt-0.5 flex-shrink-0">
+<input class="peer sr-only" id="consent-check-1" onchange="handleCheckboxChange()" type="checkbox">
+<div class="w-6 h-6 rounded-md bg-surface-container-high transition-all peer-checked:bg-primary-container flex items-center justify-center shadow-inner">
+<span class="material-symbols-outlined text-on-primary text-[18px] opacity-0 peer-checked:opacity-100 transition-opacity" style="font-variation-settings: &quot;FILL&quot; 1;">check</span>
+</div>
+</div>
+<span class="font-body-md text-body-md text-on-surface leading-snug">
+        I have read and understood the privacy disclosure and agree to the processing of my personal information for identity verification.
+      </span>
+</label>
+<!-- Consent Checkbox 2 -->
+<label class="flex items-start gap-3 p-space-md bg-surface-container-lowest rounded-xl shadow-sm cursor-pointer select-none active:bg-surface-container-low transition-colors" for="consent-check-2">
+<div class="relative flex items-center justify-center w-6 h-6 mt-0.5 flex-shrink-0">
+<input class="peer sr-only" id="consent-check-2" onchange="handleCheckboxChange()" type="checkbox">
+<div class="w-6 h-6 rounded-md bg-surface-container-high transition-all peer-checked:bg-primary-container flex items-center justify-center shadow-inner">
+<span class="material-symbols-outlined text-on-primary text-[18px] opacity-0 peer-checked:opacity-100 transition-opacity" style="font-variation-settings: &quot;FILL&quot; 1;">check</span>
+</div>
+</div>
+<span class="font-body-md text-body-md text-on-surface leading-snug">
+        I voluntarily consent to the collection and use of my photograph and live verification data for the identity verification process.
+      </span>
+</label>
+</div>
+<!-- Action Buttons & Controls -->
+<div class="space-y-space-sm pt-space-xs">
+<!-- Primary CTA: Continue -->
+<button class="w-full h-12 rounded-lg bg-surface-container text-outline font-title-md text-title-md flex items-center justify-center gap-2 transition-all cursor-not-allowed shadow-none" disabled="" id="btn-continue" onclick="handleContinueClick()" type="button">
+<span>Continue</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+<!-- Secondary CTA: Decline Consent -->
+<button class="w-full h-12 rounded-lg bg-transparent hover:bg-surface-container-low text-on-surface-variant font-title-md text-title-md flex items-center justify-center transition-colors" onclick="openDeclineModal()" type="button">
+      Decline Consent
+    </button>
+<!-- Tertiary / Helper Action: Withdraw Consent -->
+<div class="text-center pt-space-xs">
+<button class="font-label-md text-label-md text-outline hover:text-error transition-colors py-2 px-3" onclick="openWithdrawModal()" type="button">
+        Withdraw Consent
+      </button>
+</div>
+</div>
+<!-- Footer -->
+<footer class="pt-space-md text-center space-y-1">
+<div class="flex items-center justify-center gap-1.5 text-on-surface-variant font-label-md text-label-md">
+<span class="material-symbols-outlined text-[14px] text-tertiary-container">verified_user</span>
+<span>Powered by Voxelion Identity Platform • OpinionPadi Partner</span>
+</div>
+<p class="font-label-code text-label-code text-outline">
+      © 2026 Voxelion Security Systems Inc. All rights reserved.
+    </p>
+</footer>
+<!-- Modal 1: Decline Consent Dialog -->
+<div class="fixed inset-0 z-50 flex items-center justify-center p-space-md bg-tertiary/40 backdrop-blur-sm hidden transition-opacity" id="modal-decline">
+<div class="w-full max-w-sm bg-surface-container-lowest rounded-xl p-space-lg shadow-xl space-y-space-md">
+<div class="w-12 h-12 rounded-full bg-error-container text-on-error-container flex items-center justify-center mx-auto">
+<span class="material-symbols-outlined text-[24px]">gpp_bad</span>
+</div>
+<div class="text-center space-y-1.5">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Decline Consent?</h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+          Declining means you cannot continue identity verification for task <span class="font-semibold text-on-surface">OP-2026-7842</span> on OpinionPadi. Your task assignment may be released.
+        </p>
+</div>
+<div class="space-y-space-xs pt-space-xs">
+<button class="w-full h-11 rounded-lg bg-error text-on-error font-title-md text-title-md flex items-center justify-center transition-colors" onclick="confirmDecline()" type="button">
+          Confirm Decline
+        </button>
+<button class="w-full h-11 rounded-lg bg-surface-container-low text-on-surface font-title-md text-title-md flex items-center justify-center transition-colors" onclick="closeModals()" type="button">
+          Go Back
+        </button>
+</div>
+</div>
+</div>
+<!-- Modal 2: Withdraw Consent Dialog -->
+<div class="fixed inset-0 z-50 flex items-center justify-center p-space-md bg-tertiary/40 backdrop-blur-sm hidden transition-opacity" id="modal-withdraw">
+<div class="w-full max-w-sm bg-surface-container-lowest rounded-xl p-space-lg shadow-xl space-y-space-md">
+<div class="w-12 h-12 rounded-full bg-surface-container-high text-primary-container flex items-center justify-center mx-auto">
+<span class="material-symbols-outlined text-[24px]">delete_sweep</span>
+</div>
+<div class="text-center space-y-1.5">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Withdraw Consent?</h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+          Withdrawing your consent stops further identity processing and immediately triggers the applicable data purge workflow under applicable privacy regulations.
+        </p>
+</div>
+<div class="space-y-space-xs pt-space-xs">
+<button class="w-full h-11 rounded-lg bg-error text-on-error font-title-md text-title-md flex items-center justify-center transition-colors" onclick="confirmWithdrawal()" type="button">
+          Confirm Withdrawal
+        </button>
+<button class="w-full h-11 rounded-lg bg-surface-container-low text-on-surface font-title-md text-title-md flex items-center justify-center transition-colors" onclick="closeModals()" type="button">
+          Cancel
+        </button>
+</div>
+</div>
+</div>
+<!-- Success / Feedback Toast -->
+<div class="fixed bottom-6 left-1/2 -translate-x-1/2 px-4 py-2.5 rounded-full bg-primary-container text-on-primary font-body-sm text-body-sm shadow-xl flex items-center gap-2 opacity-0 pointer-events-none transition-all duration-300 z-50" id="status-toast">
+<span class="material-symbols-outlined text-[16px] text-tertiary-fixed" id="toast-icon">check_circle</span>
+<span id="toast-message">Consent registered successfully.</span>
+</div>
+</div>
+</main>
+
+
+
+</body></html>

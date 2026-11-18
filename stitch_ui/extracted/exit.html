@@ -1,0 +1,154 @@
+<body class="bg-surface font-body-md text-on-surface antialiased flex flex-col min-h-screen"><main class="flex-1 flex flex-col relative w-full px-gutter pt-safe pb-safe bg-surface"><div class="flex flex-col w-full max-w-md mx-auto py-space-md">
+<!-- Interactive Prototype State Segmented Controller -->
+<div class="w-full bg-surface-container-high rounded-full p-1 mb-space-lg shadow-sm">
+<div class="grid grid-cols-2 gap-1 text-center font-label-md text-label-md">
+<button aria-selected="false" class="py-2 px-3 rounded-full font-medium transition-all duration-200 text-on-surface-variant hover:text-on-surface flex items-center justify-center gap-1.5" id="btn-state-a" onclick="switchState('state-a')" type="button">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span>A: Declined</span>
+</button>
+<button aria-selected="true" class="py-2 px-3 rounded-full font-medium transition-all duration-200 bg-surface-container-lowest text-primary-container shadow-sm flex items-center justify-center gap-1.5" id="btn-state-b" onclick="switchState('state-b')" type="button">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-fixed-dim"></span>
+<span>B: Withdrawn</span>
+</button>
+</div>
+</div>
+<!-- Brand Micro Lockup -->
+<header class="flex items-center justify-between px-space-xs mb-space-md">
+<div class="flex items-center gap-2">
+
+<div class="flex flex-col">
+<span class="font-label-code text-label-code uppercase tracking-wider text-on-surface-variant font-semibold">Voxelion ID</span>
+<span class="font-body-sm text-body-sm text-outline">Session Verification Gateway</span>
+</div>
+</div>
+
+</header>
+<!-- ================= STATE A: CONSENT DECLINED ================= -->
+<section class="flex flex-col w-full transition-opacity duration-200 hidden" id="view-state-a">
+<div class="bg-surface-container-lowest rounded-xl shadow-sm p-space-lg flex flex-col items-center text-center">
+<!-- Status Badge -->
+<div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-container text-on-secondary-fixed mb-space-md shadow-xs">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span class="font-label-md text-label-md font-medium">Consent declined</span>
+</div>
+<!-- Non-alarmist Reassuring Iconography -->
+<div class="relative w-20 h-20 mb-space-md flex items-center justify-center">
+<div class="absolute inset-0 rounded-full bg-surface-container-low"></div>
+<div class="w-14 h-14 rounded-full bg-surface-container flex items-center justify-center shadow-inner">
+<span class="material-symbols-outlined text-on-primary-container text-[30px]">shield_person</span>
+</div>
+<div class="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-surface-container-highest flex items-center justify-center shadow-xs">
+<span class="material-symbols-outlined text-on-surface-variant text-[14px]">remove</span>
+</div>
+</div>
+<!-- Core Message -->
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary-container mb-space-xs font-semibold">
+        You chose not to continue
+      </h1>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-xs mb-space-lg">
+        You have chosen not to provide consent for identity verification. Your verification process will not proceed.
+      </p>
+<!-- Reassuring Privacy Affirmation Card -->
+<div class="w-full bg-surface-container-low rounded-lg p-space-md text-left mb-space-lg">
+<div class="flex items-start gap-2.5">
+<span class="material-symbols-outlined text-on-primary-container text-[20px] mt-0.5">lock_clock</span>
+<div class="flex-1">
+<h2 class="font-title-md text-title-md text-on-surface mb-1 font-medium">Zero data footprint</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              No personal identity data or biometric records were collected or retained during this session.
+            </p>
+</div>
+</div>
+</div>
+<!-- Return Card Helper -->
+<div class="w-full bg-surface-container rounded-lg p-3.5 mb-space-lg flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container text-[18px]">domain</span>
+<span class="font-label-lg text-label-lg text-primary-container font-medium">Ready to return?</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Session closed safely</span>
+</div>
+<!-- Primary Action CTA -->
+<a class="w-full h-12 bg-primary-container text-on-primary font-label-lg text-label-lg rounded-lg shadow-sm flex items-center justify-center gap-2 hover:bg-tertiary-container transition-colors active:scale-[0.99]" href="#return-to-opinionpadi" role="button">
+<span>Return to OpinionPadi</span>
+<span class="material-symbols-outlined text-[18px]">north_east</span>
+</a>
+<!-- Secondary Helper Note -->
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-space-md text-center max-w-xs">
+        If you change your mind later or received this link in error, you can contact your OpinionPadi task coordinator.
+      </p>
+</div>
+</section>
+<!-- ================= STATE B: CONSENT WITHDRAWN ================= -->
+<section class="flex flex-col w-full transition-opacity duration-200" id="view-state-b">
+<div class="bg-surface-container-lowest rounded-xl shadow-sm p-space-lg flex flex-col items-center text-center">
+<!-- Status Badge -->
+<div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-high text-primary-container mb-space-md shadow-xs">
+<span class="w-1.5 h-1.5 rounded-full bg-on-tertiary-container"></span>
+<span class="font-label-md text-label-md font-medium">Consent withdrawn</span>
+</div>
+<!-- Non-alarmist Reassuring Security Wipe Iconography -->
+<div class="relative w-20 h-20 mb-space-md flex items-center justify-center">
+<div class="absolute inset-0 rounded-full bg-surface-container-low"></div>
+<div class="w-14 h-14 rounded-full bg-surface-container flex items-center justify-center shadow-inner">
+<span class="material-symbols-outlined text-primary-container text-[28px]">policy</span>
+</div>
+<div class="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-surface-container-highest flex items-center justify-center shadow-xs">
+<span class="material-symbols-outlined text-on-tertiary-container text-[14px]">auto_delete</span>
+</div>
+</div>
+<!-- Core Message -->
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary-container mb-space-xs font-semibold">
+        Your consent has been withdrawn
+      </h1>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-xs mb-space-md">
+        Your identity verification process has been stopped. A data deletion request has been initiated for the applicable verification data.
+      </p>
+<!-- Reference Chip -->
+<div class="w-full bg-surface-container rounded-lg px-3 py-2 mb-space-md flex items-center justify-between text-left">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-on-surface-variant text-[16px]">receipt_long</span>
+<span class="font-label-code text-label-code text-on-surface-variant font-mono">DEL-2026-9041</span>
+</div>
+<span class="font-label-code text-label-code text-outline uppercase">NDPA Sec. 3.2</span>
+</div>
+<!-- NDPA Regulatory Purge Statement Box -->
+<div class="w-full bg-surface-container-low rounded-lg p-space-md text-left mb-space-lg">
+<div class="flex items-start gap-2.5">
+<span class="material-symbols-outlined text-primary-container text-[20px] mt-0.5">cleaning_services</span>
+<div class="flex-1">
+<h2 class="font-title-md text-title-md text-on-surface mb-1 font-medium">Data Deletion Request Initiated</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Under NDPA regulations, all temporary session files, uploaded media, and draft biometric tokens have been queued for immediate cryptographic erasure.
+            </p>
+</div>
+</div>
+</div>
+<!-- Primary Action CTA -->
+<a class="w-full h-12 bg-primary-container text-on-primary font-label-lg text-label-lg rounded-lg shadow-sm flex items-center justify-center gap-2 hover:bg-tertiary-container transition-colors active:scale-[0.99]" href="#return-to-opinionpadi" role="button">
+<span>Return to OpinionPadi</span>
+<span class="material-symbols-outlined text-[18px]">north_east</span>
+</a>
+<!-- Secondary Helper Note -->
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-space-md text-center max-w-xs">
+        You may safely close this browser window or return to OpinionPadi to continue non-verified community activities.
+      </p>
+</div>
+</section>
+<!-- High-Trust Footer -->
+<footer class="mt-space-lg pt-space-sm flex flex-col items-center text-center px-space-md">
+<div class="flex items-center justify-center gap-2 text-on-surface-variant mb-1 font-label-md text-label-md">
+<span class="material-symbols-outlined text-[16px] text-on-primary-container">enhanced_encryption</span>
+<span>Secured by Voxelion Identity Engine</span>
+</div>
+<p class="font-label-code text-label-code text-outline">
+      NDPA Compliant • In official partnership with OpinionPadi
+    </p>
+</footer>
+</div>
+<!-- State Controller Micro-Interaction Script -->
+</main>
+
+
+
+</body></html>

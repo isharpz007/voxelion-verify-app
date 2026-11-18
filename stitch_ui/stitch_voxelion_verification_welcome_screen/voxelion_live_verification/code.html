@@ -1,0 +1,568 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"><meta content="mobile_stack" name="shell-type"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{width:100vw;margin:0;padding:0;background-color:#faf8ff;}body{overscroll-behavior:none;font-family:'Inter',sans-serif;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: 'class', theme: { extend: { 'colors': { 'inverse-on-surface': '#eef0ff', 'on-tertiary-fixed': '#001e2f', 'outline-variant': '#c4c6ce', 'on-secondary': '#ffffff', 'primary-fixed-dim': '#b0c8eb', 'on-secondary-fixed': '#1a1c1c', 'on-surface': '#131b2e', 'on-tertiary': '#ffffff', 'on-secondary-container': '#616363', 'on-error-container': '#93000a', 'on-primary-fixed-variant': '#314865', 'error': '#ba1a1a', 'surface-dim': '#d2d9f4', 'outline': '#74777e', 'error-container': '#ffdad6', 'on-background': '#131b2e', 'surface-variant': '#dae2fd', 'surface-container-lowest': '#ffffff', 'on-tertiary-fixed-variant': '#004c6e', 'primary': '#000f22', 'tertiary-fixed': '#c9e6ff', 'primary-container': '#0a2540', 'tertiary': '#00101c', 'surface-bright': '#faf8ff', 'on-error': '#ffffff', 'background': '#faf8ff', 'surface-tint': '#49607e', 'surface-container-low': '#f2f3ff', 'on-primary-fixed': '#001c37', 'on-primary': '#ffffff', 'surface-container': '#eaedff', 'tertiary-fixed-dim': '#89ceff', 'surface-container-high': '#e2e7ff', 'primary-fixed': '#d2e4ff', 'secondary': '#5d5f5f', 'tertiary-container': '#00273b', 'inverse-surface': '#283044', 'surface-container-highest': '#dae2fd', 'on-primary-container': '#768dad', 'surface': '#faf8ff', 'on-surface-variant': '#43474d', 'secondary-fixed': '#e2e2e2', 'secondary-container': '#dfe0e0', 'on-tertiary-container': '#0094d2', 'on-secondary-fixed-variant': '#454747', 'inverse-primary': '#b0c8eb', 'secondary-fixed-dim': '#c6c6c7' }, 'borderRadius': { 'DEFAULT': '0.25rem', 'lg': '0.5rem', 'xl': '0.75rem', 'full': '9999px' }, 'spacing': { 'space-2xl': '3rem', 'gutter-desktop': '1.5rem', 'space-sm': '0.5rem', 'space-xs': '0.25rem', 'margin': '1rem', 'gutter': '1rem', 'margin-tablet': '1.5rem', 'space-xl': '2rem', 'space-lg': '1.5rem', 'space-md': '1rem', 'margin-desktop': '2.5rem' }, 'fontFamily': { 'body-sm': ['Inter'], 'label-code': ['Inter'], 'title-md': ['Inter'], 'body-lg': ['Inter'], 'label-lg': ['Inter'], 'headline-lg': ['Inter'], 'headline-sm': ['Inter'], 'display-lg': ['Inter'], 'body-md': ['Inter'], 'headline-lg-mobile': ['Inter'], 'headline-md': ['Inter'], 'label-md': ['Inter'] }, 'fontSize': { 'body-sm': ['12px', { 'lineHeight': '18px', 'fontWeight': '400' }], 'label-code': ['12px', { 'lineHeight': '16px', 'letterSpacing': '0.04em', 'fontWeight': '600' }], 'title-md': ['16px', { 'lineHeight': '24px', 'letterSpacing': '-0.005em', 'fontWeight': '600' }], 'body-lg': ['16px', { 'lineHeight': '26px', 'fontWeight': '400' }], 'label-lg': ['14px', { 'lineHeight': '20px', 'fontWeight': '500' }], 'headline-lg': ['32px', { 'lineHeight': '40px', 'letterSpacing': '-0.02em', 'fontWeight': '600' }], 'headline-sm': ['20px', { 'lineHeight': '28px', 'letterSpacing': '-0.01em', 'fontWeight': '600' }], 'display-lg': ['40px', { 'lineHeight': '48px', 'letterSpacing': '-0.025em', 'fontWeight': '700' }], 'body-md': ['14px', { 'lineHeight': '22px', 'fontWeight': '400' }], 'headline-lg-mobile': ['26px', { 'lineHeight': '34px', 'letterSpacing': '-0.015em', 'fontWeight': '600' }], 'headline-md': ['24px', { 'lineHeight': '32px', 'letterSpacing': '-0.015em', 'fontWeight': '600' }], 'label-md': ['12px', { 'lineHeight': '16px', 'letterSpacing': '0.01em', 'fontWeight': '500' }] } } } };</script></head><body class="bg-surface text-on-surface flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] pt-safe"><div class="h-16 px-margin flex items-center justify-between"><div class="flex items-center gap-space-xs"><button aria-label="Go back" class="w-11 h-11 flex items-center justify-center rounded-lg text-on-surface hover:bg-surface-container-high transition-colors" onclick="history.back()" type="button"><span class="material-symbols-outlined text-[20px]">arrow_back</span></button><span class="font-title-md text-title-md text-on-surface truncate max-w-[200px]">Biometric Liveness</span></div><div class="flex items-center gap-space-xs"></div></div></header><main class="flex-1 flex flex-col w-full pt-16 bg-surface"><div class="flex flex-col w-full text-on-surface">
+<!-- Interactive Evaluator State Switcher Toolbar -->
+<aside aria-label="Prototype State Navigator" class="w-full bg-surface-container-high px-margin py-space-sm shadow-sm">
+<div class="max-w-md mx-auto">
+<div class="flex items-center justify-between mb-1.5">
+<span class="font-label-code text-label-code text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-on-tertiary-container">tune</span>
+          PROTOTYPE STATE PREVIEWS
+        </span>
+<span class="font-label-code text-[11px] text-on-surface-variant bg-surface px-1.5 py-0.5 rounded-full">Screen 5 of 5</span>
+</div>
+<div class="flex gap-1.5 overflow-x-auto pb-1 scrollbar-none items-center">
+<button class="state-tab px-2.5 py-1 rounded-full font-label-md text-label-md bg-primary text-on-primary whitespace-nowrap shadow-sm transition-all" id="tab-permission-req" onclick="setScreenState('permission-req')" type="button">1. Permission Req</button>
+<button class="state-tab px-2.5 py-1 rounded-full font-label-md text-label-md bg-surface text-on-surface-variant hover:bg-surface-container whitespace-nowrap transition-all" id="tab-camera-active" onclick="setScreenState('camera-active')" type="button">2. Camera Active</button>
+<button class="state-tab px-2.5 py-1 rounded-full font-label-md text-label-md bg-surface text-on-surface-variant hover:bg-surface-container whitespace-nowrap transition-all" id="tab-countdown" onclick="setScreenState('countdown')" type="button">3. Countdown</button>
+<button class="state-tab px-2.5 py-1 rounded-full font-label-md text-label-md bg-surface text-on-surface-variant hover:bg-surface-container whitespace-nowrap transition-all" id="tab-recording" onclick="setScreenState('recording')" type="button">4. Recording</button>
+<button class="state-tab px-2.5 py-1 rounded-full font-label-md text-label-md bg-surface text-on-surface-variant hover:bg-surface-container whitespace-nowrap transition-all" id="tab-processing" onclick="setScreenState('processing')" type="button">5. Processing</button>
+<button class="state-tab px-2.5 py-1 rounded-full font-label-md text-label-md bg-surface text-on-surface-variant hover:bg-surface-container whitespace-nowrap transition-all" id="tab-permission-denied" onclick="setScreenState('permission-denied')" type="button">6. Permission Denied</button>
+<button class="state-tab px-2.5 py-1 rounded-full font-label-md text-label-md bg-surface text-on-surface-variant hover:bg-surface-container whitespace-nowrap transition-all" id="tab-camera-unavailable" onclick="setScreenState('camera-unavailable')" type="button">7. Camera Unavailable</button>
+<button class="state-tab px-2.5 py-1 rounded-full font-label-md text-label-md bg-surface text-on-surface-variant hover:bg-surface-container whitespace-nowrap transition-all" id="tab-challenge-failed" onclick="setScreenState('challenge-failed')" type="button">8. Challenge Failed</button>
+<button class="state-tab px-2.5 py-1 rounded-full font-label-md text-label-md bg-surface text-on-surface-variant hover:bg-surface-container whitespace-nowrap transition-all" id="tab-accessibility" onclick="setScreenState('accessibility')" type="button">9. Accessibility</button>
+<button class="px-2.5 py-1 rounded-full font-label-md text-label-md bg-error-container text-on-error-container whitespace-nowrap hover:opacity-90 transition-all flex items-center gap-1" onclick="openWithdrawModal()" type="button">
+<span class="material-symbols-outlined text-[13px]">gavel</span> Withdraw
+        </button>
+</div>
+</div>
+</aside>
+<!-- Main Content Wrapper -->
+<div class="w-full max-w-md mx-auto px-margin pt-space-md pb-space-2xl flex flex-col gap-space-md">
+<!-- Brand Identity & Security Chips Lockup -->
+<section class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<!-- Voxelion Monogram Icon -->
+
+<div>
+<div class="flex items-center gap-1.5">
+<span class="font-title-md text-[15px] font-bold tracking-tight text-primary-container">VOXELION</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span class="font-label-md text-[11px] text-on-surface-variant uppercase tracking-wider font-semibold">LiveID</span>
+</div>
+<p class="font-label-code text-[10px] text-on-surface-variant">Task Ref: OP-2026-7842 • OpinionPadi</p>
+</div>
+</div>
+<div class="flex items-center gap-1 bg-surface-container-high px-2 py-1 rounded-full shadow-sm">
+<span class="material-symbols-outlined text-on-tertiary-container text-[14px]">lock</span>
+<span class="font-label-code text-[10px] text-primary-container font-semibold">256-bit Encrypted</span>
+</div>
+</div>
+<!-- Linear Step Progress Indicator (Step 4 of 5) -->
+<nav aria-label="Verification progress" class="bg-surface-container-low p-2.5 rounded-xl shadow-sm mt-1"><div class="flex items-center justify-between relative px-2"><div class="absolute left-6 right-6 top-3.5 h-[2px] bg-surface-container-highest -z-0"><div class="h-full bg-primary-container w-[75%]"></div></div><div class="flex flex-col items-center gap-1 z-10"><div class="w-7 h-7 rounded-full bg-primary-container text-on-primary flex items-center justify-center shadow-sm"><span class="material-symbols-outlined text-[15px]">check</span></div><span class="font-label-code text-[10px] text-on-surface-variant font-medium">Consent</span></div><div class="flex flex-col items-center gap-1 z-10"><div class="w-7 h-7 rounded-full bg-primary-container text-on-primary flex items-center justify-center shadow-sm"><span class="material-symbols-outlined text-[15px]">check</span></div><span class="font-label-code text-[10px] text-on-surface-variant font-medium">Intake</span></div><div class="flex flex-col items-center gap-1 z-10"><div class="w-7 h-7 rounded-full bg-primary-container text-on-primary flex items-center justify-center shadow-sm"><span class="material-symbols-outlined text-[15px]">check</span></div><span class="font-label-code text-[10px] text-on-surface-variant font-medium">Photo</span></div><div class="flex flex-col items-center gap-1 z-10"><div class="w-7 h-7 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-md ring-2 ring-surface-tint"><span class="font-label-code text-[11px] font-bold">4</span></div><span class="font-label-code text-[10px] text-primary font-bold">Live Check</span></div><div class="flex flex-col items-center gap-1 z-10"><div class="w-7 h-7 rounded-full bg-surface-container-highest text-secondary flex items-center justify-center"><span class="font-label-code text-[11px]">5</span></div><span class="font-label-code text-[10px] text-secondary font-medium">Result</span></div></div></nav>
+</section>
+<!-- Page Introduction Header -->
+<header class="flex flex-col gap-1">
+<div class="flex items-center gap-1.5">
+<span class="font-label-md text-label-md text-on-tertiary-container font-semibold">You're almost done!</span>
+
+</div>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary tracking-tight font-bold">
+        Let's verify it's really you
+      </h1>
+<p class="font-body-md text-body-md text-on-surface-variant">
+        We'll guide you through a quick live verification. Follow the instruction displayed on your screen while looking at your camera.
+      </p>
+</header>
+<!-- ============================================================== -->
+<!-- DYNAMIC STATES CONTAINER                                       -->
+<!-- ============================================================== -->
+<!-- STATE 1: Camera Permission Required -->
+<section class="state-card flex flex-col gap-space-md" id="state-permission-req">
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-md flex flex-col items-center text-center">
+<!-- Visual Anchor Placeholder -->
+<div class="w-24 h-24 rounded-full bg-surface-container-low flex items-center justify-center mb-space-md relative shadow-sm">
+<div class="absolute inset-0 rounded-full bg-gradient-to-tr from-tertiary-fixed/30 to-surface-variant/40 animate-pulse"></div>
+<span class="material-symbols-outlined text-primary-container text-[40px] relative z-10">videocam</span>
+<div class="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-primary flex items-center justify-center text-on-primary shadow-sm">
+<span class="material-symbols-outlined text-[16px]">security</span>
+</div>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-primary mb-1">Camera access required</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mb-space-lg">
+          We need temporary access to your camera to complete the 5-second live biometric verification.
+        </p>
+<!-- Primary Action Trigger -->
+<button class="w-full h-12 bg-primary-container text-on-primary rounded-lg font-title-md text-title-md flex items-center justify-center gap-2 shadow-md hover:bg-primary transition-all active:scale-[0.99]" onclick="setScreenState('camera-active')" type="button">
+<span class="material-symbols-outlined text-[20px]">videocam</span>
+          Enable Camera
+        </button>
+<!-- Privacy & Protection Note -->
+<div class="mt-space-md bg-surface-container-low p-3 rounded-lg flex items-start gap-2.5 text-left w-full">
+<span class="material-symbols-outlined text-on-tertiary-container text-[18px] shrink-0 mt-0.5">verified_user</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Your camera is only active during the 5-second check. Footage is encrypted and processed according to strict Nigeria Data Protection Act (NDPA) protocols.
+          </p>
+</div>
+</div>
+</section>
+<!-- STATE 2: Camera Active & Challenge Ready -->
+<section class="state-card hidden flex flex-col gap-space-md" id="state-camera-active">
+<!-- Camera Viewfinder Mockup (3:4 ratio) -->
+<div class="relative w-full aspect-[3/4] bg-inverse-surface rounded-xl overflow-hidden shadow-xl flex items-center justify-center">
+<!-- Visual Stream Placeholder representation -->
+<div class="absolute inset-0 bg-cover bg-center opacity-85" data-alt="Clear modern smartphone front camera selfie preview showing a volunteer focused calmly forward inside a modern sunlit interior space, natural skin tones, professional verification context with crisp focus." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA1v4fPcQEtq4167B1dATY9qDvAMW_TUf35fShsrWqpMNd3bWzHFC2B3s5sT6zbfIbbZB0L_BHp_zxSs_ojaRsodm_E_HIBs9VZUTYOQVe8BpRdQFyev_ekng_6RPmTrRY-aR8_eeRE-wtWoKIbQTKdU5AkPIsdaF59nXLNd8kqr2_2gMSlfLRaFSOKLSIVygJ9AbYghUfpcUqD4tR4h_8S_wocHPjagLwVTvPtrqI')">
+</div>
+<!-- Subtle Biometric Scanning Overlay -->
+<div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none p-6">
+<!-- Oval Face Positioning Guide -->
+<div class="w-52 h-72 rounded-[9999px] border-2 border-dashed border-tertiary-fixed/80 shadow-[0_0_0_9999px_rgba(10,37,64,0.45)] relative flex items-center justify-center">
+<!-- Subtle Eye Reticle Line -->
+<div class="w-36 h-[1px] bg-tertiary-fixed/50 absolute top-[36%]"></div>
+<!-- Face corner brackets -->
+<div class="absolute top-4 left-6 w-3 h-3 border-t-2 border-l-2 border-tertiary-fixed"></div>
+<div class="absolute top-4 right-6 w-3 h-3 border-t-2 border-r-2 border-tertiary-fixed"></div>
+<div class="absolute bottom-4 left-6 w-3 h-3 border-b-2 border-l-2 border-tertiary-fixed"></div>
+<div class="absolute bottom-4 right-6 w-3 h-3 border-b-2 border-r-2 border-tertiary-fixed"></div>
+</div>
+</div>
+<!-- Top Viewfinder Banner -->
+<div class="absolute top-3 left-3 right-3 flex items-center justify-between">
+<div class="bg-inverse-surface/85 backdrop-blur-md px-3 py-1 rounded-full flex items-center gap-1.5 shadow-sm">
+<span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+<span class="font-label-code text-[11px] text-inverse-on-surface">Position face inside oval</span>
+</div>
+<div class="bg-inverse-surface/85 backdrop-blur-md p-1.5 rounded-full text-inverse-on-surface">
+<span class="material-symbols-outlined text-[16px]">wb_sunny</span>
+</div>
+</div>
+<!-- Bottom Guidance Scrim -->
+<div class="absolute bottom-3 inset-x-3 text-center">
+<p class="font-label-code text-[11px] text-inverse-on-surface bg-inverse-surface/75 backdrop-blur-md px-3 py-1.5 rounded-lg inline-block">
+            Good lighting detected • Keep head still
+          </p>
+</div>
+</div>
+<!-- Challenge Instruction Card -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-md flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<span class="font-label-code text-[11px] text-on-surface-variant uppercase tracking-wider font-semibold">Active Verification Challenge</span>
+<!-- Dynamic Challenge Randomizer / Selector for evaluators -->
+<div class="flex items-center gap-1">
+<button class="challenge-pill px-2 py-0.5 rounded font-label-code text-[10px] bg-primary-container text-on-primary" onclick="cycleChallenge('blink')" type="button">Blink</button>
+<button class="challenge-pill px-2 py-0.5 rounded font-label-code text-[10px] bg-surface-container-high text-on-surface-variant" onclick="cycleChallenge('turn-left')" type="button">Turn Left</button>
+<button class="challenge-pill px-2 py-0.5 rounded font-label-code text-[10px] bg-surface-container-high text-on-surface-variant" onclick="cycleChallenge('turn-right')" type="button">Turn Right</button>
+</div>
+</div>
+<div class="flex items-center gap-3 bg-surface-container-low p-3 rounded-lg">
+<div class="w-12 h-12 rounded-lg bg-tertiary-container text-on-tertiary-container flex items-center justify-center shrink-0" id="challenge-icon-box">
+<span class="material-symbols-outlined text-[26px]" id="challenge-icon">visibility</span>
+</div>
+<div>
+<h3 class="font-title-md text-title-md text-primary font-bold" id="challenge-title">Blink your eyes</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant" id="challenge-sub">Please blink naturally 2 times when the countdown finishes.</p>
+</div>
+</div>
+<button class="w-full h-12 bg-primary-container text-on-primary rounded-lg font-title-md text-title-md flex items-center justify-center gap-2 shadow-md hover:bg-primary transition-all active:scale-[0.99]" onclick="setScreenState('countdown')" type="button">
+<span class="material-symbols-outlined text-[20px]">play_arrow</span>
+          Start Verification Challenge
+        </button>
+</div>
+</section>
+<!-- STATE 3: Challenge Countdown -->
+<section class="state-card hidden flex flex-col gap-space-md" id="state-countdown">
+<div class="relative w-full aspect-[3/4] bg-inverse-surface rounded-xl overflow-hidden shadow-xl flex items-center justify-center">
+<!-- Background camera preview -->
+<div class="absolute inset-0 bg-cover bg-center opacity-60" data-alt="Volunteer looking into camera steady and centered, soft indoor lighting, biometric verification session framing." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBShA3S5_1efgnF1Qawp8ces4VHw4AIPYENGHi3a5Sk7takOFvW6TVmo2wbk-YItMUyTOcakdhltrNpCp8mxiudTxBeFzaHseoyYokZoy6ts8UeCeOw3tepbCwY9A7VvwBBzwr3ksOgH4TRfFFf1gLOeTbTiihk4D3UEYt3tONfKdAkVx1JAzOW0ljMTxukPYcUlNklPFd8AdqGUDktFAymRCEpa4K_rWjpktul5Ns')">
+</div>
+<!-- Dimmed Focus Overlay -->
+<div class="absolute inset-0 bg-primary-container/60 backdrop-blur-[2px] flex flex-col items-center justify-center gap-3 p-6 text-center">
+<span class="font-label-md text-label-md text-tertiary-fixed tracking-wide uppercase font-semibold">Get Ready...</span>
+<!-- Animated Countdown Circle -->
+<div class="w-24 h-24 rounded-full bg-surface text-primary flex items-center justify-center shadow-2xl relative">
+<span class="font-display-lg text-[48px] font-bold text-primary-container" id="countdown-num">3</span>
+<!-- Progress ring ringlet -->
+<svg class="absolute inset-0 w-full h-full -rotate-90 pointer-events-none" viewBox="0 0 100 100">
+<circle cx="50" cy="50" fill="none" r="46" stroke="#e2e7ff" stroke-width="4"></circle>
+<circle cx="50" cy="50" fill="none" r="46" stroke="#0094d2" stroke-dasharray="289" stroke-dashoffset="75" stroke-linecap="round" stroke-width="4"></circle>
+</svg>
+</div>
+<div class="bg-inverse-surface/90 px-4 py-2 rounded-full mt-2">
+<p class="font-label-md text-inverse-on-surface">Target: <strong class="text-tertiary-fixed">Blink your eyes</strong></p>
+</div>
+</div>
+<div class="absolute bottom-4 inset-x-4 text-center">
+<button class="bg-surface/90 hover:bg-surface text-primary font-label-md px-3 py-1.5 rounded-full shadow-md" onclick="setScreenState('recording')" type="button">
+            Skip to recording preview →
+          </button>
+</div>
+</div>
+</section>
+<!-- STATE 4: Challenge Recording Active -->
+<section class="state-card hidden flex flex-col gap-space-md" id="state-recording">
+<div class="relative w-full aspect-[3/4] bg-inverse-surface rounded-xl overflow-hidden shadow-xl flex items-center justify-center">
+<!-- Live stream image representation -->
+<div class="absolute inset-0 bg-cover bg-center" data-alt="Focused portrait of a participant performing the verification action looking directly into lens with clarity and good lighting, biometric alignment oval active." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBkCMEjsA68bgOQBOCBjXTSoZPWyA8nfCnGGxVgsdOFNRMrdujTbL4MYOuniDBh0qT0yE6b2kNlUn_gKrDEHLbfVCe93DLcw8iIZzLaOUPEXsByronzZuvyFNi4mF9rQ_Hviszwb5H8izBNE1eRaWIXdVj_38t7LhVFLXFA8NbSkCy2h5x2tQlLUWJ4ngz0wLBZbU-RIPCGZNDZQKu9Bw6OYCVv0kYpaAeVs1JBQMM')">
+</div>
+<!-- Scanning Oval Boundary with active glowing cyan edge -->
+<div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+<div class="w-56 h-76 rounded-[9999px] border-2 border-on-tertiary-container shadow-[0_0_20px_rgba(0,148,210,0.5)] relative">
+<!-- Dynamic scanning bar line -->
+<div class="w-full h-1 bg-gradient-to-r from-transparent via-tertiary-fixed to-transparent absolute top-1/2 -translate-y-1/2 animate-pulse"></div>
+</div>
+</div>
+<!-- Recording Indicator Badge -->
+<div class="absolute top-4 left-4 bg-inverse-surface/90 backdrop-blur-md px-3 py-1 rounded-full flex items-center gap-2 shadow-md">
+<span class="w-2.5 h-2.5 rounded-full bg-error animate-ping"></span>
+<span class="font-label-code text-[11px] text-inverse-on-surface font-bold tracking-wide">REC • 00:03</span>
+</div>
+<!-- Floating Live Instruction Banner -->
+<div class="absolute top-16 inset-x-4 text-center">
+<div class="bg-primary-container text-on-primary py-2.5 px-4 rounded-xl shadow-lg inline-flex items-center gap-2 border border-tertiary-fixed/20 animate-bounce">
+<span class="material-symbols-outlined text-[20px] text-tertiary-fixed">visibility</span>
+<span class="font-title-md text-[15px] font-bold">Blink your eyes now</span>
+</div>
+</div>
+<!-- Bottom Real-time Capture Feedback Bar -->
+<div class="absolute bottom-4 inset-x-4 flex flex-col gap-1.5 bg-inverse-surface/85 backdrop-blur-md p-3 rounded-xl">
+<div class="flex items-center justify-between text-inverse-on-surface">
+<span class="font-label-code text-[10px] uppercase font-semibold">Capturing Liveness Evidence</span>
+<span class="font-label-code text-[11px] text-tertiary-fixed font-bold">65%</span>
+</div>
+<!-- Progress bar -->
+<div class="w-full h-2 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-on-tertiary-container rounded-full w-[65%] transition-all duration-300"></div>
+</div>
+<p class="font-label-md text-[11px] text-inverse-on-surface/90 text-center mt-0.5">
+            Keep your face steadily inside the oval
+          </p>
+</div>
+</div>
+<button class="w-full h-11 bg-surface-container text-primary font-label-md rounded-lg hover:bg-surface-container-high transition-colors" onclick="setScreenState('processing')" type="button">
+        Simulate completion → Upload Biometrics
+      </button>
+</section>
+<!-- STATE 5: Uploading / Processing State -->
+<section class="state-card hidden flex flex-col gap-space-md" id="state-processing">
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-md flex flex-col items-center text-center">
+<!-- Biometric Analyzing Radar Graphic -->
+<div class="w-24 h-24 rounded-full bg-surface-container flex items-center justify-center relative mb-space-md">
+<div class="absolute inset-0 rounded-full border-4 border-on-tertiary-container/20 border-t-on-tertiary-container animate-spin"></div>
+<span class="material-symbols-outlined text-primary-container text-[38px]">fingerprint</span>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-primary mb-1">Processing your verification</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mb-space-lg">
+          Please keep this screen open while we securely verify and synchronize your biometric proof.
+        </p>
+<!-- Dynamic Verification Status Step List -->
+<div class="w-full flex flex-col gap-2.5 text-left mb-space-md">
+<!-- Step A -->
+<div class="flex items-center justify-between p-3 rounded-lg bg-surface-container-low">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-emerald-600 text-[18px]">check_circle</span>
+<span class="font-label-md text-label-md text-on-surface">Encrypting live capture</span>
+</div>
+<span class="font-label-code text-[10px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full font-bold">Done</span>
+</div>
+<!-- Step B -->
+<div class="flex items-center justify-between p-3 rounded-lg bg-surface-container-high">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-on-tertiary-container text-[18px] animate-spin">sync</span>
+<span class="font-label-md text-label-md text-primary font-semibold">Verifying liveness against template</span>
+</div>
+<span class="font-label-code text-[10px] text-on-tertiary-container bg-surface px-2 py-0.5 rounded-full font-bold">Analyzing</span>
+</div>
+<!-- Step C -->
+<div class="flex items-center justify-between p-3 rounded-lg bg-surface-container-low opacity-60">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-outline text-[18px]">radio_button_unchecked</span>
+<span class="font-label-md text-label-md text-on-surface-variant">Synchronizing OpinionPadi audit log</span>
+</div>
+<span class="font-label-code text-[10px] text-secondary">Pending</span>
+</div>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant font-label-code text-[11px]">
+<span class="material-symbols-outlined text-[15px] text-error">lock_clock</span>
+          Do not refresh or close this browser tab
+        </div>
+</div>
+</section>
+<!-- STATE 6: Camera Permission Denied -->
+<section class="state-card hidden flex flex-col gap-space-md" id="state-permission-denied">
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-md flex flex-col">
+<div class="w-14 h-14 rounded-full bg-error-container text-on-error-container flex items-center justify-center mb-space-md self-center">
+<span class="material-symbols-outlined text-[30px]">videocam_off</span>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-primary text-center mb-1">Camera access was denied</h2>
+<p class="font-body-md text-body-md text-on-surface-variant text-center mb-space-md">
+          Please allow camera permissions in your browser or device settings to complete your volunteer verification.
+        </p>
+<!-- Step-by-step instructions card -->
+<div class="bg-surface-container-low p-4 rounded-xl flex flex-col gap-2.5 mb-space-md text-left">
+<span class="font-label-code text-[11px] text-primary uppercase font-bold tracking-wider">How to enable access:</span>
+<div class="flex items-start gap-2.5">
+<span class="w-5 h-5 rounded-full bg-surface-container-high text-primary font-label-code text-[11px] flex items-center justify-center shrink-0 mt-0.5">1</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Tap the <strong>Lock / Settings icon</strong> in your browser's address bar.</p>
+</div>
+<div class="flex items-start gap-2.5">
+<span class="w-5 h-5 rounded-full bg-surface-container-high text-primary font-label-code text-[11px] flex items-center justify-center shrink-0 mt-0.5">2</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Tap <strong>Permissions</strong> and switch <strong>Camera</strong> to <strong>Allow</strong>.</p>
+</div>
+<div class="flex items-start gap-2.5">
+<span class="w-5 h-5 rounded-full bg-surface-container-high text-primary font-label-code text-[11px] flex items-center justify-center shrink-0 mt-0.5">3</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Return here and tap the retry button below.</p>
+</div>
+</div>
+<button class="w-full h-12 bg-primary-container text-on-primary rounded-lg font-title-md text-title-md flex items-center justify-center gap-2 shadow-md hover:bg-primary transition-all" onclick="setScreenState('camera-active')" type="button">
+<span class="material-symbols-outlined text-[20px]">refresh</span>
+          Try Again
+        </button>
+<button class="w-full text-center mt-3 font-label-md text-label-md text-on-tertiary-container hover:underline" onclick="setScreenState('accessibility')" type="button">
+          Camera still not working? Try alternative option →
+        </button>
+</div>
+</section>
+<!-- STATE 7: Camera Unavailable / Hardware Busy -->
+<section class="state-card hidden flex flex-col gap-space-md" id="state-camera-unavailable">
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-md flex flex-col text-center items-center">
+<div class="w-14 h-14 rounded-full bg-surface-container-high text-secondary flex items-center justify-center mb-space-md">
+<span class="material-symbols-outlined text-[30px]">no_photography</span>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-primary mb-1">Camera unavailable</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mb-space-lg">
+          Your camera hardware could not be reached. Another application (like Zoom or WhatsApp) might be using it, or no camera was detected.
+        </p>
+<div class="w-full bg-surface-container-low p-3.5 rounded-lg text-left mb-space-lg">
+<div class="flex items-center gap-2 mb-1">
+<span class="material-symbols-outlined text-on-surface text-[18px]">lightbulb</span>
+<span class="font-title-md text-[13px] text-primary">Quick Troubleshooting</span>
+</div>
+<ul class="font-body-sm text-body-sm text-on-surface-variant list-disc pl-5 space-y-1">
+<li>Close background camera applications</li>
+<li>Disconnect any external USB devices</li>
+<li>Restart browser or refresh the page</li>
+</ul>
+</div>
+<button class="w-full h-12 bg-primary-container text-on-primary rounded-lg font-title-md text-title-md flex items-center justify-center gap-2 shadow-md hover:bg-primary transition-all" onclick="setScreenState('camera-active')" type="button">
+<span class="material-symbols-outlined text-[20px]">sync</span>
+          Retry Camera Connection
+        </button>
+</div>
+</section>
+<!-- STATE 8: Challenge Failed / Movement Incomplete -->
+<section class="state-card hidden flex flex-col gap-space-md" id="state-challenge-failed">
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-md flex flex-col text-center items-center">
+<div class="w-14 h-14 rounded-full bg-error-container text-on-error-container flex items-center justify-center mb-space-md">
+<span class="material-symbols-outlined text-[30px]">warning</span>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-primary mb-1">Verification capture incomplete</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mb-space-md">
+          We couldn't clearly detect the required action (movement was either too fast, lighting changed, or your face left the guide oval).
+        </p>
+<!-- Constructive guidance tips -->
+<div class="w-full bg-surface-container-low p-3.5 rounded-lg text-left mb-space-lg flex flex-col gap-2">
+<span class="font-label-code text-[11px] text-primary uppercase font-bold">Helpful Tips for Success:</span>
+<div class="flex items-start gap-2">
+<span class="material-symbols-outlined text-on-tertiary-container text-[16px] mt-0.5">check</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Look directly at the camera throughout the test.</span>
+</div>
+<div class="flex items-start gap-2">
+<span class="material-symbols-outlined text-on-tertiary-container text-[16px] mt-0.5">check</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Perform the requested motion slowly and naturally.</span>
+</div>
+<div class="flex items-start gap-2">
+<span class="material-symbols-outlined text-on-tertiary-container text-[16px] mt-0.5">check</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Ensure light illuminates your face evenly without backlight.</span>
+</div>
+</div>
+<button class="w-full h-12 bg-primary-container text-on-primary rounded-lg font-title-md text-title-md flex items-center justify-center gap-2 shadow-md hover:bg-primary transition-all" onclick="setScreenState('camera-active')" type="button">
+<span class="material-symbols-outlined text-[20px]">replay</span>
+          Try Challenge Again
+        </button>
+</div>
+</section>
+<!-- STATE 9: Accessibility Alternative Verification Path -->
+<section class="state-card hidden flex flex-col gap-space-md" id="state-accessibility">
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-md flex flex-col text-left">
+<div class="w-12 h-12 rounded-lg bg-surface-container-high text-primary flex items-center justify-center mb-space-sm">
+<span class="material-symbols-outlined text-[26px]">accessibility_new</span>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-primary mb-1">Need an alternative verification option?</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mb-space-md">
+          If you have motor, optical, or device constraints that make facial movement challenges difficult, Voxelion provides inclusive accessibility alternatives for OpinionPadi volunteers.
+        </p>
+<div class="space-y-2.5 mb-space-lg">
+<div class="p-3 rounded-lg bg-surface-container-low flex items-start gap-3">
+<span class="material-symbols-outlined text-on-tertiary-container text-[20px] mt-0.5">contact_support</span>
+<div>
+<h3 class="font-title-md text-[14px] text-primary">Assisted Manual Audit</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">A verified OpinionPadi compliance coordinator will review your submitted photo ID manually.</p>
+</div>
+</div>
+<div class="p-3 rounded-lg bg-surface-container-low flex items-start gap-3">
+<span class="material-symbols-outlined text-on-tertiary-container text-[20px] mt-0.5">call</span>
+<div>
+<h3 class="font-title-md text-[14px] text-primary">Live Video Session</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Schedule a 2-minute accessible video call with support.</p>
+</div>
+</div>
+</div>
+<button class="w-full h-12 bg-primary-container text-on-primary rounded-lg font-title-md text-title-md flex items-center justify-center gap-2 shadow-md hover:bg-primary transition-all mb-2" onclick="alert('Alternative verification request submitted to OpinionPadi Task Desk.')" type="button">
+          Request Alternative Route
+        </button>
+<button class="w-full text-center py-2 font-label-md text-label-md text-on-surface-variant hover:text-primary" onclick="setScreenState('camera-active')" type="button">
+          ← Return to camera verification
+        </button>
+</div>
+</section>
+<!-- Secondary & Exit Actions Lockup -->
+<footer class="flex flex-col gap-space-sm pt-space-sm border-t border-surface-container-highest">
+<div class="flex items-center justify-between text-on-surface-variant font-label-md text-label-md">
+<a class="flex items-center gap-1 hover:text-primary" href="#previous-screen" onclick="alert('Navigating back to Screen 4: Photo Capture'); return false;">
+<span class="material-symbols-outlined text-[16px]">arrow_back</span>
+          Back to Photo Capture
+        </a>
+<button class="text-error hover:underline flex items-center gap-1" onclick="openWithdrawModal()" type="button">
+<span class="material-symbols-outlined text-[15px]">cancel</span>
+          Withdraw Consent &amp; Exit
+        </button>
+</div>
+<!-- Trust Credentials Footer -->
+<div class="text-center pt-2">
+<p class="font-label-code text-[10px] text-secondary">
+          Secured by Voxelion Engine • Integrated with OpinionPadi<br>
+          ISO/IEC 27001 Certified • NDPA Compliant Biometric Gateway
+        </p>
+</div>
+</footer>
+</div>
+<!-- WITHDRAW CONSENT MODAL DIALOG (NDPA compliant) -->
+<dialog class="fixed inset-0 z-50 w-full h-full bg-inverse-surface/60 backdrop-blur-sm p-4 hidden items-center justify-center" id="withdraw-modal">
+<div class="bg-surface-container-lowest max-w-sm w-full p-space-lg rounded-2xl shadow-2xl flex flex-col gap-space-md relative">
+<div class="w-12 h-12 rounded-full bg-error-container text-on-error-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[26px]">delete_forever</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-primary mb-1">Withdraw Consent?</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">
+          In accordance with the Nigeria Data Protection Act (NDPA), withdrawing will immediately terminate your session and permanently purge all biometric telemetry collected so far.
+        </p>
+</div>
+<div class="bg-surface-container-low p-3 rounded-lg flex items-center gap-2">
+<span class="material-symbols-outlined text-error text-[18px]">info</span>
+<span class="font-label-code text-[11px] text-on-surface-variant">This action cannot be undone. Task OP-2026-7842 will be canceled.</span>
+</div>
+<div class="flex flex-col gap-2 pt-2">
+<button class="w-full h-11 bg-error text-on-error rounded-lg font-title-md text-title-md flex items-center justify-center shadow-md hover:opacity-90" onclick="confirmWithdrawal()" type="button">
+          Confirm &amp; Delete Data
+        </button>
+<button class="w-full h-11 bg-surface-container text-primary rounded-lg font-label-md text-label-md flex items-center justify-center hover:bg-surface-container-high" onclick="closeWithdrawModal()" type="button">
+          Continue Verification
+        </button>
+</div>
+</div>
+</dialog>
+</div>
+<script>
+  // Prototype State Controller
+  function setScreenState(stateId) {
+    // Hide all state cards
+    document.querySelectorAll('.state-card').forEach(card => {
+      card.classList.add('hidden');
+    });
+
+    // Reset toolbar buttons styling
+    document.querySelectorAll('.state-tab').forEach(tab => {
+      tab.classList.remove('bg-primary', 'text-on-primary', 'shadow-sm');
+      tab.classList.add('bg-surface', 'text-on-surface-variant');
+    });
+
+    // Reveal target state
+    const targetCard = document.getElementById('state-' + stateId);
+    if (targetCard) {
+      targetCard.classList.remove('hidden');
+    }
+
+    // Highlight target tab
+    const targetTab = document.getElementById('tab-' + stateId);
+    if (targetTab) {
+      targetTab.classList.remove('bg-surface', 'text-on-surface-variant');
+      targetTab.classList.add('bg-primary', 'text-on-primary', 'shadow-sm');
+      targetTab.scrollIntoView({ behavior: 'smooth', inline: 'nearest', block: 'nearest' });
+    }
+
+    // Trigger state-specific micro-animations
+    if (stateId === 'countdown') {
+      runCountdownAnimation();
+    }
+  }
+
+  // Micro-interaction: Countdown simulation
+  function runCountdownAnimation() {
+    const numEl = document.getElementById('countdown-num');
+    if (!numEl) return;
+    numEl.innerText = '3';
+    setTimeout(() => {
+      if (!document.getElementById('state-countdown').classList.contains('hidden')) {
+        numEl.innerText = '2';
+      }
+    }, 1000);
+    setTimeout(() => {
+      if (!document.getElementById('state-countdown').classList.contains('hidden')) {
+        numEl.innerText = '1';
+      }
+    }, 2000);
+    setTimeout(() => {
+      if (!document.getElementById('state-countdown').classList.contains('hidden')) {
+        setScreenState('recording');
+      }
+    }, 3000);
+  }
+
+  // Micro-interaction: Challenge randomizer / switcher
+  function cycleChallenge(type) {
+    const title = document.getElementById('challenge-title');
+    const sub = document.getElementById('challenge-sub');
+    const icon = document.getElementById('challenge-icon');
+    
+    document.querySelectorAll('.challenge-pill').forEach(btn => {
+      btn.classList.remove('bg-primary-container', 'text-on-primary');
+      btn.classList.add('bg-surface-container-high', 'text-on-surface-variant');
+    });
+
+    if (type === 'blink') {
+      title.innerText = 'Blink your eyes';
+      sub.innerText = 'Please blink naturally 2 times when the countdown finishes.';
+      icon.innerText = 'visibility';
+      event.target.classList.replace('bg-surface-container-high', 'bg-primary-container');
+      event.target.classList.replace('text-on-surface-variant', 'text-on-primary');
+    } else if (type === 'turn-left') {
+      title.innerText = 'Slowly turn your head left';
+      sub.innerText = 'Rotate your face 30 degrees to your left shoulder.';
+      icon.innerText = 'turn_left';
+      event.target.classList.replace('bg-surface-container-high', 'bg-primary-container');
+      event.target.classList.replace('text-on-surface-variant', 'text-on-primary');
+    } else if (type === 'turn-right') {
+      title.innerText = 'Slowly turn your head right';
+      sub.innerText = 'Rotate your face 30 degrees to your right shoulder.';
+      icon.innerText = 'turn_right';
+      event.target.classList.replace('bg-surface-container-high', 'bg-primary-container');
+      event.target.classList.replace('text-on-surface-variant', 'text-on-primary');
+    }
+  }
+
+  // Modal dialog controls for NDPA consent withdrawal
+  function openWithdrawModal() {
+    const modal = document.getElementById('withdraw-modal');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+  }
+
+  function closeWithdrawModal() {
+    const modal = document.getElementById('withdraw-modal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+  }
+
+  function confirmWithdrawal() {
+    closeWithdrawModal();
+    alert('Session terminated. Biometric artifacts purged in compliance with NDPA Article 3.');
+    setScreenState('permission-req');
+  }
+</script></main>
+
+
+
+
+
+</body></html>

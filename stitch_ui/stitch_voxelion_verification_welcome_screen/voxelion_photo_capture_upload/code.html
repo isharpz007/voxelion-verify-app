@@ -1,0 +1,680 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"><meta content="mobile_blank" name="shell-type"><link href="https://fonts.googleapis.com" rel="preconnect"><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "secondary": "#5d5f5f", "on-secondary-fixed-variant": "#454747", "on-error-container": "#93000a", "outline-variant": "#c4c6ce", "secondary-container": "#dfe0e0", "secondary-fixed": "#e2e2e2", "surface-container-lowest": "#ffffff", "on-primary": "#ffffff", "inverse-surface": "#283044", "surface-container": "#eaedff", "tertiary": "#00101c", "surface-bright": "#faf8ff", "on-secondary-container": "#616363", "inverse-primary": "#b0c8eb", "on-secondary": "#ffffff", "error-container": "#ffdad6", "on-tertiary-container": "#0094d2", "surface": "#faf8ff", "primary-container": "#0a2540", "inverse-on-surface": "#eef0ff", "on-tertiary": "#ffffff", "error": "#ba1a1a", "primary-fixed": "#d2e4ff", "surface-container-high": "#e2e7ff", "on-primary-fixed-variant": "#314865", "on-surface-variant": "#43474d", "on-background": "#131b2e", "surface-container-highest": "#dae2fd", "on-tertiary-fixed-variant": "#004c6e", "secondary-fixed-dim": "#c6c6c7", "on-surface": "#131b2e", "on-secondary-fixed": "#1a1c1c", "primary": "#000f22", "tertiary-fixed-dim": "#89ceff", "on-tertiary-fixed": "#001e2f", "tertiary-container": "#00273b", "surface-variant": "#dae2fd", "on-primary-container": "#768dad", "surface-container-low": "#f2f3ff", "surface-dim": "#d2d9f4", "background": "#faf8ff", "on-error": "#ffffff", "on-primary-fixed": "#001c37", "tertiary-fixed": "#c9e6ff", "primary-fixed-dim": "#b0c8eb", "outline": "#74777e", "surface-tint": "#49607e" }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, spacing: { "margin-tablet": "1.5rem", "space-2xl": "3rem", "gutter-desktop": "1.5rem", "space-lg": "1.5rem", "margin-desktop": "2.5rem", "gutter": "1rem", "margin": "1rem", "space-md": "1rem", "space-xl": "2rem", "space-sm": "0.5rem", "space-xs": "0.25rem" }, fontFamily: { "display-lg": ["Inter"], "body-lg": ["Inter"], "label-code": ["Inter"], "label-md": ["Inter"], "headline-sm": ["Inter"], "title-md": ["Inter"], "body-sm": ["Inter"], "headline-lg-mobile": ["Inter"], "label-lg": ["Inter"], "headline-lg": ["Inter"], "headline-md": ["Inter"], "body-md": ["Inter"] }, fontSize: { "display-lg": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.025em", "fontWeight": "700" }], "body-lg": ["16px", { "lineHeight": "26px", "fontWeight": "400" }], "label-code": ["12px", { "lineHeight": "16px", "letterSpacing": "0.04em", "fontWeight": "600" }], "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500" }], "headline-sm": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "title-md": ["16px", { "lineHeight": "24px", "letterSpacing": "-0.005em", "fontWeight": "600" }], "body-sm": ["12px", { "lineHeight": "18px", "fontWeight": "400" }], "headline-lg-mobile": ["26px", { "lineHeight": "34px", "letterSpacing": "-0.015em", "fontWeight": "600" }], "label-lg": ["14px", { "lineHeight": "20px", "fontWeight": "500" }], "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600" }], "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.015em", "fontWeight": "600" }], "body-md": ["14px", { "lineHeight": "22px", "fontWeight": "400" }] } } } }</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-on-surface antialiased pt-safe pb-safe"><main class="flex flex-col relative w-full bg-surface min-h-screen"><div class="flex flex-col w-full pb-8">
+<!-- Top Global Header / Brand Bar -->
+<header class="w-full bg-surface-container-lowest shadow-sm px-4 py-3 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<button aria-label="Go back" class="w-9 h-9 flex items-center justify-center rounded-lg bg-surface-container hover:bg-surface-container-high transition-colors text-primary" type="button">
+<span class="material-symbols-outlined text-lg">arrow_back</span>
+</button>
+<div class="flex items-center gap-1.5">
+
+<span class="font-headline-sm text-headline-sm text-primary font-bold tracking-tight">voxelion</span>
+</div>
+</div>
+<div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-low text-primary">
+<span class="material-symbols-outlined text-sm text-on-tertiary-container" style="font-variation-settings: 'FILL' 1;">lock</span>
+<span class="font-label-code text-label-code tracking-wide uppercase text-on-surface-variant font-semibold">256-bit Encrypted</span>
+</div>
+</header>
+<!-- Prototype Interactive State Switcher Ribbon -->
+<aside class="w-full bg-primary-container text-on-primary px-3 py-2 flex flex-col gap-1.5 shadow-md">
+<div class="flex items-center justify-between">
+<span class="font-label-code text-label-code uppercase tracking-wider text-on-primary-container font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-xs text-on-tertiary-container">tune</span> Prototype State Switcher
+      </span>
+<span class="font-label-code text-label-code px-2 py-0.5 rounded bg-tertiary-container text-on-tertiary-container font-medium" id="active-state-indicator">State 1: Camera Ready</span>
+</div>
+<div class="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
+<button class="state-pill-btn whitespace-nowrap px-2.5 py-1 rounded-full font-label-md text-label-md font-medium bg-on-tertiary-container text-on-primary transition-all" data-state="camera" type="button">1. Camera Mode</button>
+<button class="state-pill-btn whitespace-nowrap px-2.5 py-1 rounded-full font-label-md text-label-md font-medium bg-tertiary-container text-on-primary-container hover:bg-surface-container-highest/20 transition-all" data-state="checking" type="button">2. Checking (Scan)</button>
+<button class="state-pill-btn whitespace-nowrap px-2.5 py-1 rounded-full font-label-md text-label-md font-medium bg-tertiary-container text-on-primary-container hover:bg-surface-container-highest/20 transition-all" data-state="passed" type="button">3. Quality Passed</button>
+<button class="state-pill-btn whitespace-nowrap px-2.5 py-1 rounded-full font-label-md text-label-md font-medium bg-tertiary-container text-on-primary-container hover:bg-surface-container-highest/20 transition-all" data-state="failed" type="button">4. Quality Failed</button>
+<button class="state-pill-btn whitespace-nowrap px-2.5 py-1 rounded-full font-label-md text-label-md font-medium bg-tertiary-container text-on-primary-container hover:bg-surface-container-highest/20 transition-all" data-state="uploading" type="button">5. Uploading (68%)</button>
+<button class="state-pill-btn whitespace-nowrap px-2.5 py-1 rounded-full font-label-md text-label-md font-medium bg-tertiary-container text-on-primary-container hover:bg-surface-container-highest/20 transition-all" data-state="error" type="button">6. Upload Error</button>
+</div>
+</aside>
+<!-- Content Container with max mobile/tablet constraint -->
+<div class="w-full max-w-xl mx-auto px-4 flex flex-col gap-5 mt-4">
+<!-- 5-Step Journey Stepper -->
+<nav aria-label="Verification progress" class="w-full bg-surface-container-lowest p-3.5 rounded-xl shadow-sm flex flex-col gap-2.5"><div class="flex items-center justify-between text-xs">
+<span class="font-label-code text-label-code px-2 py-0.5 rounded-md bg-surface-container text-on-surface-variant font-semibold tracking-wide">
+  Task Ref: OP-2026-7842 • OpinionPadi
+</span>
+<span class="font-label-code text-label-code text-on-surface-variant font-medium">Step 3 of 5</span>
+</div>
+<div class="relative flex items-center justify-between w-full mt-1">
+  <!-- Continuous Connecting Line behind steps -->
+  <div class="absolute left-4 right-4 top-4 h-0.5 bg-surface-container -translate-y-1/2 z-0"></div>
+  <div class="absolute left-4 top-4 h-0.5 bg-primary -translate-y-1/2 z-0" style="width: 50%;"></div>
+  <!-- Step 1: Consent (Completed) -->
+  <div class="relative z-10 flex flex-col items-center gap-1.5">
+    <div class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-sm">
+      <span class="material-symbols-outlined text-base font-bold">check</span>
+    </div>
+    <span class="font-label-code text-label-code text-on-surface-variant font-medium">Consent</span>
+  </div>
+  <!-- Step 2: Intake (Completed) -->
+  <div class="relative z-10 flex flex-col items-center gap-1.5">
+    <div class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-sm">
+      <span class="material-symbols-outlined text-base font-bold">check</span>
+    </div>
+    <span class="font-label-code text-label-code text-on-surface-variant font-medium">Intake</span>
+  </div>
+  <!-- Step 3: Photo (Active) -->
+  <div class="relative z-10 flex flex-col items-center gap-1.5">
+    <div class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-sm ring-4 ring-primary-fixed-dim/40">
+      <span class="font-label-code text-label-code font-bold text-sm">3</span>
+    </div>
+    <span class="font-label-code text-label-code text-primary font-bold">Photo</span>
+  </div>
+  <!-- Step 4: Live (Upcoming) -->
+  <div class="relative z-10 flex flex-col items-center gap-1.5">
+    <div class="w-8 h-8 rounded-full bg-surface-container text-secondary flex items-center justify-center">
+      <span class="font-label-code text-label-code font-semibold text-sm">4</span>
+    </div>
+    <span class="font-label-code text-label-code text-secondary font-medium">Live</span>
+  </div>
+  <!-- Step 5: Result (Upcoming) -->
+  <div class="relative z-10 flex flex-col items-center gap-1.5">
+    <div class="w-8 h-8 rounded-full bg-surface-container text-secondary flex items-center justify-center">
+      <span class="font-label-code text-label-code font-semibold text-sm">5</span>
+    </div>
+    <span class="font-label-code text-label-code text-secondary font-medium">Result</span>
+  </div>
+</div></nav>
+<!-- Page Header & Instructions -->
+<section class="flex flex-col gap-2">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-lg">add_a_photo</span>
+</div>
+<span class="font-label-code text-label-code text-on-tertiary-container uppercase tracking-wider font-semibold">Biometric Capture</span>
+</div>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary tracking-tight">Let's take your photo</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">We need a clear, unedited photograph to verify your real identity and match your documents.</p>
+</section>
+<!-- Guidelines Bento Strip -->
+<section class="bg-surface-container-lowest rounded-xl p-3.5 shadow-sm flex flex-col gap-2.5">
+<div class="flex items-center gap-2 text-primary font-title-md text-title-md">
+<span class="material-symbols-outlined text-base text-on-tertiary-container">verified_user</span>
+<span>For a fast approval:</span>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+<div class="flex items-start gap-2 p-2 rounded-lg bg-surface-container-low">
+<span class="material-symbols-outlined text-lg text-primary mt-0.5">face</span>
+<span class="font-body-sm text-body-sm text-on-surface">Position your face in the centre of the frame</span>
+</div>
+<div class="flex items-start gap-2 p-2 rounded-lg bg-surface-container-low">
+<span class="material-symbols-outlined text-lg text-primary mt-0.5">wb_sunny</span>
+<span class="font-body-sm text-body-sm text-on-surface">Ensure surroundings are brightly and evenly lit</span>
+</div>
+<div class="flex items-start gap-2 p-2 rounded-lg bg-surface-container-low">
+<span class="material-symbols-outlined text-lg text-primary mt-0.5">visibility</span>
+<span class="font-body-sm text-body-sm text-on-surface">Remove tinted glasses, hats, or masks</span>
+</div>
+</div>
+</section>
+<!-- Upload Error Banner (Visible only in 'error' state) -->
+<div class="hidden w-full bg-error-container text-on-error-container p-3.5 rounded-xl shadow-sm flex items-start justify-between gap-3" id="banner-error">
+<div class="flex items-start gap-2.5">
+<span class="material-symbols-outlined text-error text-xl mt-0.5">error</span>
+<div class="flex flex-col">
+<span class="font-title-md text-title-md font-semibold text-error">Encrypted upload failed</span>
+<span class="font-body-sm text-body-sm text-on-error-container">The secure handshake timed out. Please retry the upload or switch network.</span>
+</div>
+</div>
+<button class="px-3 py-1.5 rounded-lg bg-error text-on-error font-label-md text-label-md font-semibold hover:opacity-95 transition-opacity" id="btn-retry-upload" type="button">
+        Retry
+      </button>
+</div>
+<!-- MAIN INTERACTIVE VIEW AREA -->
+<section class="w-full bg-surface-container-lowest rounded-xl p-4 shadow-sm flex flex-col gap-4">
+<!-- VIEW A: Camera Viewfinder Mode -->
+<div class="flex flex-col items-center gap-4 w-full" id="view-camera">
+<!-- Viewfinder Box -->
+<div class="relative w-full aspect-[4/5] max-h-[380px] bg-tertiary rounded-xl overflow-hidden shadow-inner flex items-center justify-center">
+<!-- Ambient camera feed texture placeholder -->
+<div class="absolute inset-0 bg-cover bg-center opacity-70" data-alt="A clean, subtle mobile camera viewfinder background with gentle studio lighting and soft neutral bokeh depth of field, ready for face portrait alignment, high security SaaS interface aesthetic" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBxRrzNyH8Gb6-gknz8WDEGyM4LqKXT55ZGRQSoIEbrI6Q3NvZkQ0TPueXvYrSy-LbVHVeIj-GJZ6I6Rd-ikAnyfiPS4dGbndcv3YQC-ufiO6f7CUQONPaoanro0Q-NSnKI7wEQ3AR_wh9JsbljibvZAdt-Ps3c_34txfC3BdD_ZRT5sblGBTd5C3lL3DHznrFvb3A3jsPguj-aVWH4S--IxMl5oEjEGookkMk4KXs')"></div>
+<!-- Face positioning contour guide -->
+<div class="relative z-10 w-48 h-64 border-2 border-dashed border-surface-container-lowest/80 rounded-[50%] flex flex-col items-center justify-between py-6 shadow-2xl">
+<!-- Top eye guide tick marks -->
+<div class="w-full flex justify-between px-6 items-center opacity-70">
+<div class="w-4 h-0.5 bg-surface-container-lowest rounded-full"></div>
+<span class="font-label-code text-label-code text-surface-container-lowest text-[10px] tracking-wider uppercase">Eye Level</span>
+<div class="w-4 h-0.5 bg-surface-container-lowest rounded-full"></div>
+</div>
+<!-- Center crosshair subtly visible -->
+<div class="w-6 h-6 flex items-center justify-center opacity-40 text-surface-container-lowest">
+<span class="material-symbols-outlined text-base">filter_center_focus</span>
+</div>
+<!-- Chin positioning notch -->
+<div class="flex flex-col items-center gap-1 opacity-70">
+<div class="w-6 h-0.5 bg-surface-container-lowest rounded-full"></div>
+<span class="font-label-code text-label-code text-surface-container-lowest text-[10px] tracking-wider uppercase">Chin Position</span>
+</div>
+</div>
+<!-- Live scanning grid overlay / animation -->
+<div class="absolute inset-0 pointer-events-none bg-gradient-to-b from-transparent via-on-tertiary-container/10 to-transparent"></div>
+<!-- Camera Switch button (overlay top right) -->
+<button aria-label="Switch camera lens" class="absolute top-3 right-3 z-20 w-10 h-10 rounded-full bg-primary/70 text-on-primary backdrop-blur-md flex items-center justify-center hover:bg-primary transition-colors shadow" id="btn-switch-camera" type="button">
+<span class="material-symbols-outlined text-xl">flip_camera_ios</span>
+</button>
+<!-- Framing Guidance Status Chip -->
+<div class="absolute bottom-3 left-3 right-3 z-20 flex justify-center">
+<div class="px-3.5 py-1.5 rounded-full bg-primary-container/85 backdrop-blur-md text-on-primary font-label-md text-label-md flex items-center gap-1.5 shadow-sm">
+<span class="w-2 h-2 rounded-full bg-on-tertiary-container animate-pulse"></span>
+<span>Position your face inside the oval</span>
+</div>
+</div>
+</div>
+<!-- Camera Controls -->
+<div class="w-full flex flex-col items-center gap-3">
+<div class="flex items-center justify-center gap-6 w-full">
+<button aria-label="Upload existing photo" class="flex flex-col items-center gap-1 text-on-surface-variant hover:text-primary transition-colors" id="btn-gallery-pick" type="button">
+<div class="w-11 h-11 rounded-full bg-surface-container flex items-center justify-center">
+<span class="material-symbols-outlined text-xl">photo_library</span>
+</div>
+<span class="font-label-code text-label-code">Upload</span>
+</button>
+<!-- Shutter Trigger -->
+<button class="relative group p-1.5 rounded-full bg-surface-container shadow-md flex items-center justify-center active:scale-95 transition-transform" id="btn-shutter" type="button">
+<div class="w-16 h-16 rounded-full bg-primary group-hover:bg-primary-container text-on-primary flex items-center justify-center shadow-lg transition-colors">
+<span class="material-symbols-outlined text-3xl">photo_camera</span>
+</div>
+</button>
+<button aria-label="Toggle camera torch" class="flex flex-col items-center gap-1 text-on-surface-variant hover:text-primary transition-colors" id="btn-flash-toggle" type="button">
+<div class="w-11 h-11 rounded-full bg-surface-container flex items-center justify-center">
+<span class="material-symbols-outlined text-xl">flash_on</span>
+</div>
+<span class="font-label-code text-label-code">Flash</span>
+</button>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Tap the shutter when you are centered &amp; still</span>
+</div>
+<!-- Secondary File Upload Card -->
+<div class="w-full mt-2 pt-3 border-t-0 bg-surface-container-low rounded-xl p-3.5 flex items-center justify-between gap-3">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container-highest text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-xl">cloud_upload</span>
+</div>
+<div class="flex flex-col">
+<span class="font-title-md text-title-md font-semibold text-on-surface">Already have a portrait?</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Upload high-res JPG or PNG from device</span>
+</div>
+</div>
+<label class="cursor-pointer px-3.5 py-2 rounded-lg bg-surface-container-lowest text-primary font-label-md text-label-md font-semibold hover:bg-surface-container shadow-sm transition-colors flex items-center gap-1">
+<span>Browse</span>
+<input accept="image/jpeg,image/png" class="hidden" id="file-input" type="file">
+</label>
+</div>
+</div>
+<!-- VIEW B: Photo Preview & Scrutiny Mode (States: checking, passed, failed, uploading, error) -->
+<div class="hidden flex-col items-center gap-4 w-full" id="view-preview">
+<!-- Captured Picture Container -->
+<div class="relative w-full aspect-[4/5] max-h-[360px] bg-tertiary rounded-xl overflow-hidden shadow-md flex items-center justify-center">
+<img class="w-full h-full object-cover" data-alt="High quality, front-facing crisp photographic portrait of an adult looking directly into the camera with neutral expression, soft clear studio background lighting, high dynamic range security verification snapshot" id="captured-photo-img" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDEwdZrUUt1FZ2jxVSTcU_YTOU65ELElufyz8yvJ5Jty7PFX0BJ60L_NPkHX8r_uoRAm00TilTXGkXt1x9Glm02vTLcoj0i2OVYsKPbYCAQR5KAQEG9kjBjrk0El0a3HoVvAR9KJkkIRbDFmotupjczjh6PhEXUBhqtgJFsDt-x9GKxHEEiWDW-lC0waxjfo4TZ29V9iO9DJiHXALHfDMSU4KrGXWVH6OgFqIHGNFo">
+<!-- Biometric Mesh / Bounding Box Overlay -->
+<div class="absolute inset-10 rounded-2xl border-2 border-on-tertiary-container/80 pointer-events-none flex flex-col justify-between p-2">
+<div class="flex justify-between">
+<div class="w-3 h-3 border-t-2 border-l-2 border-on-tertiary-container"></div>
+<div class="w-3 h-3 border-t-2 border-r-2 border-on-tertiary-container"></div>
+</div>
+<div class="flex justify-between">
+<div class="w-3 h-3 border-b-2 border-l-2 border-on-tertiary-container"></div>
+<div class="w-3 h-3 border-b-2 border-r-2 border-on-tertiary-container"></div>
+</div>
+</div>
+<!-- Active Laser Scanning Animation bar (Shown during 'checking' and 'uploading') -->
+<div class="absolute left-0 right-0 h-1 bg-gradient-to-r from-transparent via-on-tertiary-container to-transparent shadow-[0_0_12px_#0094d2] animate-bounce hidden" id="scanning-laser"></div>
+<!-- Top Status Chips -->
+<div class="absolute top-3 left-3 right-3 flex items-center justify-between">
+<span class="px-2.5 py-1 rounded-full bg-primary/80 backdrop-blur-md text-on-primary font-label-code text-label-code uppercase tracking-wider flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">image</span> Photo Preview
+            </span>
+<span class="px-2.5 py-1 rounded-full bg-surface-container-lowest/90 backdrop-blur-md text-primary font-label-code text-label-code font-bold flex items-center gap-1" id="preview-badge-status"><span class="w-2 h-2 rounded-full bg-on-tertiary-container animate-pulse"></span> Quality Check</span>
+</div>
+<!-- Bottom upload progress bar overlay (Shown only in 'uploading' state) -->
+<div class="hidden absolute inset-0 bg-primary/85 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-on-primary gap-3" id="upload-overlay-progress">
+<div class="w-12 h-12 rounded-full border-4 border-surface-container-highest/20 border-t-on-tertiary-container animate-spin flex items-center justify-center"></div>
+<div class="flex flex-col items-center gap-1">
+<span class="font-title-md text-title-md font-semibold">Encrypting &amp; uploading...</span>
+<span class="font-body-sm text-body-sm text-on-primary-container">Securing biometrics with SHA-256</span>
+</div>
+<!-- Progress Track -->
+<div class="w-full max-w-xs bg-surface-container-highest/30 rounded-full h-2.5 overflow-hidden mt-1">
+<div class="bg-on-tertiary-container h-full rounded-full transition-all duration-300" style="width: 68%;"></div>
+</div>
+<span class="font-label-code text-label-code font-semibold tracking-wider">68% COMPLETE</span>
+</div>
+</div>
+<!-- Quick Action Pill Buttons -->
+<div class="flex items-center gap-2.5 w-full justify-center">
+<button class="px-3.5 py-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-primary font-label-md text-label-md font-semibold transition-colors flex items-center gap-1.5" id="btn-retake" type="button">
+<span class="material-symbols-outlined text-base">restart_alt</span>
+<span>Retake photo</span>
+</button>
+<button class="px-3.5 py-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-primary font-label-md text-label-md font-semibold transition-colors flex items-center gap-1.5" id="btn-choose-another" type="button">
+<span class="material-symbols-outlined text-base">upload_file</span>
+<span>Choose another</span>
+</button>
+</div>
+</div>
+<!-- VIEW C: Automated Photo Quality Matrix (Visible when not in pure camera viewfinder) -->
+<div class="hidden flex-col gap-2.5 w-full bg-surface-container-low p-3.5 rounded-xl" id="quality-matrix-card">
+<div class="flex items-center justify-between">
+<span class="font-label-code text-label-code uppercase tracking-wider text-on-surface-variant font-bold">Automated Quality Analysis</span>
+<span class="font-label-code text-label-code font-bold px-2 py-0.5 rounded text-on-tertiary-container bg-surface-container" id="matrix-verdict-tag">Evaluating...</span>
+</div>
+<!-- 5 Checklist Rows -->
+<div class="flex flex-col gap-2 text-xs">
+<!-- 1. Face Detected -->
+<div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-lowest" id="check-face">
+<div class="flex items-center gap-2">
+<span class="check-icon material-symbols-outlined text-base text-secondary">pending</span>
+<span class="font-body-sm text-body-sm text-on-surface">Face detected</span>
+</div>
+<span class="check-status font-label-code text-label-code text-secondary font-medium">Checking...</span>
+</div>
+<!-- 2. Clarity & Focus -->
+<div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-lowest" id="check-clarity">
+<div class="flex items-center gap-2">
+<span class="check-icon material-symbols-outlined text-base text-secondary">pending</span>
+<span class="font-body-sm text-body-sm text-on-surface">Image clarity</span>
+</div>
+<span class="check-status font-label-code text-label-code text-secondary font-medium">Checking...</span>
+</div>
+<!-- 3. Lighting Condition -->
+<div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-lowest" id="check-lighting">
+<div class="flex items-center gap-2">
+<span class="check-icon material-symbols-outlined text-base text-secondary">pending</span>
+<span class="font-body-sm text-body-sm text-on-surface">Lighting condition</span>
+</div>
+<span class="check-status font-label-code text-label-code text-secondary font-medium">Checking...</span>
+</div>
+<!-- 4. Supported Format -->
+<div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-lowest" id="check-format">
+<div class="flex items-center gap-2">
+<span class="check-icon material-symbols-outlined text-base text-secondary">pending</span>
+<span class="font-body-sm text-body-sm text-on-surface">Supported format</span>
+</div>
+<span class="check-status font-label-code text-label-code text-secondary font-medium">Checking...</span>
+</div>
+<!-- 5. File Size Accepted -->
+<div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-lowest" id="check-size">
+<div class="flex items-center gap-2">
+<span class="check-icon material-symbols-outlined text-base text-secondary">pending</span>
+<span class="font-body-sm text-body-sm text-on-surface">File size accepted</span>
+</div>
+<span class="check-status font-label-code text-label-code text-secondary font-medium">Checking...</span>
+</div>
+</div>
+<!-- Failure Guidance Tip (Only visible in 'failed' state) -->
+<div class="hidden p-3 rounded-lg bg-error-container text-on-error-container flex items-start gap-2.5" id="matrix-failure-guidance">
+<span class="material-symbols-outlined text-error text-lg mt-0.5">info</span>
+<div class="flex flex-col gap-0.5">
+<span class="font-label-md text-label-md font-semibold text-error">Photo rejected for low illumination &amp; blur</span>
+<span class="font-body-sm text-body-sm">Please stand in direct front-facing light, keep hands steady, and tap retake.</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Navigation & Primary Action Envelopes -->
+<section class="flex flex-col gap-3">
+<!-- Main CTA Button -->
+<button class="w-full min-h-[52px] rounded-lg bg-surface-container text-on-surface-variant font-headline-sm text-headline-sm flex items-center justify-center gap-2 cursor-not-allowed opacity-75" disabled="" id="btn-primary-cta" type="button">
+<span id="primary-cta-text">Continue to Live Verification</span>
+<span class="material-symbols-outlined text-xl" id="primary-cta-icon">arrow_forward</span>
+</button>
+<!-- Back to Intake -->
+<div class="flex items-center justify-between pt-1">
+<button class="font-label-lg text-label-lg font-medium text-on-surface-variant hover:text-primary transition-colors flex items-center gap-1" id="btn-back-intake" type="button">
+<span class="material-symbols-outlined text-base">west</span>
+<span>Back to Intake</span>
+</button>
+<!-- Withdrawal Link -->
+<button class="font-label-md text-label-md font-medium text-error hover:underline transition-all" id="btn-open-withdraw" type="button">
+          Withdraw Consent &amp; Exit
+        </button>
+</div>
+</section>
+<!-- Trust & Verification Footer Lockup -->
+<footer class="w-full py-4 flex flex-col items-center gap-1 text-center">
+<div class="flex items-center gap-2 text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-base text-on-tertiary-container" style="font-variation-settings: 'FILL' 1;">shield</span>
+<span>Secured by Voxelion Engine • Partnered with OpinionPadi</span>
+</div>
+<p class="font-label-code text-label-code text-secondary">
+        Biometric captures are permanently purged upon verification completion according to ISO 27001 standards.
+      </p>
+</footer>
+</div>
+<!-- Consent Withdrawal Modal Overlay -->
+<div class="hidden fixed inset-0 z-50 bg-primary-container/60 backdrop-blur-sm flex items-center justify-center p-4" id="modal-withdraw">
+<div class="w-full max-w-sm bg-surface-container-lowest rounded-xl p-5 shadow-2xl flex flex-col gap-4 animate-in fade-in zoom-in duration-200">
+<div class="w-12 h-12 rounded-full bg-error-container text-error flex items-center justify-center">
+<span class="material-symbols-outlined text-2xl">person_remove</span>
+</div>
+<div class="flex flex-col gap-1.5">
+<h3 class="font-headline-sm text-headline-sm text-primary">Withdraw Consent?</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">
+          This will immediately stop your identity verification. Any uploaded selfies and draft data will be securely shredded.
+        </p>
+</div>
+<div class="flex flex-col gap-2 pt-2">
+<button class="w-full h-11 rounded-lg bg-error text-on-error font-label-lg text-label-lg font-semibold hover:opacity-95 transition-opacity" id="btn-confirm-withdraw" type="button">
+          Yes, Delete Data &amp; Exit
+        </button>
+<button class="w-full h-11 rounded-lg bg-surface-container text-primary font-label-lg text-label-lg font-semibold hover:bg-surface-container-high transition-colors" id="btn-cancel-withdraw" type="button">
+          Cancel, Keep Going
+        </button>
+</div>
+</div>
+</div>
+</div>
+<script>
+  (function initPhotoScreen() {
+    const states = {
+      camera: {
+        indicator: 'State 1: Camera Ready',
+        viewCamera: true,
+        viewPreview: false,
+        viewMatrix: false,
+        laser: false,
+        uploading: false,
+        errorBanner: false,
+        ctaState: 'disabled',
+        ctaText: 'Continue to Live Verification',
+        matrixStatus: 'idle'
+      },
+      checking: {
+        indicator: 'State 2: Quality Scanning',
+        viewCamera: false,
+        viewPreview: true,
+        viewMatrix: true,
+        laser: true,
+        uploading: false,
+        errorBanner: false,
+        ctaState: 'disabled',
+        ctaText: 'Analyzing photo quality...',
+        matrixStatus: 'checking'
+      },
+      passed: {
+        indicator: 'State 3: Quality Passed',
+        viewCamera: false,
+        viewPreview: true,
+        viewMatrix: true,
+        laser: false,
+        uploading: false,
+        errorBanner: false,
+        ctaState: 'enabled',
+        ctaText: 'Continue to Live Verification',
+        matrixStatus: 'passed'
+      },
+      failed: {
+        indicator: 'State 4: Quality Failed',
+        viewCamera: false,
+        viewPreview: true,
+        viewMatrix: true,
+        laser: false,
+        uploading: false,
+        errorBanner: false,
+        ctaState: 'disabled',
+        ctaText: 'Quality issues detected',
+        matrixStatus: 'failed'
+      },
+      uploading: {
+        indicator: 'State 5: Uploading (68%)',
+        viewCamera: false,
+        viewPreview: true,
+        viewMatrix: true,
+        laser: false,
+        uploading: true,
+        errorBanner: false,
+        ctaState: 'loading',
+        ctaText: 'Uploading verification photo (68%)...',
+        matrixStatus: 'passed'
+      },
+      error: {
+        indicator: 'State 6: Upload Failed',
+        viewCamera: false,
+        viewPreview: true,
+        viewMatrix: true,
+        laser: false,
+        uploading: false,
+        errorBanner: true,
+        ctaState: 'disabled',
+        ctaText: 'Upload Interrupted',
+        matrixStatus: 'passed'
+      }
+    };
+
+    const stateBtns = document.querySelectorAll('.state-pill-btn');
+    const indicator = document.getElementById('active-state-indicator');
+    const viewCamera = document.getElementById('view-camera');
+    const viewPreview = document.getElementById('view-preview');
+    const matrixCard = document.getElementById('quality-matrix-card');
+    const laser = document.getElementById('scanning-laser');
+    const uploadOverlay = document.getElementById('upload-overlay-progress');
+    const errorBanner = document.getElementById('banner-error');
+    const ctaBtn = document.getElementById('btn-primary-cta');
+    const ctaText = document.getElementById('primary-cta-text');
+    const ctaIcon = document.getElementById('primary-cta-icon');
+    const matrixVerdict = document.getElementById('matrix-verdict-tag');
+    const matrixGuidance = document.getElementById('matrix-failure-guidance');
+    const previewBadge = document.getElementById('preview-badge-status');
+
+    // Matrix rows
+    const checks = [
+      { id: 'check-face', passLabel: 'Face detected & centered', failLabel: 'No clear face detected' },
+      { id: 'check-clarity', passLabel: 'Image is sharp & clear', failLabel: 'Photo is too blurry' },
+      { id: 'check-lighting', passLabel: 'Lighting is suitable', failLabel: 'Lighting is too low' },
+      { id: 'check-format', passLabel: 'Supported format (JPEG/PNG)', failLabel: 'Unsupported format' },
+      { id: 'check-size', passLabel: 'File size accepted (1.8 MB)', failLabel: 'File size exceeds limit' }
+    ];
+
+    function applyMatrixStatus(mode) {
+      checks.forEach((item, index) => {
+        const row = document.getElementById(item.id);
+        if (!row) return;
+        const icon = row.querySelector('.check-icon');
+        const status = row.querySelector('.check-status');
+
+        if (mode === 'checking') {
+          icon.textContent = 'hourglass_empty';
+          icon.className = 'check-icon material-symbols-outlined text-base text-on-tertiary-container animate-spin';
+          status.textContent = 'Evaluating...';
+          status.className = 'check-status font-label-code text-label-code text-on-surface-variant font-medium';
+        } else if (mode === 'passed') {
+          icon.textContent = 'check_circle';
+          icon.className = 'check-icon material-symbols-outlined text-base text-on-tertiary-container';
+          status.textContent = item.passLabel;
+          status.className = 'check-status font-label-code text-label-code text-primary font-semibold';
+        } else if (mode === 'failed') {
+          // Fail 2 checks for realism
+          if (index === 1 || index === 2) {
+            icon.textContent = 'cancel';
+            icon.className = 'check-icon material-symbols-outlined text-base text-error';
+            status.textContent = item.failLabel;
+            status.className = 'check-status font-label-code text-label-code text-error font-semibold';
+          } else {
+            icon.textContent = 'check_circle';
+            icon.className = 'check-icon material-symbols-outlined text-base text-on-tertiary-container';
+            status.textContent = item.passLabel;
+            status.className = 'check-status font-label-code text-label-code text-primary font-semibold';
+          }
+        }
+      });
+
+      if (mode === 'passed') {
+        matrixVerdict.textContent = 'Passed (5/5)';
+        matrixVerdict.className = 'font-label-code text-label-code font-bold px-2 py-0.5 rounded bg-surface-container-highest text-primary';
+        matrixGuidance.classList.add('hidden');
+        previewBadge.innerHTML = '<span class="material-symbols-outlined text-xs text-primary">verified</span> Verified';
+      } else if (mode === 'failed') {
+        matrixVerdict.textContent = 'Failed (3/5)';
+        matrixVerdict.className = 'font-label-code text-label-code font-bold px-2 py-0.5 rounded bg-error-container text-error';
+        matrixGuidance.classList.remove('hidden');
+        previewBadge.innerHTML = '<span class="material-symbols-outlined text-xs text-error">warning</span> Quality Alert';
+      } else {
+        matrixVerdict.textContent = 'Evaluating...';
+        matrixVerdict.className = 'font-label-code text-label-code font-bold px-2 py-0.5 rounded text-on-tertiary-container bg-surface-container';
+        matrixGuidance.classList.add('hidden');
+        previewBadge.innerHTML = '<span class="w-2 h-2 rounded-full bg-on-tertiary-container animate-pulse"></span> Quality Check';
+      }
+    }
+
+    function renderState(key) {
+      const cfg = states[key];
+      if (!cfg) return;
+
+      indicator.textContent = cfg.indicator;
+
+      // Update state buttons styling
+      stateBtns.forEach(btn => {
+        if (btn.getAttribute('data-state') === key) {
+          btn.className = 'state-pill-btn whitespace-nowrap px-2.5 py-1 rounded-full font-label-md text-label-md font-medium bg-on-tertiary-container text-on-primary transition-all';
+        } else {
+          btn.className = 'state-pill-btn whitespace-nowrap px-2.5 py-1 rounded-full font-label-md text-label-md font-medium bg-tertiary-container text-on-primary-container hover:bg-surface-container-highest/20 transition-all';
+        }
+      });
+
+      // View visibility
+      viewCamera.classList.toggle('hidden', !cfg.viewCamera);
+      viewPreview.classList.toggle('hidden', !cfg.viewPreview);
+      matrixCard.classList.toggle('hidden', !cfg.viewMatrix);
+      if (cfg.viewPreview) {
+        viewPreview.classList.add('flex');
+      }
+      if (cfg.viewMatrix) {
+        matrixCard.classList.add('flex');
+      }
+
+      // Laser animation
+      laser.classList.toggle('hidden', !cfg.laser);
+
+      // Upload overlay
+      uploadOverlay.classList.toggle('hidden', !cfg.uploading);
+
+      // Error banner
+      errorBanner.classList.toggle('hidden', !cfg.errorBanner);
+
+      // Matrix content
+      applyMatrixStatus(cfg.matrixStatus);
+
+      // CTA Button state
+      if (cfg.ctaState === 'enabled') {
+        ctaBtn.disabled = false;
+        ctaBtn.className = 'w-full min-h-[52px] rounded-lg bg-primary-container text-on-primary font-headline-sm text-headline-sm flex items-center justify-center gap-2 shadow-md hover:bg-primary transition-all cursor-pointer';
+        ctaText.textContent = cfg.ctaText;
+        ctaIcon.textContent = 'arrow_forward';
+        ctaIcon.className = 'material-symbols-outlined text-xl';
+      } else if (cfg.ctaState === 'loading') {
+        ctaBtn.disabled = true;
+        ctaBtn.className = 'w-full min-h-[52px] rounded-lg bg-surface-container-high text-primary font-headline-sm text-headline-sm flex items-center justify-center gap-2 cursor-wait';
+        ctaText.textContent = cfg.ctaText;
+        ctaIcon.textContent = 'sync';
+        ctaIcon.className = 'material-symbols-outlined text-xl animate-spin';
+      } else {
+        ctaBtn.disabled = true;
+        ctaBtn.className = 'w-full min-h-[52px] rounded-lg bg-surface-container text-on-surface-variant font-headline-sm text-headline-sm flex items-center justify-center gap-2 cursor-not-allowed opacity-75';
+        ctaText.textContent = cfg.ctaText;
+        ctaIcon.textContent = 'arrow_forward';
+        ctaIcon.className = 'material-symbols-outlined text-xl';
+      }
+    }
+
+    // Attach click events to state switchers
+    stateBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        renderState(btn.getAttribute('data-state'));
+      });
+    });
+
+    // Shutter Trigger action -> Transition to checking then passed
+    const shutterBtn = document.getElementById('btn-shutter');
+    if (shutterBtn) {
+      shutterBtn.addEventListener('click', () => {
+        renderState('checking');
+        setTimeout(() => {
+          renderState('passed');
+        }, 1200);
+      });
+    }
+
+    // Retake and Choose another -> Return to Camera Mode
+    const retakeBtn = document.getElementById('btn-retake');
+    const chooseBtn = document.getElementById('btn-choose-another');
+    if (retakeBtn) retakeBtn.addEventListener('click', () => renderState('camera'));
+    if (chooseBtn) chooseBtn.addEventListener('click', () => renderState('camera'));
+
+    // File input trigger
+    const fileInput = document.getElementById('file-input');
+    const galleryPick = document.getElementById('btn-gallery-pick');
+    if (galleryPick && fileInput) {
+      galleryPick.addEventListener('click', () => fileInput.click());
+    }
+    if (fileInput) {
+      fileInput.addEventListener('change', () => {
+        renderState('checking');
+        setTimeout(() => {
+          renderState('passed');
+        }, 1200);
+      });
+    }
+
+    // Retry upload button
+    const retryBtn = document.getElementById('btn-retry-upload');
+    if (retryBtn) {
+      retryBtn.addEventListener('click', () => {
+        renderState('uploading');
+        setTimeout(() => {
+          renderState('passed');
+        }, 1500);
+      });
+    }
+
+    // Modal Withdrawal Flow
+    const withdrawModal = document.getElementById('modal-withdraw');
+    const openWithdraw = document.getElementById('btn-open-withdraw');
+    const cancelWithdraw = document.getElementById('btn-cancel-withdraw');
+    const confirmWithdraw = document.getElementById('btn-confirm-withdraw');
+
+    if (openWithdraw) {
+      openWithdraw.addEventListener('click', () => {
+        withdrawModal.classList.remove('hidden');
+      });
+    }
+    if (cancelWithdraw) {
+      cancelWithdraw.addEventListener('click', () => {
+        withdrawModal.classList.add('hidden');
+      });
+    }
+    if (confirmWithdraw) {
+      confirmWithdraw.addEventListener('click', () => {
+        withdrawModal.classList.add('hidden');
+        renderState('camera');
+      });
+    }
+
+    // Camera switcher flip micro-interaction
+    const switchCamera = document.getElementById('btn-switch-camera');
+    if (switchCamera) {
+      let flipped = false;
+      switchCamera.addEventListener('click', () => {
+        flipped = !flipped;
+        switchCamera.style.transform = flipped ? 'rotate(180deg)' : 'rotate(0deg)';
+        switchCamera.style.transition = 'transform 0.4s ease';
+      });
+    }
+
+    // Initial render in Camera Mode
+    renderState('camera');
+  })();
+</script></main>
+
+</body></html>

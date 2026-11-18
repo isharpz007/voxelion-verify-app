@@ -1,0 +1,267 @@
+<body class="bg-surface text-on-surface font-body-md text-body-md pt-safe pb-safe flex flex-col min-h-screen"><main class="flex-1 flex flex-col relative w-full bg-surface"><div class="flex flex-col w-full text-on-surface">
+<!-- Interactive Prototype State Controller Bar -->
+<section class="w-full bg-surface-container-low px-margin py-space-sm shadow-sm">
+<div class="flex items-center justify-between gap-space-xs mb-space-xs">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-tertiary-container" style="font-size: 16px; font-variation-settings: 'FILL' 1;">tune</span>
+<span class="font-label-code text-label-code text-tertiary-container uppercase tracking-wider">UX Prototype States</span>
+</div>
+<span class="font-label-code text-label-code text-on-surface-variant">Step 2: Intake</span>
+</div>
+<!-- State Pills -->
+<div class="flex items-center gap-space-xs overflow-x-auto pb-space-xs no-scrollbar" id="demo-state-bar">
+<button class="px-space-sm py-space-xs rounded-full font-label-md text-label-md transition-all shrink-0 bg-primary-container text-on-primary font-medium shadow-sm" id="btn-state-empty" onclick="setDemoState('empty')" type="button">
+        Default (Empty)
+      </button>
+<button class="px-space-sm py-space-xs rounded-full font-label-md text-label-md transition-all shrink-0 bg-surface-container-highest text-on-surface hover:bg-surface-container-high" id="btn-state-valid" onclick="setDemoState('valid')" type="button">
+        Valid Form
+      </button>
+<button class="px-space-sm py-space-xs rounded-full font-label-md text-label-md transition-all shrink-0 bg-surface-container-highest text-on-surface hover:bg-surface-container-high" id="btn-state-errors" onclick="setDemoState('errors')" type="button">
+        Validation Errors
+      </button>
+<button class="px-space-sm py-space-xs rounded-full font-label-md text-label-md transition-all shrink-0 bg-surface-container-highest text-on-surface hover:bg-surface-container-high" id="btn-state-loading" onclick="setDemoState('loading')" type="button">
+        Submitting / Loading
+      </button>
+<button class="px-space-sm py-space-xs rounded-full font-label-md text-label-md transition-all shrink-0 bg-surface-container-highest text-on-surface hover:bg-surface-container-high" id="btn-state-server_error" onclick="setDemoState('server_error')" type="button">
+        Server Error
+      </button>
+<button class="px-space-sm py-space-xs rounded-full font-label-md text-label-md transition-all shrink-0 bg-surface-container-highest text-on-surface hover:bg-surface-container-high" id="btn-state-withdraw_modal" onclick="setDemoState('withdraw_modal')" type="button">
+        Withdraw Modal
+      </button>
+</div>
+</section>
+<!-- Navigation & Security Trust Lockup -->
+<header class="w-full px-margin pt-space-md pb-space-sm flex items-center justify-between">
+<button aria-label="Go back to Consent" class="flex items-center gap-space-xs text-on-surface hover:text-primary transition-colors py-space-xs -ml-space-xs pr-space-sm rounded-lg" onclick="alert('Navigating back to Screen 2: Consent Verification')" type="button">
+<span class="material-symbols-outlined text-[22px]">arrow_back</span>
+<span class="font-label-lg text-label-lg font-semibold">Consent</span>
+</button>
+<div class="flex items-center gap-space-xs bg-surface-container-highest px-space-sm py-[4px] rounded-full">
+<span class="material-symbols-outlined text-[#0ea5e9]" style="font-size: 15px; font-variation-settings: 'FILL' 1;">verified_user</span>
+<span class="font-label-code text-label-code text-on-primary-fixed-variant font-semibold">256-bit Encrypted</span>
+</div>
+</header>
+<!-- Progress Flow & Task Reference Card -->
+<section class="w-full px-margin pb-space-sm">
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm">
+<div class="flex items-center justify-between mb-space-sm">
+<div class="flex items-center gap-space-xs">
+<div class="w-2 h-2 rounded-full bg-[#0ea5e9] animate-pulse"></div>
+<span class="font-label-code text-label-code text-primary uppercase font-bold tracking-wider">Step 2 of 5</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate max-w-[190px]">Task Ref: OP-2026-7842</span>
+</div>
+<!-- 5-Step Horizontal Breadcrumb / Gauge -->
+<nav aria-label="Verification Steps" class="w-full pt-space-xs"><div class="relative w-full pt-space-xs pb-1"><div class="absolute top-[18px] left-[10%] right-[10%] h-[2px] bg-surface-container-high -translate-y-1/2 -z-0"><div class="h-full bg-primary-container w-1/4"></div></div><ol class="relative z-10 grid grid-cols-5 items-center w-full text-center"><li class="flex flex-col items-center"><div class="w-7 h-7 rounded-full bg-primary-container text-on-primary flex items-center justify-center shadow-xs"><span class="material-symbols-outlined text-[16px] font-bold">check</span></div><span class="font-label-code text-[11px] font-semibold text-primary mt-1">Consent</span></li><li class="flex flex-col items-center"><div class="w-7 h-7 rounded-full bg-[#0ea5e9] text-white flex items-center justify-center font-title-md text-[13px] font-bold shadow-md shadow-sky-500/20 ring-2 ring-[#0ea5e9] ring-offset-2 ring-offset-surface-container-lowest">2</div><span class="font-label-code text-[11px] font-bold text-on-surface mt-1">Intake</span></li><li class="flex flex-col items-center"><div class="w-7 h-7 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center font-label-md text-label-md font-medium">3</div><span class="font-label-code text-[11px] text-on-surface-variant mt-1">Photo</span></li><li class="flex flex-col items-center"><div class="w-7 h-7 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center font-label-md text-label-md font-medium">4</div><span class="font-label-code text-[11px] text-on-surface-variant mt-1">Live</span></li><li class="flex flex-col items-center"><div class="w-7 h-7 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center font-label-md text-label-md font-medium">5</div><span class="font-label-code text-[11px] text-on-surface-variant mt-1">Result</span></li></ol></div></nav>
+</div>
+</section>
+<!-- Server Error Notification Banner (Toggleable) -->
+<aside aria-live="assertive" class="hidden px-margin pb-space-sm" id="server-error-banner" role="alert">
+<div class="bg-error-container text-on-error-container p-space-md rounded-xl shadow-sm flex items-start gap-space-sm">
+<span class="material-symbols-outlined text-error shrink-0 mt-0.5 text-[20px]" style="font-variation-settings: 'FILL' 1;">error</span>
+<div class="flex-1 min-w-0">
+<h2 class="font-title-md text-title-md font-semibold text-error">Submission Failed</h2>
+<p class="font-body-sm text-body-sm mt-0.5 text-on-error-container">
+          We were unable to sync your information with the OpinionPadi verification service. Please review your details and try again. <span class="font-label-code text-label-code font-bold">(Error Code: VX-502)</span>
+</p>
+</div>
+<button aria-label="Dismiss error notification" class="text-on-error-container hover:text-error transition-colors p-1" onclick="dismissServerError()" type="button">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+</aside>
+<!-- Page Introduction Block -->
+<section class="w-full px-margin pt-space-xs pb-space-md">
+<div class="flex items-center gap-space-md mb-space-xs">
+
+<div>
+<p class="font-label-code text-label-code text-[#0ea5e9] uppercase font-bold tracking-wider">Volunteer Profile</p>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary font-bold">Your Information</h1>
+</div>
+</div>
+<h2 class="font-title-md text-title-md text-on-surface font-semibold">Let's get to know you</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1 leading-relaxed">
+      Please provide the official details requested below. Make sure all entries accurately correspond to your government ID before continuing.
+    </p>
+</section>
+<!-- Intake Form -->
+<form class="w-full px-margin space-y-space-md" id="intake-form" novalidate="" onsubmit="handleFormSubmit(event)">
+<!-- Card 1: Personal Information -->
+<fieldset class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm space-y-space-md">
+<legend class="flex items-center justify-between w-full pb-space-xs">
+<span class="font-title-md text-title-md text-primary font-bold">Personal Information</span>
+<span class="font-label-code text-label-code text-on-surface-variant bg-surface-container px-space-xs py-0.5 rounded">* Required</span>
+</legend>
+<!-- Field: Full Name -->
+<div class="space-y-1.5" id="field-wrap-name">
+<label class="block font-label-lg text-label-lg font-semibold text-on-surface" for="input-fullname">
+          Full Legal Name <span aria-hidden="true" class="text-error">*</span>
+</label>
+<div class="relative">
+<input aria-describedby="name-helper name-error" autocomplete="name" class="w-full h-12 px-space-md rounded-lg bg-surface font-body-md text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-[#0ea5e9] transition-all" id="input-fullname" name="fullname" placeholder="e.g. Amara Okafor" required="" type="text">
+<div class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-error pointer-events-none" id="icon-name-error">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">error</span>
+</div>
+<div class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-[#047857] pointer-events-none" id="icon-name-valid">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant" id="name-helper">As it appears on your official documents.</p>
+<p class="hidden font-body-sm text-body-sm text-error font-medium flex items-center gap-1" id="name-error">
+          Please enter your full name as shown on your ID.
+        </p>
+</div>
+<!-- Field: Email Address -->
+<div class="space-y-1.5" id="field-wrap-email">
+<label class="block font-label-lg text-label-lg font-semibold text-on-surface" for="input-email">
+          Email Address <span aria-hidden="true" class="text-error">*</span>
+</label>
+<div class="relative">
+<input aria-describedby="email-helper email-error" autocomplete="email" class="w-full h-12 px-space-md rounded-lg bg-surface font-body-md text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-[#0ea5e9] transition-all" id="input-email" name="email" placeholder="amara.okafor@example.com" required="" type="email">
+<div class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-error pointer-events-none" id="icon-email-error">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">error</span>
+</div>
+<div class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-[#047857] pointer-events-none" id="icon-email-valid">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant" id="email-helper">We'll send verification confirmation and audit receipts here.</p>
+<p class="hidden font-body-sm text-body-sm text-error font-medium flex items-center gap-1" id="email-error">
+          Please enter a valid email address (e.g. name@domain.com).
+        </p>
+</div>
+<!-- Field: Phone Number -->
+<div class="space-y-1.5" id="field-wrap-phone">
+<label class="block font-label-lg text-label-lg font-semibold text-on-surface" for="input-phone">
+          Phone Number <span aria-hidden="true" class="text-error">*</span>
+</label>
+<div class="flex items-center gap-space-xs">
+<!-- Country Prefix Selector Container -->
+<div class="relative shrink-0">
+<label class="sr-only" for="input-country-code">Country Calling Code</label>
+<select class="h-12 pl-space-sm pr-7 rounded-lg bg-surface font-label-lg text-on-surface focus:outline-none focus:ring-2 focus:ring-[#0ea5e9] appearance-none" id="input-country-code" name="country_code">
+<option value="+234">🇳🇬 +234</option>
+<option value="+1">🇺🇸 +1</option>
+<option value="+44">🇬🇧 +44</option>
+<option value="+254">🇰🇪 +254</option>
+<option value="+27">🇿🇦 +27</option>
+</select>
+<span class="material-symbols-outlined text-on-surface-variant text-[18px] absolute right-1.5 top-1/2 -translate-y-1/2 pointer-events-none">expand_more</span>
+</div>
+<!-- Phone Number Input -->
+<div class="relative flex-1">
+<input aria-describedby="phone-helper phone-error" autocomplete="tel-national" class="w-full h-12 px-space-md rounded-lg bg-surface font-body-md text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-[#0ea5e9] transition-all" id="input-phone" name="phone" placeholder="0801 234 5678" required="" type="tel">
+<div class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-error pointer-events-none" id="icon-phone-error">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">error</span>
+</div>
+<div class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-[#047857] pointer-events-none" id="icon-phone-valid">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+</div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant" id="phone-helper">For critical verification updates &amp; SMS security challenges.</p>
+<p class="hidden font-body-sm text-body-sm text-error font-medium flex items-center gap-1" id="phone-error">
+          Please enter a valid mobile number for identity verification.
+        </p>
+</div>
+</fieldset>
+<!-- Card 2: Additional Volunteer Information -->
+<fieldset class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm space-y-space-md">
+<legend class="flex items-center justify-between w-full pb-space-xs">
+<span class="font-title-md text-title-md text-primary font-bold">Additional Details</span>
+<span class="font-label-code text-label-code text-on-surface-variant">Optional</span>
+</legend>
+<!-- Field: Volunteer Role Reference -->
+<div class="space-y-1.5">
+<label class="block font-label-lg text-label-lg font-semibold text-on-surface" for="input-role-ref">
+          Volunteer Role Reference
+        </label>
+<input aria-describedby="role-helper" class="w-full h-12 px-space-md rounded-lg bg-surface font-body-md text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-[#0ea5e9] transition-all" id="input-role-ref" name="role_ref" placeholder="e.g. Community Data Collector [Approved Intake Field]" type="text">
+<p class="font-body-sm text-body-sm text-on-surface-variant" id="role-helper">Supplied by your OpinionPadi task coordinator or team lead.</p>
+</div>
+<!-- Field: Preferred Contact Method Dropdown -->
+<div class="space-y-1.5">
+<label class="block font-label-lg text-label-lg font-semibold text-on-surface" for="select-contact-method">
+          Preferred Contact Method
+        </label>
+<div class="relative">
+<select aria-describedby="contact-helper" class="w-full h-12 px-space-md pr-10 rounded-lg bg-surface font-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-[#0ea5e9] appearance-none" id="select-contact-method" name="contact_method">
+<option value="email">Email</option>
+<option value="whatsapp">SMS / WhatsApp</option>
+<option value="phone">Direct Phone Call</option>
+</select>
+<span class="material-symbols-outlined text-on-surface-variant text-[20px] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">expand_more</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant" id="contact-helper">Channel used for task dispatch announcements.</p>
+</div>
+</fieldset>
+<!-- Submission & Flow Actions -->
+<div class="pt-space-xs space-y-space-sm">
+<!-- Primary Action CTA (50px+ Touch Target) -->
+<button class="w-full min-h-[52px] bg-[#0A2540] text-white rounded-xl font-title-md text-title-md font-semibold flex items-center justify-center gap-space-xs shadow-md hover:bg-[#0F2A4A] active:scale-[0.99] transition-all" id="btn-submit" type="submit">
+<span class="flex items-center gap-space-xs" id="submit-text">
+          Continue to Photo
+          <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+</span>
+<!-- Spinner Loading State -->
+<span class="hidden items-center gap-space-xs" id="submit-spinner">
+<svg class="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+<path class="opacity-75" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" fill="currentColor"></path>
+</svg>
+<span>Verifying &amp; Saving...</span>
+</span>
+</button>
+<!-- Back to Consent Action -->
+<div class="text-center pt-space-xs">
+<button class="font-label-lg text-label-lg text-on-surface hover:text-primary font-medium py-space-xs px-space-md rounded-lg transition-colors inline-flex items-center gap-1" onclick="alert('Navigating back to Screen 2 (Consent)')" type="button">
+<span class="material-symbols-outlined text-[16px]">chevron_left</span>
+          Back to Consent
+        </button>
+</div>
+<!-- Tertiary Withdrawal Action -->
+<div class="text-center pt-space-xs">
+<button class="font-body-sm text-body-sm text-error/80 hover:text-error underline underline-offset-4 decoration-error/30 transition-colors py-1 inline-block" onclick="openWithdrawModal()" type="button">
+          Withdraw Consent &amp; Exit Verification
+        </button>
+</div>
+</div>
+</form>
+<!-- Institutional Verification Footer -->
+<footer class="w-full px-margin pt-space-xl pb-space-lg mt-space-md text-center">
+<div class="flex items-center justify-center gap-space-xs text-on-surface-variant font-label-md text-label-md mb-1">
+<span class="material-symbols-outlined text-[#0ea5e9] text-[16px]">verified</span>
+<span>Powered by Voxelion Identity Platform • OpinionPadi Partner</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant/70">
+      © 2026 Voxelion Security Systems Inc. All rights reserved.
+    </p>
+</footer>
+<!-- Modal: Withdraw Consent Confirmation -->
+<div aria-describedby="modal-withdraw-desc" aria-labelledby="modal-withdraw-title" aria-modal="true" class="hidden fixed inset-0 z-50 flex items-center justify-center p-space-margin bg-[#0A2540]/60 backdrop-blur-sm transition-opacity" id="withdraw-modal" role="dialog">
+<div class="bg-surface-container-lowest rounded-2xl max-w-sm w-full p-space-lg shadow-2xl relative">
+<!-- Modal Warning Icon -->
+<div class="w-12 h-12 rounded-full bg-error-container text-error flex items-center justify-center mb-space-md">
+<span class="material-symbols-outlined text-[26px]" style="font-variation-settings: 'FILL' 1;">warning</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-primary font-bold" id="modal-withdraw-title">
+        Withdraw Consent?
+      </h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-2 leading-relaxed" id="modal-withdraw-desc">
+        Withdrawing stops your identity verification immediately. Any profile data entered will be purged in accordance with our data deletion policy, and your task <strong class="text-on-surface">OP-2026-7842</strong> will be canceled.
+      </p>
+<div class="mt-space-lg space-y-space-xs">
+<button class="w-full min-h-[48px] bg-error text-on-error rounded-xl font-title-md text-title-md font-semibold hover:opacity-95 active:scale-[0.99] transition-all" onclick="confirmWithdrawal()" type="button">
+          Confirm Withdrawal
+        </button>
+<button class="w-full min-h-[44px] bg-surface-container-high text-on-surface rounded-xl font-label-lg text-label-lg font-medium hover:bg-surface-container-highest transition-colors" onclick="closeWithdrawModal()" type="button">
+          Cancel &amp; Continue Verification
+        </button>
+</div>
+</div>
+</div>
+</div>
+<!-- State Switcher & Client Interaction Script -->
+</main>
+
+</body></html>

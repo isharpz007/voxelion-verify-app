@@ -1,0 +1,299 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"><meta content="mobile_blank" name="shell-type"><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "surface-container-low": "#f2f3ff", "secondary": "#5d5f5f", "surface-variant": "#dae2fd", "on-surface-variant": "#43474d", "error": "#ba1a1a", "primary-fixed-dim": "#b0c8eb", "tertiary": "#00101c", "on-surface": "#131b2e", "inverse-on-surface": "#eef0ff", "on-primary-fixed-variant": "#314865", "primary-container": "#0a2540", "on-tertiary": "#ffffff", "on-secondary-fixed-variant": "#454747", "surface": "#faf8ff", "on-error": "#ffffff", "surface-container-high": "#e2e7ff", "on-secondary-container": "#616363", "on-secondary-fixed": "#1a1c1c", "on-error-container": "#93000a", "inverse-primary": "#b0c8eb", "primary-fixed": "#d2e4ff", "on-background": "#131b2e", "primary": "#000f22", "surface-dim": "#d2d9f4", "surface-bright": "#faf8ff", "on-primary": "#ffffff", "on-primary-container": "#768dad", "surface-container-highest": "#dae2fd", "on-primary-fixed": "#001c37", "surface-container-lowest": "#ffffff", "background": "#faf8ff", "tertiary-fixed-dim": "#89ceff", "tertiary-container": "#00273b", "secondary-fixed": "#e2e2e2", "surface-container": "#eaedff", "on-tertiary-fixed": "#001e2f", "on-tertiary-container": "#0094d2", "outline-variant": "#c4c6ce", "error-container": "#ffdad6", "on-tertiary-fixed-variant": "#004c6e", "secondary-container": "#dfe0e0", "surface-tint": "#49607e", "tertiary-fixed": "#c9e6ff", "inverse-surface": "#283044", "secondary-fixed-dim": "#c6c6c7", "on-secondary": "#ffffff", "outline": "#74777e" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "margin-tablet": "1.5rem", "gutter-desktop": "1.5rem", "margin": "1rem", "space-2xl": "3rem", "space-lg": "1.5rem", "space-xl": "2rem", "space-md": "1rem", "gutter": "1rem", "margin-desktop": "2.5rem", "space-xs": "0.25rem", "space-sm": "0.5rem" }, "fontFamily": { "display-lg": ["Inter"], "label-lg": ["Inter"], "headline-lg-mobile": ["Inter"], "label-code": ["Inter"], "title-md": ["Inter"], "body-sm": ["Inter"], "headline-sm": ["Inter"], "body-lg": ["Inter"], "label-md": ["Inter"], "body-md": ["Inter"], "headline-md": ["Inter"], "headline-lg": ["Inter"] }, "fontSize": { "display-lg": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.025em", "fontWeight": "700"}], "label-lg": ["14px", {"lineHeight": "20px", "fontWeight": "500"}], "headline-lg-mobile": ["26px", {"lineHeight": "34px", "letterSpacing": "-0.015em", "fontWeight": "600"}], "label-code": ["12px", {"lineHeight": "16px", "letterSpacing": "0.04em", "fontWeight": "600"}], "title-md": ["16px", {"lineHeight": "24px", "letterSpacing": "-0.005em", "fontWeight": "600"}], "body-sm": ["12px", {"lineHeight": "18px", "fontWeight": "400"}], "headline-sm": ["20px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600"}], "body-lg": ["16px", {"lineHeight": "26px", "fontWeight": "400"}], "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500"}], "body-md": ["14px", {"lineHeight": "22px", "fontWeight": "400"}], "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.015em", "fontWeight": "600"}], "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600"}] } } } };</script></head><body class="bg-surface text-on-surface font-body-md text-body-md pt-safe pb-safe flex flex-col min-h-screen"><main class="flex-1 flex flex-col relative w-full bg-surface"><div class="flex flex-col w-full px-margin pb-space-xl">
+<!-- Top App Navigation & Security Status Indicator -->
+<header class="flex items-center justify-between w-full py-space-sm">
+<div class="flex items-center space-x-2"><span class="font-headline-sm text-headline-sm text-primary tracking-tight">Voxelion</span></div>
+<!-- Security Chip / Badge -->
+<div class="flex items-center space-x-1.5 px-3 py-1 rounded-full bg-surface-container-high text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px] text-on-tertiary-container" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+<span class="font-label-code text-label-code text-on-surface">256-bit Encrypted Session</span>
+</div>
+</header>
+<!-- Interactive State Demo Switcher Bar -->
+<section class="w-full mt-space-sm mb-space-md">
+<div class="bg-surface-container rounded-xl p-1 flex items-center justify-between shadow-sm overflow-x-auto no-scrollbar">
+<button class="flex-1 min-w-[76px] py-1.5 px-2 rounded-lg font-label-md text-label-md text-center transition-all duration-200 text-on-surface-variant hover:text-primary font-normal" id="tab-btn-valid" onclick="switchState('valid')">
+        Valid Link
+      </button>
+<button class="flex-1 min-w-[76px] py-1.5 px-2 rounded-lg font-label-md text-label-md text-center transition-all duration-200 text-on-surface-variant hover:text-primary font-normal" id="tab-btn-invalid" onclick="switchState('invalid')">
+        Invalid
+      </button>
+<button class="flex-1 min-w-[76px] py-1.5 px-2 rounded-lg font-label-md text-label-md text-center transition-all duration-200 text-on-surface-variant hover:text-primary font-normal" id="tab-btn-expired" onclick="switchState('expired')">
+        Expired
+      </button>
+<button class="flex-1 min-w-[76px] py-1.5 px-2 rounded-lg font-label-md text-label-md text-center transition-all duration-200 bg-surface text-primary shadow-sm font-semibold" id="tab-btn-used" onclick="switchState('used')">
+        Used
+      </button>
+</div>
+</section>
+<!-- DYNAMIC VIEW CONTAINER -->
+<div class="w-full relative">
+<!-- ============================================== -->
+<!-- STATE 1: VALID LINK (Active Normal Welcome)   -->
+<!-- ============================================== -->
+<div class="flex flex-col w-full space-y-space-md transition-opacity duration-300 hidden" id="view-valid">
+<!-- Refined Graphic Emblem Header -->
+<div class="flex flex-col items-center text-center pt-2">
+<div class="relative flex items-center justify-center w-16 h-16 rounded-full bg-surface-container-lowest shadow-md mb-space-sm">
+<div class="absolute inset-0 rounded-full bg-surface-container-high opacity-50 blur-sm"></div>
+<div class="relative w-12 h-12 rounded-full bg-surface-variant flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[28px] text-on-tertiary-container" style="font-variation-settings: 'FILL' 1;">badge</span>
+</div>
+<div class="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-primary-container text-on-primary flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-[14px]">check</span>
+</div>
+</div>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary tracking-tight">
+          Welcome to Voxelion
+        </h1>
+<p class="font-title-md text-title-md text-on-surface-variant mt-0.5">
+          Volunteer Identity Verification
+        </p>
+<p class="font-body-md text-body-md text-secondary mt-2 max-w-xs">
+          You’re one step closer to completing your volunteer task. Voxelion helps securely verify your identity through a simple guided process.
+        </p>
+</div>
+<!-- Task Information Card -->
+<div class="w-full bg-surface-container-lowest rounded-xl p-space-md shadow-sm">
+<div class="flex items-center justify-between pb-3 border-b border-surface-container-high">
+<span class="font-label-code text-label-code text-secondary tracking-wider">TASK DETAILS</span>
+<!-- OpinionPadi Partner Tag -->
+<div class="flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full bg-surface-container-high text-on-surface">
+<span class="material-symbols-outlined text-[14px] text-on-tertiary-container">handshake</span>
+<span class="font-label-code text-label-code font-semibold">OpinionPadi</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-3 pt-3">
+<div>
+<span class="font-body-sm text-body-sm text-secondary">Task Reference</span>
+<div class="flex items-center space-x-1 mt-0.5">
+<span class="font-label-code text-label-code font-bold text-primary" id="task-ref">OP-2026-7842</span>
+<button class="p-1 rounded hover:bg-surface-container text-secondary" onclick="copyRef()" title="Copy Task Code">
+<span class="material-symbols-outlined text-[14px]" id="copy-icon">content_copy</span>
+</button>
+</div>
+</div>
+<div>
+<span class="font-body-sm text-body-sm text-secondary">Estimated Duration</span>
+<div class="flex items-center space-x-1 mt-0.5">
+<span class="material-symbols-outlined text-[14px] text-secondary">schedule</span>
+<span class="font-title-md text-title-md text-primary font-medium">~2–3 mins</span>
+</div>
+</div>
+</div>
+<div class="mt-3 pt-3 border-t border-surface-container-high flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-secondary">Verification Status</span>
+<div class="flex items-center space-x-2 px-2.5 py-1 rounded-full bg-surface-container text-on-surface">
+<span class="w-2 h-2 rounded-full bg-[#10b981] animate-pulse"></span>
+<span class="font-label-md text-label-md font-semibold text-primary">Ready to begin</span>
+</div>
+</div>
+</div>
+<!-- Quick 3-Step Process Glance -->
+<div class="w-full bg-surface-container-low rounded-xl p-space-md"><h3 class="font-label-code text-label-code uppercase tracking-wider text-secondary mb-3">Verification Steps</h3><div class="flex items-center justify-between relative"><div class="flex flex-col items-center flex-1 text-center"><div class="w-7 h-7 rounded-full bg-primary-container text-on-primary font-label-code text-label-code flex items-center justify-center font-bold shadow-sm">1</div><span class="font-label-code text-label-code text-primary mt-1.5 leading-tight font-medium">Consent</span></div><div class="h-0.5 bg-surface-variant flex-1 -mt-4"></div><div class="flex flex-col items-center flex-1 text-center"><div class="w-7 h-7 rounded-full bg-surface-variant text-on-surface-variant font-label-code text-label-code flex items-center justify-center font-bold">2</div><span class="font-label-code text-label-code text-on-surface-variant mt-1.5 leading-tight">Intake</span></div><div class="h-0.5 bg-surface-variant flex-1 -mt-4"></div><div class="flex flex-col items-center flex-1 text-center"><div class="w-7 h-7 rounded-full bg-surface-variant text-on-surface-variant font-label-code text-label-code flex items-center justify-center font-bold">3</div><span class="font-label-code text-label-code text-on-surface-variant mt-1.5 leading-tight">Photo</span></div><div class="h-0.5 bg-surface-variant flex-1 -mt-4"></div><div class="flex flex-col items-center flex-1 text-center"><div class="w-7 h-7 rounded-full bg-surface-variant text-on-surface-variant font-label-code text-label-code flex items-center justify-center font-bold">4</div><span class="font-label-code text-label-code text-on-surface-variant mt-1.5 leading-tight">Live</span></div><div class="h-0.5 bg-surface-variant flex-1 -mt-4"></div><div class="flex flex-col items-center flex-1 text-center"><div class="w-7 h-7 rounded-full bg-surface-variant text-on-surface-variant font-label-code text-label-code flex items-center justify-center font-bold">5</div><span class="font-label-code text-label-code text-on-surface-variant mt-1.5 leading-tight">Result</span></div></div></div>
+<!-- Primary Call to Action -->
+<div class="w-full pt-1">
+<button class="w-full h-[52px] bg-primary-container hover:bg-primary text-on-primary rounded-xl font-title-md text-title-md flex items-center justify-center space-x-2 shadow-md active:scale-[0.99] transition-transform">
+<span>Get Started</span>
+<span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+</button>
+<p class="font-body-sm text-body-sm text-secondary text-center mt-2">
+          Next step: Volunteer Consent &amp; Permissions
+        </p>
+</div>
+<!-- Security Reassurance Notice -->
+<div class="flex items-center justify-center space-x-2 p-2 rounded-lg bg-surface-container-high/60 text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">lock</span>
+<span class="font-body-sm text-body-sm">Your information is handled securely throughout the verification process.</span>
+</div>
+</div>
+<!-- ============================================== -->
+<!-- STATE 2: INVALID LINK (Error State)            -->
+<!-- ============================================== -->
+<div class="flex flex-col w-full space-y-space-md transition-opacity duration-300 hidden" id="view-invalid">
+<div class="flex flex-col items-center text-center pt-4">
+<!-- Visual Warning Badge -->
+<div class="w-16 h-16 rounded-full bg-error-container text-on-error-container flex items-center justify-center shadow-sm mb-space-sm">
+<span class="material-symbols-outlined text-[32px]">error_outline</span>
+</div>
+<div class="px-3 py-1 rounded-full bg-error-container text-on-error-container font-label-code text-label-code uppercase tracking-wider mb-2">
+          Authentication Error
+        </div>
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-primary tracking-tight">
+          Invalid verification link
+        </h2>
+<p class="font-body-md text-body-md text-secondary mt-2 max-w-sm">
+          This verification link could not be validated or is incomplete. Security protocols require a fresh authenticated token from OpinionPadi.
+        </p>
+</div>
+<!-- Action Guidance Card -->
+<div class="w-full bg-surface-container-lowest rounded-xl p-space-md shadow-sm space-y-3">
+<h3 class="font-title-md text-title-md text-primary">What should you do?</h3>
+<div class="flex items-start space-x-3">
+<div class="w-6 h-6 rounded-full bg-surface-container text-on-surface font-label-code text-label-code flex items-center justify-center shrink-0 mt-0.5">1</div>
+<p class="font-body-md text-body-md text-on-surface-variant">
+            Return to your <strong>OpinionPadi dashboard</strong> or original volunteer assignment email.
+          </p>
+</div>
+<div class="flex items-start space-x-3">
+<div class="w-6 h-6 rounded-full bg-surface-container text-on-surface font-label-code text-label-code flex items-center justify-center shrink-0 mt-0.5">2</div>
+<p class="font-body-md text-body-md text-on-surface-variant">
+            Request a newly generated verification link or get in touch with your task coordinator.
+          </p>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="w-full space-y-2 pt-2">
+<button class="w-full h-[50px] bg-primary-container hover:bg-primary text-on-primary rounded-xl font-title-md text-title-md flex items-center justify-center space-x-2 shadow-sm">
+<span>Return to OpinionPadi</span>
+<span class="material-symbols-outlined text-[18px]">open_in_new</span>
+</button>
+<button class="w-full h-[44px] text-primary hover:bg-surface-container-high rounded-xl font-label-lg text-label-lg flex items-center justify-center">
+          Contact Task Coordinator
+        </button>
+</div>
+</div>
+<!-- ============================================== -->
+<!-- STATE 3: EXPIRED LINK (Timeout State)          -->
+<!-- ============================================== -->
+<div class="flex flex-col w-full space-y-space-md transition-opacity duration-300 hidden" id="view-expired">
+<div class="flex flex-col items-center text-center pt-4">
+<!-- Visual Timeout Badge -->
+<div class="w-16 h-16 rounded-full bg-surface-container-highest text-secondary flex items-center justify-center shadow-sm mb-space-sm">
+<span class="material-symbols-outlined text-[32px]">hourglass_disabled</span>
+</div>
+<div class="px-3 py-1 rounded-full bg-surface-container-high text-on-secondary-fixed-variant font-label-code text-label-code uppercase tracking-wider mb-2">
+          Session Expired
+        </div>
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-primary tracking-tight">
+          This link has expired
+        </h2>
+<p class="font-body-md text-body-md text-secondary mt-2 max-w-sm">
+          For your privacy and security, one-time verification links automatically expire after 24 hours. This session token has timed out.
+        </p>
+</div>
+<!-- Expired Details Card -->
+<div class="w-full bg-surface-container-lowest rounded-xl p-space-md shadow-sm">
+<div class="flex items-center justify-between pb-3 border-b border-surface-container-high">
+<span class="font-body-sm text-body-sm text-secondary">Reference Code</span>
+<span class="font-label-code text-label-code font-bold text-primary">OP-2026-7842</span>
+</div>
+<div class="flex items-center justify-between pt-3">
+<span class="font-body-sm text-body-sm text-secondary">Expired On</span>
+<span class="font-body-md text-body-md text-error font-medium">Today at 02:15 PM UTC</span>
+</div>
+</div>
+<!-- Action Guidance Card & Primary Button -->
+<div class="w-full bg-surface-container-low rounded-xl p-space-md space-y-2">
+<div class="flex items-center space-x-2 text-primary">
+<span class="material-symbols-outlined text-[20px] text-on-tertiary-container">refresh</span>
+<h4 class="font-title-md text-title-md">How to proceed?</h4>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+          Sign into your volunteer dashboard on OpinionPadi and click “Re-verify Identity” to issue a fresh 24-hour token.
+        </p>
+</div>
+<div class="w-full space-y-2 pt-2">
+<button class="w-full h-[50px] bg-primary-container hover:bg-primary text-on-primary rounded-xl font-title-md text-title-md flex items-center justify-center space-x-2 shadow-sm">
+<span>Request New Link via OpinionPadi</span>
+<span class="material-symbols-outlined text-[18px]">launch</span>
+</button>
+<button class="w-full h-[44px] text-secondary hover:text-primary font-body-sm text-body-sm flex items-center justify-center">
+          Need help? Visit OpinionPadi Help Center
+        </button>
+</div>
+</div>
+<!-- ============================================== -->
+<!-- STATE 4: PREVIOUSLY USED LINK (Consumed)      -->
+<!-- ============================================== -->
+<div class="flex flex-col w-full space-y-space-md transition-opacity duration-300" id="view-used">
+<div class="flex flex-col items-center text-center pt-4">
+<!-- Visual Verified Badge -->
+<div class="w-16 h-16 rounded-full bg-surface-variant text-on-tertiary-container flex items-center justify-center shadow-sm mb-space-sm">
+<span class="material-symbols-outlined text-[32px]" style="font-variation-settings: 'FILL' 1;">task_alt</span>
+</div>
+<div class="px-3 py-1 rounded-full bg-surface-container text-on-surface font-label-code text-label-code uppercase tracking-wider mb-2">
+          Already Processed
+        </div>
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-primary tracking-tight">
+          Link already used
+        </h2>
+<p class="font-body-md text-body-md text-secondary mt-2 max-w-sm">
+          This one-time verification link has already been submitted and processed for task <strong>OP-2026-7842</strong>. Verification cannot be re-run on a consumed link.
+        </p>
+</div>
+<!-- Status Summary Card -->
+<div class="w-full bg-surface-container-lowest rounded-xl p-space-md shadow-sm space-y-3">
+<div class="flex items-center justify-between pb-3 border-b border-surface-container-high">
+<span class="font-body-sm text-body-sm text-secondary">Submission Status</span>
+<div class="flex items-center space-x-1.5 text-on-tertiary-container">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-label-code text-label-code font-bold">Successfully Submitted</span>
+</div>
+</div>
+<div>
+<span class="font-body-sm text-body-sm text-secondary">Next Step</span>
+<p class="font-body-md text-body-md text-primary mt-0.5">
+            Your task coordinator will review your verification shortly. You may monitor status updates on your volunteer profile.
+          </p>
+</div>
+</div>
+<!-- Primary Action -->
+<div class="w-full pt-2">
+<button class="w-full h-[50px] bg-primary-container hover:bg-primary text-on-primary rounded-xl font-title-md text-title-md flex items-center justify-center space-x-2 shadow-sm">
+<span>Return to OpinionPadi Task Board</span>
+<span class="material-symbols-outlined text-[18px]">dashboard</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Footnote / Partnership Attributions -->
+<div class="w-full mt-space-xl pt-space-md border-t border-surface-container-high flex flex-col items-center text-center space-y-1">
+<div class="flex items-center space-x-2 text-secondary font-label-code text-label-code">
+<span>Powered by Voxelion Identity Platform</span>
+<span>•</span>
+<span>In partnership with OpinionPadi</span>
+</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant flex items-center space-x-2">
+<span>© 2026 Voxelion Inc. All rights reserved.</span>
+<span>•</span>
+<a class="underline hover:text-primary" href="#">Privacy Policy</a>
+<span>•</span>
+<a class="underline hover:text-primary" href="#">Terms</a>
+</div>
+</div>
+</div>
+<script>
+  function switchState(stateName) {
+    const states = ['valid', 'invalid', 'expired', 'used'];
+    
+    // Update views
+    states.forEach(st => {
+      const el = document.getElementById('view-' + st);
+      const btn = document.getElementById('tab-btn-' + st);
+      if (st === stateName) {
+        el.classList.remove('hidden');
+        btn.className = 'flex-1 min-w-[76px] py-1.5 px-2 rounded-lg font-label-md text-label-md text-center transition-all duration-200 bg-surface text-primary shadow-sm font-semibold';
+      } else {
+        el.classList.add('hidden');
+        btn.className = 'flex-1 min-w-[76px] py-1.5 px-2 rounded-lg font-label-md text-label-md text-center transition-all duration-200 text-on-surface-variant hover:text-primary font-normal';
+      }
+    });
+  }
+
+  function copyRef() {
+    const code = document.getElementById('task-ref').innerText;
+    navigator.clipboard.writeText(code).then(() => {
+      const icon = document.getElementById('copy-icon');
+      icon.innerText = 'check';
+      setTimeout(() => {
+        icon.innerText = 'content_copy';
+      }, 1500);
+    });
+  }
+</script><footer class="w-full py-space-md px-margin text-center mt-auto"><p class="font-label-code text-label-code text-on-surface-variant">Powered by Voxelion • © 2025 All Rights Reserved</p></footer></main>
+
+
+
+</body></html>

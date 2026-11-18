@@ -1,0 +1,651 @@
+16/11/2026, 16:18
+PRODUCT & ENGINEERING · IMPLEMENTATION DOCUMENT
+Voxelion + OpinionPadi — Technical Build Plan
+Shareable implementation document. Covers the stack, architecture, API contract, data model, and the phased frontend/backend plan. Companion to the Feature Specification and the 8-page Implementation Plan.
+Status: Proposed. Items marked TBD still need a decision before or during the relevant phase. Prepared: November 2026
+1. What we are building
+A volunteer accepts a task on OpinionPadi, is sent to Voxelion through a secure signed link, gives consent, fills in an intake form, uploads a face photo, and completes a live video challenge. On success they get a unique completion code, which they take back to OpinionPadi as proof. A reviewer approves or rejects the reward — backed by a server-side code check, not just the screenshot. Key principles:
+Consent is recorded before any photo is collected. Withdrawal is possible at every step and triggers stop-processing + deletion. The completion code is validated against the backend record; the screenshot is supporting evidence only.
+Voxelion + OpinionPadi — Technical Build Plan · 1
+
+16/11/2026, 16:18
+
+2. Technology stack
+
+RECOMMENDED STACK
+
+Layer
+
+Choice
+
+Why
+
+Framework
+
+Laravel 11/12 on PHP 8.3
+
+The workbrook platform already runs Laravel — same team skills, queues, storage, auth patterns
+
+Frontend
+
+React via Inertia.js + Vite
+
+React pages rendered inside Laravel — server controls the journey order, no separate SPA or CORS
+
+Journey auth
+
+Laravel session + CSRF
+
+Cookie-based; no bearer tokens in browser storage
+
+Database
+
+PostgreSQL (or MySQL)
+
+Relational fits the record model (participant → consent → session → result)
+
+ORM / migrations
+
+Eloquent + Laravel migrations
+
+The data model maps 1:1 to models
+
+Queue / jobs
+
+Laravel Queue + Redis
+
+Deletion workflows, webhook retries, provider callbacks ( ProcessDeletionRequest , DispatchWebhook )
+
+Media storage
+
+Laravel Storage → S3-compatible private bucket (encrypted, temporary signed URLs only)
+
+Photos/video are biometric data — never public URLs
+
+Verification provider
+
+Voxelion API/SDK first — TBD
+
+Behind a VerificationProvider interface so the vendor can be swapped
+
+Inter-platform auth
+
+Signed JWT (RS256) + short-lived onetime hand-off tokens via firebase/phpjwt
+
+OpinionPadi → Voxelion redirect and OpinionPadi → code validation
+
+Code validation
+
+REST endpoint under /api/v1/ called server-to-server by OpinionPadi
+
+Replaces screenshot-only trust
+
+Logging/audit
+
+Laravel events + audit_events table (structured logs)
+
+NDPA traceability
+
+WHY LARAVEL + INERTIA + REACT
+One codebase, one deploy. The verification journey is linear and server-driven — Inertia gives React interactivity while Laravel middleware enforces the step order server-side (a volunteer cannot reach /photo before consent is recorded — the route simply won't render). React handles the interactive parts: checkbox gating, getUserMedia camera capture, upload previews. OpinionPadi only talks to the /api/v1/ endpoints — it never sees the frontend. Reviewer screens can be Inertia pages too, or live in the existing Laravel admin app.
+
+Voxelion + OpinionPadi — Technical Build Plan · 2
+
+16/11/2026, 16:18
+Note: build this as a fresh Laravel app — the existing workbrook-api runs Lumen 7 / PHP 7.2 (both EOL). Share infrastructure (Redis, S3, DB server) but not the old codebase.
+Voxelion + OpinionPadi — Technical Build Plan · 3
+
+16/11/2026, 16:18
+
+REPO LAYOUT (PROPOSED)
+
+voxelion-verify/
+
+├── app/
+
+│ ├── Http/
+
+│ │ ├── Controllers/
+
+│ │ │ ├── Journey/
+
+# volunteer-facing (Inertia pages)
+
+│ │ │ │ ├── StartController.php
+
+# /start?t=… validates hand-off JWT
+
+│ │ │ │ ├── ConsentController.php # GET page / POST consent / POST withdraw
+
+│ │ │ │ ├── IntakeController.php # GET page / PUT intake
+
+│ │ │ │ ├── PhotoController.php
+
+# GET page / POST upload
+
+│ │ │ │ ├── LivenessController.php # GET page / POST start / POST complete
+
+│ │ │ │ └── ResultController.php # GET result + completion code
+
+│ │ │ ├── Api/
+
+# OpinionPadi server-to-server
+
+│ │ │ │ ├── CompletionCodeController.php # GET /api/v1/codes/:code
+
+│ │ │ │ └── RewardSubmissionController.php # create/list/approve/reject
+
+│ │ │ └── Admin/
+
+│││
+
+└── ReviewController.php # reviewer approve/reject screens
+
+│ │ ├── Middleware/
+
+│ │ │ ├── ValidateHandoffToken.php # RS256 JWT + jti replay check
+
+│ │ │ ├── EnforceSessionState.php
+
+# the gate: blocks out-of-order steps
+
+│ │ │ └── VerifyWebhookSignature.php # HMAC on OpinionPadi calls
+
+│ │ └── Requests/
+
+# form request validation
+
+│ ├── Models/
+
+Participant · Consent · VerificationSession · MediaAsset
+
+││
+
+VerificationResult · CompletionCode · RewardSubmission
+
+││
+
+AuditEvent · DeletionRequest
+
+│ ├── Enums/
+
+│ │ └── SessionState.php
+
+# CREATED→CONSENTED→INTAKE_DONE→
+
+││
+
+# PHOTO_OK→LIVE_CHECK→VERIFIED|FAILED
+
+│ ├── Services/
+
+│ │ ├── HandoffTokenService.php
+
+# decode/verify OpinionPadi JWT
+
+│ │ ├── PhotoQualityService.php
+
+# face detect, blur, lighting
+
+│ │ ├── VerificationProvider/
+
+# swap provider here only
+
+│ │ │ ├── VerificationProvider.php # interface
+
+│ │ │ └── VoxelionProvider.php
+
+# implements it (or chosen vendor)
+
+│ │ ├── CompletionCodeService.php
+
+# generate/hash/validate/consume
+
+│ │ └── OpinionPadiWebhook.php
+
+# outbound signed status events
+
+│ └── Jobs/
+
+│
+
+├── ProcessDeletionRequest.php
+
+# withdrawal → delete media+records
+
+│
+
+├── DispatchWebhook.php
+
+# retry/backoff to OpinionPadi
+
+│
+
+└── RunQualityChecks.php
+
+│
+
+├── resources/js/
+
+# React lives here (Inertia + Vite)
+
+│ ├── Pages/
+
+│ │ ├── Start.jsx
+
+Consent.jsx Intake.jsx
+
+│ │ ├── Photo.jsx
+
+LiveCheck.jsx Result.jsx Exit.jsx
+
+│ │ └── Admin/ReviewQueue.jsx
+
+# reviewer screens
+
+│ ├── Components/
+
+│ │ ├── JourneyLayout.jsx
+
+# progress bar + Withdraw button
+
+│ │ ├── CameraCapture.jsx
+
+│ │ └── QualityFeedback.jsx
+
+│ └── app.jsx
+
+│
+
+├── routes/
+
+│ ├── web.php
+
+# Inertia journey routes (session auth)
+
+│ └── api.php
+
+# /api/v1/* OpinionPadi endpoints
+
+├── database/migrations/
+
+# the 9 tables from Section 5
+
+├── config/
+
+│ ├── opinionpadi.php
+
+# public key, webhook secret, URLs
+
+│ └── verification.php
+
+# provider creds, thresholds, TTLs
+
+├── composer.json package.json vite.config.js
+
+Voxelion + OpinionPadi — Technical Build Plan · 4
+
+16/11/2026, 16:18
+
+3. Architecture
+
+┌──────────────────┐ signed link (one-time JWT) ┌──────────────────────────┐
+
+│ OPINIONPADI │ ─────────────────────────────▶ │ LARAVEL APP
+
+│
+
+│ task · reward │
+
+│
+
+│
+
+│ review · payout │
+
+│ web.php (session auth) │
+
+└───────┬──────────┘
+
+│ └─ Inertia → React pages│
+
+│
+
+│ consent · intake · │
+
+│ server-to-server:
+
+│ photo · live · result │
+
+│ validate completion code ─────────────▶ │
+
+│
+
+│ (GET /api/v1/codes/:code)
+
+│ api.php (token auth) │
+
+│
+
+│ └─ code validation · │
+
+│ webhooks: status updates ◀───────────── │ reward submissions │
+
+│ (HMAC-signed)
+
+│
+
+│
+
+│
+
+│ middleware:
+
+│
+
+│
+
+│ handoff JWT · session- │
+
+│
+
+│ state gate · HMAC
+
+│
+
+│
+
+└──┬───────┬───────┬───────┘
+
+│
+
+│
+
+│
+
+│
+
+│
+
+┌──────▼─┐ ┌───▼───┐ ┌─▼────────────┐
+
+│
+
+│ Postgres│ │ Redis │ │ S3 private │
+
+│
+
+│ records │ │ queue │ │ media bucket │
+
+│
+
+└────────┘ └───┬───┘ └──────────────┘
+
+│
+
+┌──────▼──────────┐
+
+└──────────────────────────────────────────────▶│ Verification │
+
+(provider callbacks)
+
+│ provider (TBD) │
+
+└─────────────────┘
+
+4. API contract (proposed)
+4.1 HAND-OFF: OPINIONPADI → VOXELION
+GET https://verify.voxelion.example/start?t=<one-time JWT>
+JWT claims (signed by OpinionPadi, RS256, exp ≤ 15 min, single-use jti ):
+{ "iss": "opinionpadi", "sub": "volunteer-op-id", "task_id": "task_123", "submission_id": "sub_456", "jti": "uuid", "exp": 1731700000
+}
+
+Voxelion + OpinionPadi — Technical Build Plan · 5
+
+16/11/2026, 16:18
+
+4.2 JOURNEY ROUTES ( WEB.PHP — SESSION AUTH + INERTIA)
+
+Method
+
+Route
+
+GET
+
+/start?t=…
+
+GET/POST /consent
+
+POST
+
+/withdraw
+
+GET/PUT
+
+/intake
+
+GET/POST /photo
+
+GET
+
+/live
+
+POST
+
+/live/challenge
+
+POST
+
+/live/complete
+
+GET
+
+/result
+
+GET
+
+/exit
+
+Purpose Validate hand-off JWT → create participant + session → redirect to /consent Show consent page / record the two ticks + timestamps Withdraw consent → stop-processing + deletion job Show intake form / submit (validated) Show upload page / accept photo → quality checks Show live-check page Issue a randomized challenge Submit capture → liveness + facial similarity Outcome + completion code Withdrawn/declined confirmation page
+
+State machine enforced server-side: CREATED → CONSENTED → INTAKE_DONE → PHOTO_OK → LIVE_CHECK → VERIFIED / FAILED / MANUAL_REVIEW (+ WITHDRAWN / DECLINED terminal states). The EnforceSessionState middleware sits on every journey route and redirects/rejects out-of-order access — e.g. no /photo render before CONSENTED . Session state lives server-side, so a network drop resumes from verification_sessions.state on next page load.
+
+4.3 OPINIONPADI → VOXELION (SERVER-TO-SERVER)
+
+Method Route
+
+GET
+
+/api/v1/completion-
+
+codes/:code
+
+POST
+
+OpinionPadi-side webhook receiver
+
+Purpose Validate code → returns { valid, participant_ref, task_id, verified_at } . Called by OpinionPadi backend during reward review Voxelion sends status events (verified, failed, withdrawn) — HMAC-signed
+
+4.4 COMPLETION CODE RULES (PROPOSED)
+Format: VX-XXXX-XXXX-XXXX (Crockford base32, no ambiguous chars), stored hashed. Bound to one participant_id + task_id + session_id . Single-use for reward approval; expires after TBD (suggest 72 h). Validation checks: exists, not expired, not already consumed, session status = VERIFIED.
+
+Voxelion + OpinionPadi — Technical Build Plan · 6
+
+16/11/2026, 16:18
+
+5. Data model (proposed)
+
+Table
+
+Key fields
+
+participants
+
+id (UUID, the Participant ID), op_volunteer_ref , task_id , intake fields (TBD), status , timestamps
+
+consents
+
+id , participant_id , consent_version , checkbox_1_at , checkbox_2_at , declined_at , withdrawn_at , disclosure_hash
+
+verification_sessions
+
+id , participant_id , state , handoff_jti (unique → no duplicate sessions), expires_at , timestamps
+
+media_assets
+
+id , participant_id , kind (photo/video), s3_key , quality_check_json , created_at — bucket is private, server-side encryption
+
+verification_results
+
+id , session_id , challenge , liveness_response_json , similarity_score , outcome , completed_at
+
+completion_codes
+
+id , code_hash , session_id , participant_id , issued_at , expires_at , consumed_at , consumed_by_task
+
+reward_submissions
+
+id , task_id , participant_id , code_id , screenshot_s3_key , review_state (pending/approved/rejected), reviewer_id , decision_at
+
+audit_events
+
+id , actor , action , entity_type , entity_id , metadata_json , created_at
+
+deletion_requests
+
+id , participant_id , trigger (withdrawal/request), status , processor_confirmations_json
+
+Participant ID format TBD — suggest UUIDv4, never exposed in public URLs.
+
+Voxelion + OpinionPadi — Technical Build Plan · 7
+
+16/11/2026, 16:18
+
+6. Frontend pages (React via Inertia — ) resources/js/Pages
+
+Page Landing/hand-off
+Consent Intake Photo upload Live check
+
+Route /start? t=… /consent /intake /photo /live
+
+Result
+
+/result
+
+Withdrawn/declined /exit
+
+Contents Validates token, shows errors for expired/used links
+NDPA disclosure, 2 checkboxes, disabled Continue, Decline + Withdraw controls Short form, inline validation — fields TBD (Section 5.3) Upload/preview, quality-check feedback, retry prompt getUserMedia camera, randomized challenge prompt, capture + upload, permission-denied fallback Success: completion code prominent + copy button (screenshot-friendly). Failure: retry/manual-review messaging Confirmation + what happens to their data
+
+Cross-cutting: JourneyLayout wraps every page (progress bar + Withdraw control), session state resumes server-side on reload, mobile-first layout (volunteers are mostly on phones), accessible fallbacks for the video challenge TBD.
+
+7. Phased plan
+Two parallel tracks — backend and frontend — running through seven phases. No fixed timeline is attached; each phase lists its deliverables and its exit criteria (what must be true before moving on), so progress is measured by completion, not dates.
+PHASE 0 — DISCOVERY & DECISIONS Purpose: close every open decision before code is written. This phase is a hard blocker — later phases inherit its outputs. Backend / platform:
+Confirm whether Voxelion exposes a face-verification API or SDK. If yes: document endpoints, auth, response format, limits. If no: shortlist providers — NIST FRTE West-Africa results required (see FACE_MATCHING_RESEARCH.md )
+Decide inter-platform auth: token format, signing keys (RS256), key rotation, token TTL Decide session rules: expiry, duplicate-session handling, resume behaviour Agree retry limits for photo upload and liveness failures
+Voxelion + OpinionPadi — Technical Build Plan · 8
+
+16/11/2026, 16:18
+Frontend / product: Obtain the Section 5.3 intake field list — names, types, validation rules Legal sign-off on consent wording and NDPA lawful basis Decide automatic vs. reviewer-led reward approval Decide accessibility fallback for volunteers who cannot complete the video challenge
+Exit criteria: every item in Section 9 (Open decisions) has an owner and an answer. Provider chosen or buildvs-buy decided.
+PHASE 1 — FOUNDATIONS Purpose: a running skeleton — deployable API and app shell with auth and the session state machine in place. Backend:
+Laravel app scaffold (PHP 8.3): env config, health endpoint, Inertia + Vite setup PostgreSQL + Eloquent; migrations for all tables in Section 5 ValidateHandoffToken middleware: verify OpinionPadi RS256 JWT (exp, one-time jti replay protection) OpinionPadi server-to-server credentials for /api/v1/* routes SessionState enum + EnforceSessionState middleware rejecting out-of-order transitions AuditEvent model + event listeners writing to audit_events CI: Pint (code style), PHPStan/Larastan, PHPUnit/Pest pipeline Frontend: Inertia + React scaffold inside resources/js : app.jsx , shared JourneyLayout (progress bar + Withdraw), error handling Start.jsx : token validation feedback, expired/used/invalid link error states Design system basics: layout, typography, buttons, form components, mobile-first grid Journey progress indicator (Consent → Intake → Photo → Live → Result) Exit criteria: a signed link opens the app, creates a session, and the state machine blocks skipping steps.
+PHASE 2 — CONSENT, INTAKE & PHOTO Purpose: the first half of the journey works end-to-end — consent gating, participant creation, photo quality checks. Backend:
+Voxelion + OpinionPadi — Technical Build Plan · 9
+
+16/11/2026, 16:18
+POST /consent — records both ticks with timestamps + disclosure version/hash; declining sets terminal state PUT /intake — Form Request validation, duplicate-record prevention, Participant ID issued POST /photo — S3 temporary-URL upload flow via Laravel Storage; RunQualityChecks job: face detected, blur score, lighting score, file format, file size POST /withdraw — sets WITHDRAWN , dispatches ProcessDeletionRequest (Laravel Queue), records processor propagation status Photo retry counter against agreed limit
+Frontend:
+Consent.jsx : NDPA disclosure text, two mandatory checkboxes, Continue disabled until both ticked, visible Decline option Intake.jsx : field-level validation, server-error surfacing, submit states Photo.jsx : file picker + camera capture, preview, per-check failure messaging ("too blurry — retake"), re-upload loop Persistent "Withdraw consent" affordance in JourneyLayout on every page + confirmation dialog
+Exit criteria: a volunteer can consent, fill intake, upload a photo, and get clear pass/fail feedback — and consent is required before the photo endpoint accepts anything.
+PHASE 3 — LIVE VERIFICATION & RESULT
+Purpose: the biometric core — liveness challenge, facial match, completion code.
+Backend:
+POST /live/challenge — issues a randomized challenge from the agreed set (e.g. blink, turn head), recorded against the session POST /live/complete — submits capture to provider via VerificationProvider interface; stores liveness response + similarity score Outcome logic: pass → VERIFIED + CompletionCodeService issues code (Crockford base32, hashed at rest, single-use, TTL); fail → retry or MANUAL_REVIEW GET /result — outcome + code for the result page Manual-review queue with reviewer assignment
+Frontend:
+LiveCheck.jsx : getUserMedia camera access, on-screen challenge instructions, capture countdown, upload progress Camera-permission-denied and camera-unavailable fallback screens with retry Result.jsx : success shows the completion code prominently with copy button (screenshot-friendly layout); failure shows retry/manual-review messaging per agreed copy
+Voxelion + OpinionPadi — Technical Build Plan · 10
+
+16/11/2026, 16:18
+Accessibility fallback path per Phase 0 decision Exit criteria: both liveness AND similarity must pass to reach VERIFIED ; a real volunteer journey produces a valid completion code.
+PHASE 4 — OPINIONPADI INTEGRATION & REWARD REVIEW
+Purpose: close the loop — OpinionPadi can validate codes server-to-server and reviewers can decide rewards. Backend:
+GET /api/v1/completion-codes/:code — server-to-server validation; returns validity, participant ref, task, timestamp; marks code consumed on approval OpinionPadiWebhook service + DispatchWebhook job: verified , failed , manual_review , withdrawn — HMAC-signed with retry/backoff Duplicate-submission and already-consumed-code handling reward_submissions endpoints: create, list for review, approve/reject with reasons Frontend / OpinionPadi side:
+Proof submission screen on OpinionPadi: screenshot upload + optional code entry field Admin/ReviewQueue.jsx (or existing Laravel admin app): submitted screenshot beside the backend validation result (code valid/expired/consumed/not found), approve/reject actions with reason selection Reward status visible to the volunteer Exit criteria: screenshot alone is never sufficient — every approval is backed by a VERIFIED code validation against the backend record.
+PHASE 5 — HARDENING, PRIVACY & TESTING
+Purpose: prove the system is safe before real biometric data flows through it.
+Security testing: token forgery, replayed jti , out-of-order state calls, completion-code guessing/enumeration, bucket access checks, signed-URL TTL Privacy testing: withdrawal mid-journey → confirm processing stops, media deleted from bucket, records removed/anonymized, processor deletion confirmations recorded; consent-gating cannot be bypassed Failure-matrix testing: declined consent, invalid intake, every photo quality failure, camera denied, liveness fail, match fail, retry-limit exhaustion, network drop mid-upload and mid-video, duplicate session, expired link Load testing: concurrent sessions, large media uploads, provider latency spikes and timeouts Mobile testing: device/browser matrix, low-bandwidth behaviour, camera quirks across Android/iOS
+Voxelion + OpinionPadi — Technical Build Plan · 11
+
+16/11/2026, 16:18
+Bias check: run the verification pass/fail rates across a representative sample; flag demographic skew per FACE_MATCHING_RESEARCH.md Exit criteria: full journey passes end-to-end on real devices; the privacy checklist in Section 8 is verifiably true.
+
+PHASE 6 — DEPLOYMENT & MONITORING
+Purpose: ship safely and see it working.
+Staging environment mirroring production; secrets in a secrets manager, never in code Data retention + deletion schedules running (media TTL, audit-log retention) Dashboards/alerts: verification pass rate, photo quality-failure rate, liveness/match failure rate, codevalidation latency, webhook delivery health, deletion-job queue depth Runbooks: provider outage, webhook backlog, deletion-job failure Production smoke test with a controlled live task on OpinionPadi
+Exit criteria: the definition of completion from the spec — volunteer completes consent → result, OpinionPadi validates the code against the backend, a reviewer records a reward decision.
+
+PHASE FLOW AT A GLANCE
+
+Phase 0 Decisions →
+
+Phase 1
+
+Phase 2
+
+Phase 3
+
+Phase 4
+
+Phase 5
+
+Phase 6
+
+Foundations → Consent/intake/ → Liveness/match/ → OP integration/ → Hardening → Deploy/
+
+photo
+
+completion code reward review
+
+test
+
+monitor
+
+Backend: — scaffold+auth consent+photo Frontend: — shell+/start consent+intake
+
+provider+codes
+
+validate+webhooks pen+load
+
+prod+alerts
+
+live video+result OP submit+review mobile+fail smoke test
+
+Critical path: the Phase 0 provider decision gates Phase 3. If Voxelion has no API, provider procurement/integration is the longest lead item — start that conversation immediately.
+
+8. Security & privacy checklist
+NDPA lawful basis documented; disclosure text approved by legal TLS everywhere; media encrypted at rest in private bucket (signed URLs, short TTL) Participant identifiers never in public URLs or client-visible logs Consent + withdrawal recorded with timestamps and disclosure version/hash Withdrawal → stop-processing, delete media + records, propagate to processors, record confirmations
+Voxelion + OpinionPadi — Technical Build Plan · 12
+
+16/11/2026, 16:18
+One-time hand-off tokens (replay-safe jti ); sessions expire; no duplicate active sessions Completion codes hashed at rest, single-use, expiring Audit log for all state transitions and reviewer decisions Retry limits on photo/liveness; unresolved → manual review Provider selected using NIST FRTE West-Africa results (bias testing)
+
+9. Open decisions (blockers first)
+# Decision 1 Does Voxelion have a face-verification API/SDK? If not, pick provider 2 Intake form fields (Section 5.3) 3 Consent wording + lawful basis 4 Biometric data controller + retention schedule 5 Automatic vs. reviewer-led reward approval 6 Token/session expiry, retry limits, code TTL 7 Accessibility fallback for video challenge 8 Screenshot format/limits, duplicate handling
+
+Owner Eng lead Product Legal Legal/DPO Product Eng Product/Eng Product
+
+Blocks Phase 3 Phase 2 Phase 2 Phase 2, 6 Phase 4 Phase 1–3 Phase 3 Phase 4
+
+---
+
+*Sources: Voxelion + OpinionPadi Feature Specification (Nov 2026), Implementation Plan (8pp), `FACE_MATCHING_RESEAR
+
+
+
+
+
+Voxelion + OpinionPadi — Technical Build Plan · 13
+
+
