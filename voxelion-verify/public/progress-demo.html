@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Multi-step Progress Indicator</title>
+<style>
+    :root {
+        --violet: #7c3aed;
+        --violet-light: #a78bfa;
+        --track: #e5e1f0;
+        --text: #1e1b29;
+        --text-muted: #8a8499;
+        --step: 1500ms;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+        font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        background: #faf9fc;
+        color: var(--text);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 48px;
+    }
+
+    h1 {
+        font-size: 1.35rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+    }
+
+    .progress {
+        display: flex;
+        align-items: flex-start;
+        width: min(720px, 92vw);
+    }
+
+    .step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        flex-shrink: 0;
+        width: 96px;
+    }
+
+    .step .dot {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: #fff;
+        border: 2px solid var(--track);
+        color: var(--text-muted);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 0.95rem;
+        position: relative;
+        transition: border-color .4s ease, background-color .4s ease, color .4s ease;
+        z-index: 1;
+    }
+
+    /* glow ring behind the active dot */
+    .step .dot::before {
+        content: '';
+        position: absolute;
+        inset: -7px;
+        border-radius: 50%;
+        box-shadow: 0 0 0 4px rgba(124, 58, 237, .18), 0 0 18px 4px rgba(124, 58, 237, .35);
+        opacity: 0;
+        transition: opacity .4s ease;
+    }
+
+    .step .label {
+        font-size: .82rem;
+        font-weight: 500;
+        color: var(--text-muted);
+        transition: color .4s ease;
+        text-align: center;
+    }
+
+    .step.active .dot {
+        border-color: var(--violet);
+        color: var(--violet);
+    }
+
+    .step.active .dot::before {
+        opacity: 1;
+        animation: pulse var(--step) ease-in-out infinite;
+    }
+
+    .step.active .label {
+        color: var(--violet);
+        font-weight: 600;
+    }
+
+    .step.done .dot {
+        background: var(--violet);
+        border-color: var(--violet);
+        color: #fff;
+    }
+
+    .step.done .dot .num { display: none; }
+    .step.done .dot::after {
+        content: '';
+        width: 12px;
+        height: 7px;
+        border-left: 2.5px solid #fff;
+        border-bottom: 2.5px solid #fff;
+        transform: rotate(-45deg) translateY(-1px);
+    }
+
+    /* connecting line: track + animated fill */
+    .connector {
+        flex: 1;
+        height: 3px;
+        background: var(--track);
+        border-radius: 2px;
+        margin-top: 20px; /* vertically centered on the dot */
+        overflow: hidden;
+        position: relative;
+    }
+
+    .connector .fill {
+        position: absolute;
+        inset: 0 auto 0 0;
+        width: 0%;
+        background: linear-gradient(90deg, var(--violet), var(--violet-light));
+        border-radius: 2px;
+        transition: width .9s ease;
+    }
+
+    .connector.filled .fill { width: 100%; }
+
+    @keyframes pulse {
+        0%, 100% {
+            box-shadow: 0 0 0 4px rgba(124, 58, 237, .18), 0 0 18px 4px rgba(124, 58, 237, .35);
+        }
+        50% {
+            box-shadow: 0 0 0 7px rgba(124, 58, 237, .10), 0 0 26px 8px rgba(124, 58, 237, .22);
+        }
+    }
+</style>
+</head>
+<body>
+
+<h1>Multi-step Progress Indicator</h1>
+
+<div class="progress" id="progress">
+    <div class="step">
+        <div class="dot"><span class="num">1</span></div>
+        <span class="label">Account</span>
+    </div>
+    <div class="connector"><div class="fill"></div></div>
+    <div class="step">
+        <div class="dot"><span class="num">2</span></div>
+        <span class="label">Profile</span>
+    </div>
+    <div class="connector"><div class="fill"></div></div>
+    <div class="step">
+        <div class="dot"><span class="num">3</span></div>
+        <span class="label">Review</span>
+    </div>
+    <div class="connector"><div class="fill"></div></div>
+    <div class="step">
+        <div class="dot"><span class="num">4</span></div>
+        <span class="label">Complete</span>
+    </div>
+</div>
+
+<script>
+    const STEP_MS = 1500;
+    const steps = [...document.querySelectorAll('.step')];
+    const connectors = [...document.querySelectorAll('.connector')];
+    let current = 0; // index of the active step
+
+    function render() {
+        steps.forEach((s, i) => {
+            s.classList.toggle('done', i < current);
+            s.classList.toggle('active', i === current);
+        });
+        connectors.forEach((c, i) => c.classList.toggle('filled', i < current));
+    }
+
+    function advance() {
+        current++;
+        if (current > steps.length) {
+            // all complete — brief hold, then restart from step one
+            setTimeout(() => { current = 0; render(); }, STEP_MS);
+        }
+        render();
+    }
+
+    render();
+    setInterval(advance, STEP_MS);
+</script>
+
+</body>
+</html>

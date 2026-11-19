@@ -50,9 +50,6 @@ function ValidView({ task, dev }) {
                     <div className="relative w-12 h-12 rounded-full bg-surface-variant flex items-center justify-center text-primary-container">
                         <Icon name="badge" className="text-[28px] text-on-tertiary-container" fill />
                     </div>
-                    <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-primary-container text-on-primary flex items-center justify-center shadow-sm">
-                        <Icon name="check" className="text-[14px]" />
-                    </div>
                 </div>
                 <h1 className="font-headline-lg-mobile text-headline-lg-mobile text-primary tracking-tight">Welcome to Voxelion</h1>
                 <p className="font-body-md text-body-md text-secondary mt-2 max-w-xs">
