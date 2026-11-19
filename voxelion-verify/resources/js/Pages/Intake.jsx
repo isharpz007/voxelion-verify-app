@@ -1,3 +1,6 @@
+/**
+ * Step 2: the Your Information form, email-OTP send (masked destination), 6-digit code entry with countdown, resend cooldown, and verified-skip logic.
+ */
 import { router, useForm } from '@inertiajs/react';
 import { useEffect, useRef, useState } from 'react';
 import Icon from '../Components/Icon';
@@ -26,10 +29,55 @@ function Field({ label, helper, error, children }) {
     );
 }
 
-const inputClass =
-    'w-full h-12 px-space-md rounded-lg bg-surface font-body-md text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-[#0ea5e9] transition-all border border-outline-variant/40';
+const selectClass =
+    'h-10 bg-transparent font-body-md text-on-surface appearance-none border-0 border-b-[1.5px] border-outline-variant/50 focus:border-[#111111] focus:outline-none transition-colors';
 
-function OtpInput({ value, onChange }) {
+/** Underline-only field: label floats up + shrinks while focused or non-empty. */
+function FloatField({ label, error, helper, value, onFocus, onBlur, ...inputProps }) {
+    const [focused, setFocused] = useState(false);
+    const floated = focused || String(value ?? '') !== '';
+
+    return (
+        <div className="space-y-1.5">
+            <div className="relative pt-5">
+                <input
+                    {...inputProps}
+                    value={value}
+                    onFocus={(e) => {
+                        setFocused(true);
+                        onFocus?.(e);
+                    }}
+                    onBlur={(e) => {
+                        setFocused(false);
+                        onBlur?.(e);
+                    }}
+                    className="w-full bg-transparent px-0.5 py-2 font-body-md text-on-surface border-0 border-b-[1.5px] border-outline-variant/50 placeholder-transparent focus:outline-none transition-colors"
+                />
+                <label
+                    className={`absolute left-0.5 font-body-md pointer-events-none origin-left transition-all duration-200 ${
+                        floated ? 'top-0 scale-[.8] text-[#111111]' : 'top-[26px] text-on-surface-variant'
+                    }`}
+                >
+                    {label}
+                </label>
+                <span
+                    className={`absolute bottom-0 left-0 h-[1.5px] w-full bg-[#111111] origin-center transition-transform duration-300 ${
+                        focused ? 'scale-x-100' : 'scale-x-0'
+                    }`}
+                />
+            </div>
+            {error ? (
+                <p className="font-body-sm text-body-sm text-error flex items-center gap-1">
+                    <Icon name="error" className="text-[14px]" /> {error}
+                </p>
+            ) : (
+                helper && <p className="font-body-sm text-body-sm text-on-surface-variant">{helper}</p>
+            )}
+        </div>
+    );
+}
+
+function OtpInput({ value, onChange, invalid }) {
     // Six auto-advancing boxes: digit entry moves focus forward, backspace
     // moves it back, and pasting a full code fills every box at once.
     const refs = useRef([]);
@@ -62,7 +110,11 @@ function OtpInput({ value, onChange }) {
                 <input
                     key={i}
                     ref={(el) => (refs.current[i] = el)}
-                    className="w-12 h-14 text-center rounded-lg bg-surface font-label-code text-label-lg text-on-surface focus:outline-none focus:ring-2 focus:ring-[#0ea5e9] transition-all border border-outline-variant/40"
+                    className={`w-12 h-14 text-center rounded-lg bg-surface font-label-code text-label-lg text-on-surface focus:outline-none focus:ring-2 transition-all border ${
+                        invalid
+                            ? 'border-error text-error focus:ring-error/50'
+                            : 'border-outline-variant/40 focus:ring-[#0ea5e9]'
+                    }`}
                     type="text"
                     inputMode="numeric"
                     autoComplete={i === 0 ? 'one-time-code' : 'off'}
@@ -112,22 +164,28 @@ export default function Intake({ task, participant, awaitingVerification, contac
         // Optimistic transition — waiting on onSuccess left the screen stuck
         // on method selection even though the code was sent. onError flips
         // back so a delivery failure still shows the error on the picker.
+        // transform() returns void (not the form) — call it before post().
         setChoosingMethod(false);
-        sendForm.transform(() => ({ channel })).post('/api/otp/send', {
+        sendForm.transform(() => ({ channel }));
+        sendForm.post('/api/otp/send', {
             onSuccess: () => { setSecondsLeft(300); setCooldown(60); },
             onError: () => setChoosingMethod(true),
         });
     };
 
     const resend = () => {
-        sendForm.transform(() => ({ channel: otpStatus?.channel ?? 'email' })).post('/api/otp/resend', {
+        sendForm.transform(() => ({ channel: otpStatus?.channel ?? 'email' }));
+        sendForm.post('/api/otp/resend', {
             onSuccess: () => { setSecondsLeft(300); setCooldown(60); },
         });
     };
 
     const verify = (e) => {
         e.preventDefault();
-        codeForm.post('/api/otp/verify');
+        codeForm.post('/api/otp/verify', {
+            // Wrong code: clear the boxes so the user retypes cleanly.
+            onError: () => codeForm.setData('code', ''),
+        });
     };
 
     const activeChannel = otpStatus?.channel;
@@ -141,7 +199,6 @@ export default function Intake({ task, participant, awaitingVerification, contac
             return (
                 <JourneyLayout step={2} taskRef={task.reference} showBack>
                     <div className="space-y-space-xs">
-                        <p className="font-label-code text-label-code text-[#0ea5e9] uppercase font-bold tracking-wider">Contact Verification</p>
                         <h1 className="font-headline-lg-mobile text-headline-lg-mobile font-semibold text-on-surface tracking-tight">Verify your details</h1>
                         <p className="font-body-md text-body-md text-on-surface-variant leading-relaxed">
                             How would you like to receive your verification code?
@@ -189,7 +246,6 @@ export default function Intake({ task, participant, awaitingVerification, contac
         return (
             <JourneyLayout step={2} taskRef={task.reference} showBack>
                 <div className="space-y-space-xs">
-                    <p className="font-label-code text-label-code text-[#0ea5e9] uppercase font-bold tracking-wider">Contact Verification</p>
                     <h1 className="font-headline-lg-mobile text-headline-lg-mobile font-semibold text-on-surface tracking-tight">Enter your code</h1>
                     <p className="font-body-md text-body-md text-on-surface-variant leading-relaxed">
                         We sent a verification code to <strong className="text-on-surface">{activeDestination}</strong>.
@@ -199,7 +255,7 @@ export default function Intake({ task, participant, awaitingVerification, contac
                 <form onSubmit={verify} className="space-y-space-lg">
                     <div className="w-full bg-surface-container-lowest rounded-xl p-space-md shadow-sm space-y-space-md">
                         <Field label="Verification code" error={codeForm.errors.code}>
-                            <OtpInput value={codeForm.data.code} onChange={(v) => codeForm.setData('code', v)} />
+                            <OtpInput value={codeForm.data.code} onChange={(v) => codeForm.setData('code', v)} invalid={!!codeForm.errors.code} />
                         </Field>
                         <p className={`font-body-sm text-body-sm ${expired ? 'text-error' : 'text-on-surface-variant'}`}>
                             {expired ? 'This code has expired — request a new one.' : `Code expires in ${mm}:${ss}`}
@@ -236,7 +292,6 @@ export default function Intake({ task, participant, awaitingVerification, contac
     return (
         <JourneyLayout step={2} taskRef={task.reference} showBack>
             <div className="space-y-space-xs">
-                <p className="font-label-code text-label-code text-[#0ea5e9] uppercase font-bold tracking-wider">Volunteer Profile</p>
                 <h1 className="font-headline-lg-mobile text-headline-lg-mobile font-semibold text-on-surface tracking-tight">Your Information</h1>
                 <p className="font-body-md text-body-md text-on-surface-variant leading-relaxed">
                     Please provide the official details requested below. Make sure all entries accurately correspond to your government ID before continuing.
@@ -256,31 +311,31 @@ export default function Intake({ task, participant, awaitingVerification, contac
                         <h2 className="font-title-md text-title-md text-on-surface">Personal Information</h2>
                     </div>
 
-                    <Field label="Full Name" error={form.errors.full_name} helper="As it appears on your official documents.">
-                        <input
-                            className={inputClass}
-                            type="text"
-                            autoComplete="name"
-                            value={form.data.full_name}
-                            onChange={(e) => form.setData('full_name', e.target.value)}
-                        />
-                    </Field>
+                    <FloatField
+                        label="Full Name"
+                        error={form.errors.full_name}
+                        helper="As it appears on your official documents."
+                        type="text"
+                        autoComplete="name"
+                        value={form.data.full_name}
+                        onChange={(e) => form.setData('full_name', e.target.value)}
+                    />
 
-                    <Field label="Email Address" error={form.errors.email} helper="We'll send verification confirmation and audit receipts here.">
-                        <input
-                            className={inputClass}
-                            type="email"
-                            autoComplete="email"
-                            value={form.data.email}
-                            onChange={(e) => form.setData('email', e.target.value)}
-                        />
-                    </Field>
+                    <FloatField
+                        label="Email Address"
+                        error={form.errors.email}
+                        helper="We'll send verification confirmation and audit receipts here."
+                        type="email"
+                        autoComplete="email"
+                        value={form.data.email}
+                        onChange={(e) => form.setData('email', e.target.value)}
+                    />
 
-                    <Field label="Phone Number" error={form.errors.phone ?? form.errors.phone_country_code} helper="For critical verification updates & SMS security challenges.">
-                        <div className="flex gap-2">
+                    <div className="space-y-1.5">
+                        <div className="flex gap-4 items-end">
                             <div className="relative">
                                 <select
-                                    className="h-12 pl-space-sm pr-7 rounded-lg bg-surface font-label-lg text-on-surface focus:outline-none focus:ring-2 focus:ring-[#0ea5e9] appearance-none border border-outline-variant/40"
+                                    className={`${selectClass} pr-7`}
                                     value={form.data.phone_country_code}
                                     onChange={(e) => form.setData('phone_country_code', e.target.value)}
                                     aria-label="Country Calling Code"
@@ -291,27 +346,39 @@ export default function Intake({ task, participant, awaitingVerification, contac
                                 </select>
                                 <Icon name="expand_more" className="absolute right-1.5 top-1/2 -translate-y-1/2 text-[16px] text-on-surface-variant pointer-events-none" />
                             </div>
-                            <input
-                                className={inputClass}
-                                type="tel"
-                                autoComplete="tel-national"
-                                value={form.data.phone}
-                                onChange={(e) => form.setData('phone', e.target.value)}
-                            />
+                            <div className="flex-1">
+                                <FloatField
+                                    label="Phone Number"
+                                    type="tel"
+                                    autoComplete="tel-national"
+                                    value={form.data.phone}
+                                    onChange={(e) => form.setData('phone', e.target.value)}
+                                />
+                            </div>
                         </div>
-                    </Field>
+                        {(form.errors.phone ?? form.errors.phone_country_code) ? (
+                            <p className="font-body-sm text-body-sm text-error flex items-center gap-1">
+                                <Icon name="error" className="text-[14px]" /> {form.errors.phone ?? form.errors.phone_country_code}
+                            </p>
+                        ) : (
+                            <p className="font-body-sm text-body-sm text-on-surface-variant">For critical verification updates &amp; SMS security challenges.</p>
+                        )}
+                    </div>
                 </div>
 
                 <div className="w-full bg-surface-container-lowest rounded-xl p-space-md shadow-sm space-y-space-md">
-                    <div className="flex items-center justify-between pb-2 border-b border-surface-container-high">
-                        <h2 className="font-title-md text-title-md text-on-surface">Additional Details</h2>
-                        <span className="font-label-code text-label-code text-outline">Optional</span>
-                    </div>
-
-                    <Field label="Preferred Contact Method" error={form.errors.preferred_contact}>
+                    <Field
+                        label={
+                            <>
+                                Preferred Contact Method
+                                <span className="float-right font-label-md text-label-md text-on-surface font-normal">Optional</span>
+                            </>
+                        }
+                        error={form.errors.preferred_contact}
+                    >
                         <div className="relative">
                             <select
-                                className="w-full h-12 px-space-md pr-10 rounded-lg bg-surface font-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-[#0ea5e9] appearance-none border border-outline-variant/40"
+                                className={`w-full ${selectClass} pr-10`}
                                 value={form.data.preferred_contact}
                                 onChange={(e) => form.setData('preferred_contact', e.target.value)}
                             >

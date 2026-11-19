@@ -1,3 +1,6 @@
+/**
+ * Step 5: outcome screen — completion code with copy button, expiry, similarity score and reward status.
+ */
 import { useState } from 'react';
 import Icon from '../Components/Icon';
 import CopyLink from '../Components/CopyLink';

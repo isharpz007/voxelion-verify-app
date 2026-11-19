@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
+/**
+ * Final step: renders the outcome (verified / failed / manual review), the completion code, and reward status.
+ */
 class ResultController extends Controller
 {
     public function __invoke(Request $request)
@@ -21,7 +24,6 @@ class ResultController extends Controller
             'task' => ['reference' => $participant->task_id],
             'participant' => [
                 'name' => $participant->full_name,
-                'role' => $participant->volunteer_role_ref ?: 'Community Volunteer',
             ],
             'code' => $code ? $request->session()->get('completion_code_plain') : null,
             'codeExpiresAt' => $code?->expires_at->toIso8601String(),

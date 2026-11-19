@@ -4,6 +4,9 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * Validates the selfie upload — type, size and extension limits enforced server-side.
+ */
 class PhotoUploadRequest extends FormRequest
 {
     public function rules(): array

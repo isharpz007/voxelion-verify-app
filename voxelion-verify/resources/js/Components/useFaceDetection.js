@@ -1,3 +1,6 @@
+/**
+ * React hook wrapping the face-geometry helpers: runs detection on a stream/frame and reports live status for guidance UI.
+ */
 import { useEffect, useRef, useState } from 'react';
 import { classifyFace, ema, faceToOverlay, isSteady, NEUTRAL_OVAL } from '../lib/faceGeometry';
 import { detectionToFace, getFaceDetector, pickPrimary } from '../lib/faceDetector';

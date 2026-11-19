@@ -12,6 +12,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
+/**
+ * Signed OpinionPadi API endpoints: reward submissions + admin review. Approval requires a backend-validated code, never screenshot proof alone.
+ */
 class RewardSubmissionController extends Controller
 {
     public function __construct(private CompletionCodeService $codes) {}

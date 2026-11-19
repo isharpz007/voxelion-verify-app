@@ -43,6 +43,24 @@ class EnforceSessionState
         }
 
         if (! in_array($session->state->value, $allowed, true)) {
+            // Backward navigation: page loads (never API/mutation calls) may
+            // return to an earlier completed step — the session regresses so
+            // the volunteer can redo it. Terminal states stay locked.
+            if ($request->isMethod('GET') && ! $request->is('api/*') && ! $session->state->isTerminal()) {
+                $earliest = collect($allowed)
+                    ->map(fn (string $state) => SessionState::from($state))
+                    ->sortBy(fn (SessionState $state) => $state->order())
+                    ->first();
+
+                if ($earliest->order() < $session->state->order()) {
+                    $session->update(['state' => $earliest]);
+                    AuditRecorded::dispatch('system', 'session.regressed', 'verification_session', $session->id);
+                    $request->attributes->set('verificationSession', $session->fresh());
+
+                    return $next($request);
+                }
+            }
+
             return redirect($session->state->route());
         }
 

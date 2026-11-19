@@ -1,3 +1,6 @@
+/**
+ * Unit tests for the faceGeometry math helpers.
+ */
 import { describe, it, expect } from 'vitest';
 import { classifyFace, ema, faceToOverlay, isSteady, NEUTRAL_OVAL, validatePhoto } from './faceGeometry';
 

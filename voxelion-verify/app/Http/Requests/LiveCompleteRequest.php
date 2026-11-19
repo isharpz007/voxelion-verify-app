@@ -4,6 +4,9 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * Validates the liveness capture upload (video/image) submitted from the live-check screen.
+ */
 class LiveCompleteRequest extends FormRequest
 {
     public function rules(): array

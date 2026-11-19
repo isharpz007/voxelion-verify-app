@@ -4,6 +4,9 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 
+/**
+ * Generates the local RS256 keypair in storage/app/keys used to sign dev OpinionPadi hand-off JWTs. Dev-only.
+ */
 class GenerateDevKeys extends Command
 {
     protected $signature = 'voxelion:keys';

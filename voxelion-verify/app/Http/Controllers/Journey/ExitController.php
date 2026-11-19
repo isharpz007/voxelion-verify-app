@@ -7,6 +7,9 @@ use App\Models\DeletionRequest;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
+/**
+ * Renders the exit screen for declined / withdrawn / expired sessions and kicks off participant data deletion.
+ */
 class ExitController extends Controller
 {
     public function show(Request $request)

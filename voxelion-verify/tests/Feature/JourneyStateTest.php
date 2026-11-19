@@ -288,6 +288,58 @@ class JourneyStateTest extends TestCase
 
         // A fresh request mid-journey resumes at /photo, not the start.
         $this->get('/photo')->assertOk();
-        $this->get('/consent')->assertRedirect('/photo');
+    }
+
+    public function test_backward_step_navigation_regresses_the_session(): void
+    {
+        $session = $this->beginSession();
+        $this->driveToPhoto($session);
+
+        // Clicking a completed step returns there and regresses state so the
+        // step can be redone — forward jumps still bounce to the current step.
+        $this->get('/intake')->assertOk();
+        $this->assertSame('consented', $session->fresh()->state->value);
+
+        $this->get('/result')->assertRedirect('/intake');
+    }
+
+    public function test_returning_to_intake_skips_reverification_when_unchanged(): void
+    {
+        $session = $this->beginSession();
+        $this->driveToPhoto($session);
+
+        $this->get('/intake')->assertOk();
+
+        // Same details resubmitted → straight back to /photo, no OTP round.
+        $this->put('/intake', [
+            'full_name' => 'Test Volunteer',
+            'email' => 'volunteer@example.com',
+            'phone_country_code' => '+234',
+            'phone' => '801 234 5678',
+            'preferred_contact' => 'email',
+        ])->assertRedirect('/photo');
+
+        $this->assertSame('intake_done', $session->fresh()->state->value);
+    }
+
+    public function test_changing_the_verified_channel_requires_reverification(): void
+    {
+        $session = $this->beginSession();
+        $this->driveToPhoto($session);
+
+        $this->get('/intake')->assertOk();
+
+        // The verified phone changed → its marker clears, so the session
+        // stays consented until a fresh OTP verifies a channel again.
+        $this->put('/intake', [
+            'full_name' => 'Test Volunteer',
+            'email' => 'volunteer@example.com',
+            'phone_country_code' => '+234',
+            'phone' => '901 999 8877',
+            'preferred_contact' => 'email',
+        ])->assertRedirect('/intake');
+
+        $this->assertSame('consented', $session->fresh()->state->value);
+        $this->assertNull($session->fresh()->participant->phone_verified_at);
     }
 }

@@ -6,12 +6,12 @@
 <title>Multi-step Progress Indicator</title>
 <style>
     :root {
-        --violet: #7c3aed;
-        --violet-light: #a78bfa;
+        --violet: #111111;
+        --violet-light: #555555;
         --track: #e5e1f0;
         --text: #1e1b29;
         --text-muted: #8a8499;
-        --step: 1500ms;
+        --step: 3000ms;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -32,6 +32,20 @@
         font-size: 1.35rem;
         font-weight: 600;
         letter-spacing: -0.01em;
+    }
+
+    .status {
+        font-size: .9rem;
+        font-weight: 500;
+        color: var(--violet);
+        background: #fff;
+        border: 1px solid var(--track);
+        border-radius: 999px;
+        padding: 8px 20px;
+        box-shadow: 0 2px 10px rgba(0,0,0,.07);
+        min-width: 210px;
+        text-align: center;
+        transition: color .3s ease;
     }
 
     .progress {
@@ -72,7 +86,7 @@
         position: absolute;
         inset: -7px;
         border-radius: 50%;
-        box-shadow: 0 0 0 4px rgba(124, 58, 237, .18), 0 0 18px 4px rgba(124, 58, 237, .35);
+        box-shadow: 0 0 0 4px rgba(0,0,0,.14), 0 0 18px 4px rgba(0,0,0,.28);
         opacity: 0;
         transition: opacity .4s ease;
     }
@@ -133,17 +147,17 @@
         width: 0%;
         background: linear-gradient(90deg, var(--violet), var(--violet-light));
         border-radius: 2px;
-        transition: width .9s ease;
+        transition: width 1.8s ease;
     }
 
     .connector.filled .fill { width: 100%; }
 
     @keyframes pulse {
         0%, 100% {
-            box-shadow: 0 0 0 4px rgba(124, 58, 237, .18), 0 0 18px 4px rgba(124, 58, 237, .35);
+            box-shadow: 0 0 0 4px rgba(0,0,0,.14), 0 0 18px 4px rgba(0,0,0,.28);
         }
         50% {
-            box-shadow: 0 0 0 7px rgba(124, 58, 237, .10), 0 0 26px 8px rgba(124, 58, 237, .22);
+            box-shadow: 0 0 0 7px rgba(0,0,0,.08), 0 0 26px 8px rgba(0,0,0,.18);
         }
     }
 </style>
@@ -174,10 +188,13 @@
     </div>
 </div>
 
+<div class="status" id="status">Step 1 of 4 — Account</div>
+
 <script>
-    const STEP_MS = 1500;
+    const STEP_MS = 3000;
     const steps = [...document.querySelectorAll('.step')];
     const connectors = [...document.querySelectorAll('.connector')];
+    const status = document.getElementById('status');
     let current = 0; // index of the active step
 
     function render() {
@@ -186,6 +203,13 @@
             s.classList.toggle('active', i === current);
         });
         connectors.forEach((c, i) => c.classList.toggle('filled', i < current));
+
+        if (current >= steps.length) {
+            status.textContent = 'All steps complete — restarting…';
+        } else {
+            const label = steps[current].querySelector('.label').textContent;
+            status.textContent = `Step ${current + 1} of ${steps.length} — ${label}`;
+        }
     }
 
     function advance() {

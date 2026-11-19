@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\ReviewController;
+use App\Http\Controllers\DevDataController;
 use App\Http\Controllers\DevHandoffController;
 use App\Http\Controllers\Journey\ConsentController;
 use App\Http\Controllers\Journey\ExitController;
@@ -32,6 +33,7 @@ Route::get('/', [StartController::class, 'welcome'])->name('welcome');
 
 // Local-only OpinionPadi simulator — signs a hand-off JWT and redirects.
 Route::get('/dev/handoff', DevHandoffController::class)->name('dev.handoff');
+Route::get('/dev/data', DevDataController::class)->name('dev.data');
 
 Route::middleware('journey.state:created')->group(function () {
     Route::get('/consent', [ConsentController::class, 'show'])->name('journey.consent');
@@ -45,9 +47,9 @@ Route::middleware('journey.state:consented')->group(function () {
 
     // Contact verification OTP — session-scoped endpoints (not the HMAC
     // OpinionPadi API). Rate-limited against code guessing and send abuse.
-    Route::post('/api/otp/send', [OtpController::class, 'send'])->middleware('throttle:10,1');
+    Route::post('/api/otp/send', [OtpController::class, 'send'])->middleware('throttle:5,1');
     Route::post('/api/otp/verify', [OtpController::class, 'verify'])->middleware('throttle:10,1');
-    Route::post('/api/otp/resend', [OtpController::class, 'resend'])->middleware('throttle:10,1');
+    Route::post('/api/otp/resend', [OtpController::class, 'resend'])->middleware('throttle:5,1');
     Route::get('/api/otp/status', [OtpController::class, 'status']);
 });
 

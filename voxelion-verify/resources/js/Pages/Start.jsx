@@ -1,7 +1,11 @@
+/**
+ * Welcome screen: task details, animated looping step preview, and the customize-session panel.
+ */
 import { router } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 import Icon from '../Components/Icon';
 import CopyLink from '../Components/CopyLink';
+import { RevealGroup } from '../Components/Reveal';
 
 const STEP_LABELS = ['Consent', 'Intake', 'Photo', 'Live', 'Result'];
 
@@ -23,6 +27,21 @@ function ValidView({ task, dev }) {
     // the same welcome screen and making the user click a second time.
     const autoBegin = Boolean(dev) && new URLSearchParams(window.location.search).has('t');
     const [starting, setStarting] = useState(autoBegin);
+    const [stepIndex, setStepIndex] = useState(0);
+    const [customizing, setCustomizing] = useState(false);
+    const [language, setLanguage] = useState(() => (typeof localStorage === 'undefined' ? '' : localStorage.getItem('voxelion.lang') ?? ''));
+
+    const chooseLanguage = (value) => {
+        setLanguage(value);
+        localStorage.setItem('voxelion.lang', value);
+    };
+
+    useEffect(() => {
+        const t = setInterval(() => {
+            setStepIndex((c) => (c >= STEP_LABELS.length ? 0 : c + 1));
+        }, 3000);
+        return () => clearInterval(t);
+    }, []);
 
     useEffect(() => {
         if (autoBegin) {
@@ -44,6 +63,7 @@ function ValidView({ task, dev }) {
 
     return (
         <div className="flex flex-col w-full space-y-space-md">
+            <RevealGroup>
             <div className="flex flex-col items-center text-center pt-2">
                 <div className="relative flex items-center justify-center w-16 h-16 rounded-full bg-surface-container-lowest shadow-md mb-space-sm">
                     <div className="absolute inset-0 rounded-full bg-surface-container-high opacity-50 blur-sm" />
@@ -77,13 +97,6 @@ function ValidView({ task, dev }) {
                         </div>
                     </div>
                 </div>
-                <div className="mt-3 pt-3 border-t border-surface-container-high flex items-center justify-between">
-                    <span className="font-body-sm text-body-sm text-secondary">Verification Status</span>
-                    <div className="flex items-center space-x-2 px-2.5 py-1 rounded-full bg-surface-container text-on-surface">
-                        <span className="w-2 h-2 rounded-full bg-[#10b981] animate-pulse" />
-                        <span className="font-label-md text-label-md font-semibold text-primary">Ready to begin</span>
-                    </div>
-                </div>
             </div>
 
             <div className="w-full bg-surface-container-low rounded-xl p-space-md">
@@ -93,24 +106,83 @@ function ValidView({ task, dev }) {
                         <div key={label} className="contents">
                             <div className="flex flex-col items-center flex-1 text-center">
                                 <div
-                                    className={`w-7 h-7 rounded-full font-label-code text-label-code flex items-center justify-center font-bold ${
-                                        i === 0 ? 'bg-primary-container text-on-primary shadow-sm' : 'bg-surface-variant text-on-surface-variant'
+                                    className={`relative w-7 h-7 rounded-full font-label-code text-label-code flex items-center justify-center font-bold transition-colors duration-500 ${
+                                        i < stepIndex
+                                            ? 'bg-[#111111] text-white shadow-sm'
+                                            : i === stepIndex
+                                              ? 'bg-white border-2 border-[#111111] text-[#111111]'
+                                              : 'bg-surface-variant text-on-surface-variant'
                                     }`}
+                                    style={
+                                        i === stepIndex
+                                            ? { boxShadow: '0 0 0 4px rgba(0,0,0,.14), 0 0 16px 4px rgba(0,0,0,.22)' }
+                                            : undefined
+                                    }
                                 >
-                                    {i + 1}
+                                    {i < stepIndex ? <Icon name="check" className="text-[16px]" /> : i + 1}
                                 </div>
                                 <span
-                                    className={`font-label-code text-label-code mt-1.5 leading-tight ${
-                                        i === 0 ? 'text-primary font-medium' : 'text-on-surface-variant'
+                                    className={`font-label-code text-label-code mt-1.5 leading-tight transition-colors duration-500 ${
+                                        i === stepIndex
+                                            ? 'text-[#111111] font-medium'
+                                            : i < stepIndex
+                                              ? 'text-primary'
+                                              : 'text-on-surface-variant'
                                     }`}
                                 >
                                     {label}
                                 </span>
                             </div>
-                            {i < STEP_LABELS.length - 1 && <div className="h-0.5 bg-surface-variant flex-1 -mt-4" />}
+                            {i < STEP_LABELS.length - 1 && (
+                                <div className="h-0.5 bg-surface-variant flex-1 -mt-4 rounded-full overflow-hidden">
+                                    <div
+                                        className="h-full bg-[#111111] rounded-full"
+                                        style={{
+                                            width: i < stepIndex ? '100%' : '0%',
+                                            transition: 'width 1.8s ease',
+                                        }}
+                                    />
+                                </div>
+                            )}
                         </div>
                     ))}
                 </div>
+            </div>
+
+            <div className="w-full bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden">
+                <button
+                    type="button"
+                    onClick={() => setCustomizing((open) => !open)}
+                    className="w-full flex items-center justify-between px-space-md py-3 text-left"
+                >
+                    <span className="font-title-md text-title-md text-primary">Customize session</span>
+                    <Icon
+                        name={customizing ? 'expand_less' : 'expand_more'}
+                        className="text-[20px] text-on-surface-variant"
+                    />
+                </button>
+                {customizing && (
+                    <div className="px-space-md pb-space-md space-y-2">
+                        <label className="block font-label-lg text-label-lg font-semibold text-on-surface">Language</label>
+                        <div className="relative">
+                            <select
+                                className="w-full h-12 px-space-md pr-10 rounded-lg bg-surface font-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-[#0ea5e9] appearance-none border border-outline-variant/40"
+                                value={language}
+                                onChange={(e) => chooseLanguage(e.target.value)}
+                            >
+                                <option value="" disabled>Select a language</option>
+                                <option value="en">English</option>
+                                <option value="ha">Hausa</option>
+                                <option value="yo">Yorùbá</option>
+                                <option value="ig">Igbo</option>
+                                <option value="pcm">Nigerian Pidgin</option>
+                                <option value="fr">Français</option>
+                            </select>
+                            <Icon name="expand_more" className="absolute right-3 top-1/2 -translate-y-1/2 text-[18px] text-on-surface-variant pointer-events-none" />
+                        </div>
+                        <p className="font-body-sm text-body-sm text-on-surface-variant">This will change the session language</p>
+                    </div>
+                )}
             </div>
 
             <div className="w-full pt-1">
@@ -129,6 +201,7 @@ function ValidView({ task, dev }) {
                 <Icon name="lock" className="text-[16px] text-on-surface-variant" />
                 <span className="font-body-sm text-body-sm">Your information is handled securely throughout the verification process.</span>
             </div>
+            </RevealGroup>
         </div>
     );
 }
@@ -178,6 +251,7 @@ function ErrorView({ state, opinionpadiUrl }) {
 
     return (
         <div className="flex flex-col w-full space-y-space-md">
+            <RevealGroup>
             <div className="flex flex-col items-center text-center pt-4">
                 <div className={`w-16 h-16 rounded-full ${config.iconClass} flex items-center justify-center shadow-sm mb-space-sm`}>
                     <Icon name={config.icon} className="text-[32px]" />
@@ -211,6 +285,7 @@ function ErrorView({ state, opinionpadiUrl }) {
                     Contact Task Coordinator
                 </button>
             </div>
+            </RevealGroup>
         </div>
     );
 }

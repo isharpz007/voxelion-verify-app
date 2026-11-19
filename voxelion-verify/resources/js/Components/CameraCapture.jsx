@@ -1,3 +1,6 @@
+/**
+ * getUserMedia camera wrapper: live preview, capture-to-blob, and permission/error states shared by the photo and liveness steps.
+ */
 import { useEffect, useRef, useState } from 'react';
 import Icon from './Icon';
 

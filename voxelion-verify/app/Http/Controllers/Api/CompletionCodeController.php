@@ -6,6 +6,9 @@ use App\Events\AuditRecorded;
 use App\Http\Controllers\Controller;
 use App\Services\CompletionCodeService;
 
+/**
+ * Signed OpinionPadi API endpoint: validates a completion code server-to-server. Read-only — consumption happens only on reward approval.
+ */
 class CompletionCodeController extends Controller
 {
     public function __construct(private CompletionCodeService $codes) {}

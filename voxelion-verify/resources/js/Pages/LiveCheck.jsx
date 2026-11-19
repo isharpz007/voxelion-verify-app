@@ -1,3 +1,6 @@
+/**
+ * Step 4: guided liveness capture — challenge prompts, camera feed, retry countdowns.
+ */
 import { router, usePage } from '@inertiajs/react';
 import { useEffect, useRef, useState } from 'react';
 import Icon from '../Components/Icon';

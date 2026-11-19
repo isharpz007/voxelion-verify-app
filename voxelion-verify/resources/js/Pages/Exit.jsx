@@ -1,5 +1,9 @@
+/**
+ * Exit screen shown on withdraw/decline/expiry — explains what happens to the user\u0027s data.
+ */
 import Icon from '../Components/Icon';
 import CopyLink from '../Components/CopyLink';
+import { RevealGroup } from '../Components/Reveal';
 
 const COPY = {
     declined: {
@@ -36,6 +40,7 @@ export default function Exit({ reason, deletionRef, task, opinionpadiUrl }) {
                     <span className="font-label-code text-label-code text-on-surface-variant">Session Verification Gateway</span>
                 </header>
 
+                <RevealGroup>
                 <div className="flex flex-col items-center text-center pt-4 space-y-space-sm">
                     <div className={`w-16 h-16 rounded-full ${copy.iconClass} flex items-center justify-center shadow-sm`}>
                         <Icon name={copy.icon} className="text-[32px]" />
@@ -78,6 +83,7 @@ export default function Exit({ reason, deletionRef, task, opinionpadiUrl }) {
                 </div>
 
                 {opinionpadiUrl && <CopyLink url={opinionpadiUrl} label="Copy link" />}
+                </RevealGroup>
 
                 <footer className="pt-space-md text-center space-y-1">
                     <div className="flex items-center justify-center gap-1.5 text-on-surface-variant font-label-md text-label-md">

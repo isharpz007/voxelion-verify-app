@@ -1,3 +1,6 @@
+/**
+ * Inertia + React bootstrap: resolves pages, mounts the app into the Blade root element.
+ */
 import { createRoot } from 'react-dom/client';
 import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';

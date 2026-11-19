@@ -1,3 +1,6 @@
+/**
+ * Step 1: the two required consent checkboxes (processing + biometrics) plus the decline path.
+ */
 import { useForm, router } from '@inertiajs/react';
 import { useState } from 'react';
 import Icon from '../Components/Icon';

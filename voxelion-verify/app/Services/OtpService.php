@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Mail;
  *
  * Security properties:
  *  - 6-digit codes from a CSPRNG, HMAC-hashed at rest, never logged or returned
- *  - 5-minute expiry, max 5 attempts per code, constant-time comparison
+ *  - 10-minute expiry, max 5 attempts per code, constant-time comparison
  *  - 60-second resend cooldown, max 5 sends per participant per 15 minutes
  *  - issuing a new code invalidates all previous active ones
  *  - verification runs inside a row-locked transaction so a code cannot be
@@ -89,7 +89,15 @@ class OtpService
         } catch (\Throwable $e) {
             // Never claim success when the provider rejected the message —
             // the issued code is dead so it can't linger half-delivered.
+            // Log context only: channel + participant + provider error —
+            // never the code, destination, or credentials.
             $otp->update(['invalidated_at' => now()]);
+            logger()->warning('OTP delivery failed', [
+                'channel' => $channel,
+                'participant_id' => $participant->id,
+                'provider_error' => $e->getMessage(),
+            ]);
+
             throw new OtpDeliveryException('We could not deliver the verification code. Please try another method or try again.', previous: $e);
         }
 
@@ -202,11 +210,23 @@ class OtpService
 
     private function destination(Participant $participant, string $channel): ?string
     {
-        return match ($channel) {
+        $destination = match ($channel) {
             'email' => $participant->email,
             'sms' => $participant->phone_country_code && $participant->phone
                 ? $this->normalizeE164($participant->phone_country_code, $participant->phone)
                 : null,
+            default => null,
+        };
+
+        if ($destination === null) {
+            return null;
+        }
+
+        // Guard before delivery: email must be syntactically valid, SMS
+        // destinations must be proper E.164 (+ followed by 7–15 digits).
+        return match ($channel) {
+            'email' => filter_var($destination, FILTER_VALIDATE_EMAIL) ? $destination : null,
+            'sms' => preg_match('/^\+[1-9]\d{6,14}$/', $destination) ? $destination : null,
             default => null,
         };
     }
@@ -219,7 +239,7 @@ class OtpService
     private function deliver(string $channel, string $destination, string $code): void
     {
         match ($channel) {
-            'email' => Mail::to($destination)->send(new EmailVerificationCode($code)),
+            'email' => Mail::to($destination)->send(new EmailVerificationCode($code, self::TTL_MINUTES)),
             'sms' => $this->sms->send($destination, "Your Voxelion verification code is {$code}. It expires in ".self::TTL_MINUTES.' minutes.'),
             default => throw new \InvalidArgumentException("Unknown OTP channel: {$channel}"),
         };

@@ -1,3 +1,6 @@
+/**
+ * Renders photo-quality hints (blur, lighting, face position) returned by the checks so the user can retake.
+ */
 import Icon from './Icon';
 
 /** Inline quality-check feedback banner for the photo step. */

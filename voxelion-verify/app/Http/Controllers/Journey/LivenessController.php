@@ -16,6 +16,9 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 
+/**
+ * Live liveness step: issues challenges, accepts captures, enforces retry limits, and hands off to the verification provider.
+ */
 class LivenessController extends Controller
 {
     public function __construct(

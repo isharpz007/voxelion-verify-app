@@ -158,3 +158,16 @@
         -webkit-font-smoothing: antialiased;
     }
 }
+
+/* Scroll-triggered reveal (Reveal.jsx): invisible + shifted, fades/slides up on intersect */
+.reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity .6s ease, transform .6s ease;
+    will-change: opacity, transform;
+}
+
+.reveal.reveal-visible {
+    opacity: 1;
+    transform: translateY(0);
+}

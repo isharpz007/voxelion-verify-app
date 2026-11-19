@@ -6,6 +6,9 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Http;
 
+/**
+ * Queued job that POSTs a signed event payload to the OpinionPadi webhook URL with retries and backoff.
+ */
 class DispatchWebhook implements ShouldQueue
 {
     use Queueable;

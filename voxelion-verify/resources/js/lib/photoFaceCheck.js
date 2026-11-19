@@ -1,3 +1,6 @@
+/**
+ * Photo face-check math: face presence, size, centering and geometry scoring used by photo quality feedback.
+ */
 import { getFaceDetector, detectionToFace } from './faceDetector';
 import { validatePhoto } from './faceGeometry';
 

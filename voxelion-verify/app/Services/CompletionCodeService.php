@@ -7,7 +7,7 @@ use App\Models\VerificationSession;
 
 /**
  * Issues and validates completion codes.
- * Format: VX-XXXX-XXXX-XXXX (Crockford base32 — no ambiguous chars),
+ * Format: VX + 12 chars (Crockford base32 — no ambiguous chars),
  * stored hashed (sha256 + app key pepper via HMAC), single-use, expiring.
  */
 class CompletionCodeService
@@ -109,6 +109,6 @@ class CompletionCodeService
             $groups[] = $group;
         }
 
-        return 'VX-'.implode('-', $groups);
+        return 'VX'.implode('', $groups);
     }
 }

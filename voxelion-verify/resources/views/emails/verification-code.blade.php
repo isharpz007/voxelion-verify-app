@@ -13,7 +13,7 @@
                 <span style="font-size:32px;font-weight:700;letter-spacing:.35em;color:#0f172a;font-family:ui-monospace,Menlo,monospace;">{{ $code }}</span>
             </div>
             <p style="margin:0 0 8px;font-size:13px;line-height:1.6;color:#475569;">
-                This code expires in <strong>5 minutes</strong> and can only be used once.
+                This code expires in <strong>{{ $ttlMinutes }} minutes</strong> and can only be used once. Never share it with anyone — Voxelion will never ask for your code.
             </p>
             <p style="margin:0;font-size:13px;line-height:1.6;color:#94a3b8;">
                 If you did not request this code, you can safely ignore this email — no action will be taken.

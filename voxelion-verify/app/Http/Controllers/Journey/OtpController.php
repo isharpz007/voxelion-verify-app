@@ -56,7 +56,7 @@ class OtpController extends Controller
 
         AuditRecorded::dispatch('participant', 'otp.verified', 'verification_session', $session->id, ['channel' => $channel]);
 
-        return redirect('/photo');
+        return redirect('/photo')->with('success', 'Code verified — continue to photo capture.');
     }
 
     public function resend(Request $request)

@@ -1,3 +1,6 @@
+/**
+ * Small copy-to-clipboard button used for the completion code and task links.
+ */
 import { useState } from 'react';
 import Icon from './Icon';
 

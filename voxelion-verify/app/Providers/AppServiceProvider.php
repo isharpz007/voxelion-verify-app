@@ -11,6 +11,9 @@ use App\Services\VerificationProvider\VoxelionProvider;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
+/**
+ * Binds the verification provider abstraction — swap VoxelionProvider for a real vendor here.
+ */
 class AppServiceProvider extends ServiceProvider
 {
     public function register(): void

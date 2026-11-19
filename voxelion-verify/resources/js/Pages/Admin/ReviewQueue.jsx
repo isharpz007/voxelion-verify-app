@@ -1,6 +1,10 @@
+/**
+ * Admin screen listing reward submissions for manual review — each row reveals staggered on scroll.
+ */
 import { router, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import Icon from '../../Components/Icon';
+import Reveal, { RevealGroup } from '../../Components/Reveal';
 
 const STATE_STYLES = {
     pending: 'bg-surface-container-high text-on-surface-variant',
@@ -142,6 +146,7 @@ export default function ReviewQueue({ submissions, pendingCount }) {
                     </span>
                 </header>
 
+                <RevealGroup>
                 {errors.decision && (
                     <div className="bg-error-container rounded-xl p-space-md font-body-sm text-body-sm text-on-error-container">{errors.decision}</div>
                 )}
@@ -153,8 +158,10 @@ export default function ReviewQueue({ submissions, pendingCount }) {
                 )}
 
                 <div className="space-y-space-md">
-                    {rows.map((s) => (
-                        <Row key={s.id} submission={s} onDecide={decide} busy={busy} />
+                    {rows.map((s, i) => (
+                        <Reveal key={s.id} delay={i * 100}>
+                            <Row submission={s} onDecide={decide} busy={busy} />
+                        </Reveal>
                     ))}
                 </div>
 
@@ -176,6 +183,7 @@ export default function ReviewQueue({ submissions, pendingCount }) {
                         ))}
                     </div>
                 )}
+                </RevealGroup>
             </div>
         </main>
     );

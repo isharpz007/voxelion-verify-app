@@ -1,3 +1,6 @@
+/**
+ * Step 3: selfie capture with live quality feedback before submitting.
+ */
 import { router, usePage } from '@inertiajs/react';
 import { useEffect, useRef, useState } from 'react';
 import Icon from '../Components/Icon';

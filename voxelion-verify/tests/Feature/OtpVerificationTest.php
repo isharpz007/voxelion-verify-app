@@ -237,6 +237,15 @@ class OtpVerificationTest extends TestCase
         $this->assertStringNotContainsString(Otp::first()->code_hash, $response->getContent());
     }
 
+    public function test_invalid_email_destination_is_rejected(): void
+    {
+        $session = $this->driveToIntake();
+        $session->participant->update(['email' => 'not-an-email']);
+
+        $this->post('/api/otp/send', ['channel' => 'email'])->assertStatus(422);
+        $this->assertSame(0, Otp::count());
+    }
+
     public function test_unknown_channel_is_rejected(): void
     {
         $this->driveToIntake();

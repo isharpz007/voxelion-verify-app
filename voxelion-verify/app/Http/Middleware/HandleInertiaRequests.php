@@ -5,6 +5,9 @@ namespace App\Http\Middleware;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
+/**
+ * Shares common props (app name, flash messages) with every Inertia page.
+ */
 class HandleInertiaRequests extends Middleware
 {
     protected $rootView = 'app';
@@ -18,6 +21,9 @@ class HandleInertiaRequests extends Middleware
     {
         return array_merge(parent::share($request), [
             'appName' => 'Voxelion',
+            'flash' => [
+                'success' => $request->session()->get('success'),
+            ],
         ]);
     }
 }
